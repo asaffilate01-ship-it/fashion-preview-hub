@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Kalëthon women’s court short</title>
+  <desc id="desc">Navy performance court short with integrated liner and light K mark, shown without a model.</desc>
+  <defs>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#263a54"/><stop offset=".55" stop-color="#14263e"/><stop offset="1" stop-color="#0e1b2e"/></linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#334b68"/><stop offset="1" stop-color="#17283d"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="26" stdDeviation="30" flood-color="#10110f" flood-opacity=".22"/></filter>
+  </defs>
+  <rect width="800" height="1000" fill="#eee7dc"/>
+  <g filter="url(#shadow)">
+    <path d="M210 238Q400 208 590 238l42 360-46 190-177-27-9-192-9 192-177 27-46-190Z" fill="url(#cloth)"/>
+    <path d="M203 238Q400 204 597 238l-4 72Q400 280 207 310Z" fill="url(#edge)"/>
+    <path d="M400 305v264M172 598q116 31 219 163M628 598q-116 31-219 163" fill="none" stroke="#50637a" stroke-opacity=".55" stroke-width="5"/>
+    <path d="M258 332q42 36 82 109M542 332q-42 36-82 109" fill="none" stroke="#8290a0" stroke-opacity=".28" stroke-width="4"/>
+    <path d="M224 638q76 28 164 13M576 638q-76 28-164 13" fill="none" stroke="#dfe6e8" stroke-opacity=".16" stroke-width="3"/>
+    <g transform="translate(510 338) scale(1.05)" fill="#f2eee7"><path d="M8 8h11v48H8z"/><path d="m22 30 24-22h13L33 32z"/><path d="m22 34 12-4 25 26H45z"/></g>
+  </g>
+  <text x="400" y="902" text-anchor="middle" fill="#10110f" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="8">KALËTHON</text>
+  <text x="400" y="938" text-anchor="middle" fill="#6a6b67" font-family="Arial, sans-serif" font-size="14" letter-spacing="4">WOMEN’S COURT SHORT</text>
+</svg>

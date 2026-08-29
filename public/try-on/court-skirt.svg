@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Kalëthon women’s court skort</title>
+  <desc id="desc">Oxblood performance court skirt with integrated shorts and light K mark, shown without a model.</desc>
+  <defs>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#823247"/><stop offset=".52" stop-color="#651f32"/><stop offset="1" stop-color="#451523"/></linearGradient>
+    <linearGradient id="liner" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2b2d29"/><stop offset="1" stop-color="#151613"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="26" stdDeviation="30" flood-color="#10110f" flood-opacity=".22"/></filter>
+  </defs>
+  <rect width="800" height="1000" fill="#eee7dc"/>
+  <g filter="url(#shadow)">
+    <path d="M256 286q144-29 288 0l44 408q-96 47-188 4-92 43-188-4Z" fill="url(#liner)"/>
+    <path d="M203 238q197-35 394 0l-10 74q-187-30-374 0Z" fill="#521828"/>
+    <path d="M215 301q185-29 370 0l68 404q-253 75-506 0Z" fill="url(#cloth)"/>
+    <path d="M400 294v410M305 306l-43 402M495 306l43 402" fill="none" stroke="#ad6072" stroke-opacity=".42" stroke-width="5"/>
+    <path d="M174 668q226 61 452 0" fill="none" stroke="#f0d8de" stroke-opacity=".25" stroke-width="4"/>
+    <g transform="translate(514 350) scale(1.05)" fill="#f2eee7"><path d="M8 8h11v48H8z"/><path d="m22 30 24-22h13L33 32z"/><path d="m22 34 12-4 25 26H45z"/></g>
+  </g>
+  <text x="400" y="902" text-anchor="middle" fill="#10110f" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="8">KALËTHON</text>
+  <text x="400" y="938" text-anchor="middle" fill="#6a6b67" font-family="Arial, sans-serif" font-size="14" letter-spacing="4">WOMEN’S COURT SKORT</text>
+</svg>
