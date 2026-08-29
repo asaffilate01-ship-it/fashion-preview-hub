@@ -17,11 +17,29 @@ const products = {
   "court-skirt": { name: "Custom Court Skort", amount: 9200 },
 } as const;
 
+function stripeConnection() {
+  const directKey = process.env.STRIPE_SECRET_KEY;
+  if (directKey) return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${directKey}` } };
+
+  const environment = process.env.PAYMENTS_ENVIRONMENT === "sandbox" ? "sandbox" : "live";
+  const connectionKey = environment === "sandbox" ? process.env.STRIPE_SANDBOX_API_KEY : process.env.STRIPE_LIVE_API_KEY;
+  const lovableKey = process.env.LOVABLE_API_KEY;
+  if (!connectionKey || !lovableKey) return null;
+  return {
+    endpoint: "https://connector-gateway.lovable.dev/stripe/v1/checkout/sessions",
+    headers: {
+      Authorization: `Bearer ${connectionKey}`,
+      "X-Connection-Api-Key": connectionKey,
+      "Lovable-API-Key": lovableKey,
+    },
+  };
+}
+
 export async function POST(request: Request) {
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
-  if (!stripeKey) {
+  const stripe = stripeConnection();
+  if (!stripe) {
     return NextResponse.json(
-      { code: "not_configured", message: "Secure checkout is ready; the Stripe live key still needs to be connected." },
+      { code: "not_configured", message: "Secure checkout is temporarily unavailable while the live payment connection is completed." },
       { status: 503 },
     );
   }
@@ -87,10 +105,10 @@ export async function POST(request: Request) {
     form.set("metadata[marketing_consent]", marketingConsent ? "yes" : "no");
     form.set("metadata[consent_recorded_at]", new Date().toISOString());
 
-    const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+    const stripeResponse = await fetch(stripe.endpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${stripeKey}`,
+        ...stripe.headers,
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: form,
