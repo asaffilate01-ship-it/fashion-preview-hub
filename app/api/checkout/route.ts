@@ -17,7 +17,7 @@ const products = {
   "court-skirt": { name: "Custom Court Skort", amount: 9200 },
 } as const;
 
-function stripeConnection() {
+function stripeConnection(): { endpoint: string; headers: Record<string, string> } | null {
   const directKey = process.env.STRIPE_SECRET_KEY;
   if (directKey) return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${directKey}` } };
 

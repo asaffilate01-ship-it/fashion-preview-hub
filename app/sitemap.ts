@@ -3,15 +3,17 @@ import { journalArticles } from "@/lib/journal";
 import { sportCollections } from "@/lib/sports";
 import { legalPages } from "@/lib/legal";
 
+const baseUrl = "https://kalethon.com";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const updated = new Date("2026-08-29T00:00:00Z");
+  const now = new Date("2026-08-29T00:00:00Z");
   return [
-    { url: "https://kalethon.com", lastModified: updated, changeFrequency: "weekly", priority: 1 },
-    { url: "https://kalethon.com/measurements", lastModified: updated, changeFrequency: "monthly", priority: 0.8 },
-    { url: "https://kalethon.com/journal", lastModified: updated, changeFrequency: "weekly", priority: 0.85 },
+    { url: baseUrl, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: `${baseUrl}/measurements`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${baseUrl}/journal`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     ...journalArticles.map((article) => ({
-      url: `https://kalethon.com/journal/${article.slug}`,
-      lastModified: updated,
+      url: `${baseUrl}/journal/${article.slug}`,
+      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
