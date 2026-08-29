@@ -69,8 +69,8 @@ export async function POST(request: Request) {
     const description = `${bodyColour} body / ${collarColour} trim / ${cuffColour} cuff / ${sleeve} / ${fit} fit / ${branding} / ${size}`;
     const form = new URLSearchParams();
     form.set("mode", "payment");
-    form.set("success_url", `${origin}/?checkout=success#design-yours`);
-    form.set("cancel_url", `${origin}/?checkout=cancelled#design-yours`);
+    form.set("success_url", `${origin}/customise?checkout=success`);
+    form.set("cancel_url", `${origin}/customise?checkout=cancelled`);
     form.set("billing_address_collection", "required");
     form.set("phone_number_collection[enabled]", "true");
     form.set("allow_promotion_codes", "true");

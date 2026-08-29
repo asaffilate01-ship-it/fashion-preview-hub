@@ -50,6 +50,8 @@ const structuredData = {
   logo: "https://kalethon.com/kalethon-mark.svg",
   description: "Premium British sportswear and custom sport-to-city clothing.",
   areaServed: "Worldwide",
+  email: "hello@kalethon.com",
+  contactPoint: { "@type": "ContactPoint", email: "hello@kalethon.com", contactType: "customer service", availableLanguage: "English" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -1,6 +1,6 @@
 export type LegalPage = { slug: string; title: string; summary: string; sections: { heading: string; paragraphs: string[] }[] };
 
-const contact = "concierge@kalethon.com";
+const contact = "hello@kalethon.com";
 export const legalPages: LegalPage[] = [
   { slug: "privacy-policy", title: "Privacy policy", summary: "How Kalëthon uses personal information under the UK GDPR and Data Protection Act 2018.", sections: [
     { heading: "Who controls your information", paragraphs: [`Kalëthon is the controller for personal information collected through kalethon.com. Contact ${contact} for privacy questions or rights requests. The operator's legal entity name and full geographic trading address are required business details and must be published without delay.`] },
@@ -25,12 +25,12 @@ export const legalPages: LegalPage[] = [
   { slug: "delivery", title: "Delivery policy", summary: "Production, dispatch, tracking, customs and delivery responsibilities.", sections: [
     { heading: "Made-to-order lead times", paragraphs: ["The estimated production and delivery window is shown at checkout or in order confirmation. Unless another time is agreed, UK consumer orders will be delivered without undue delay and normally within 30 days. If a delay changes the agreed date, Kalëthon will contact you with options."] },
     { heading: "Charges and tracking", paragraphs: ["Available services, destination limits and charges are shown before payment. Tracking is sent when available. International customers are responsible for import duties and taxes unless checkout expressly states they are included."] },
-    { heading: "Risk and failed delivery", paragraphs: ["Goods remain Kalëthon's responsibility until delivered to you or a person you identify, except where you independently appoint a carrier not offered by us. Report loss, damage or an incorrect item promptly to concierge@kalethon.com with the order number and photographs where relevant."] },
+    { heading: "Risk and failed delivery", paragraphs: ["Goods remain Kalëthon's responsibility until delivered to you or a person you identify, except where you independently appoint a carrier not offered by us. Report loss, damage or an incorrect item promptly to hello@kalethon.com with the order number and photographs where relevant."] },
   ]},
   { slug: "returns-and-refunds", title: "Returns and refunds", summary: "Change-of-mind, personalised-item and faulty-goods routes.", sections: [
     { heading: "Standard, non-personalised items", paragraphs: ["For eligible online purchases, tell us within 14 days after delivery that you wish to cancel, then return the item within the following 14 days. Items may be inspected as they would be in a shop; a deduction may apply for handling beyond that. Standard outbound delivery is refunded where legally required."] },
     { heading: "Custom and personalised items", paragraphs: ["Goods made to your measurements, selected specifications or clear personalisation are generally excluded from the statutory change-of-mind cancellation right. We may still offer a discretionary alteration or return where stated in the product or order confirmation."] },
-    { heading: "Faulty or incorrect goods", paragraphs: ["Personalisation never removes statutory quality rights. Contact concierge@kalethon.com if an item is faulty, not as described or incorrect. UK consumers may have a short-term right to reject within 30 days and later rights to repair or replacement. Approved refunds are made to the original payment method without undue delay and in line with legal time limits."] },
+    { heading: "Faulty or incorrect goods", paragraphs: ["Personalisation never removes statutory quality rights. Contact hello@kalethon.com if an item is faulty, not as described or incorrect. UK consumers may have a short-term right to reject within 30 days and later rights to repair or replacement. Approved refunds are made to the original payment method without undue delay and in line with legal time limits."] },
     { heading: "Starting a return", paragraphs: ["Email the order number, item, reason and photographs if relevant. Do not send made-to-order goods before receiving return instructions. A geographic returns address and any applicable consumer cancellation form must be published without delay."] },
   ]},
   { slug: "accessibility", title: "Accessibility statement", summary: "Kalëthon's commitment to an inclusive shopping and customisation experience.", sections: [

@@ -148,12 +148,12 @@ export default function Home() {
         <nav className="primary-nav" aria-label="Primary navigation">
           <a href="#collections">Collections</a>
           <a href="#pieces">Shop</a>
-          <a href="#design-yours">Customise</a>
+          <Link href="/customise">Customise</Link>
           <Link href="/measurements">Measurements</Link>
           <Link href="/journal">Journal</Link>
           <a href="#hoodies">Hoodies</a>
           <a href="#graphic-tees">Graphic tees</a>
-          <a href="#try-on">Try on</a>
+          <Link href="/try-on">Try on</Link>
           <a href="#story">Our standard</a>
         </nav>
         <div className="header-actions" aria-label="Shop shortcuts">
@@ -361,7 +361,7 @@ export default function Home() {
         <div className="footer-links">
           <div><p>Shop</p><a href="#design-yours">Bespoke studio</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a>{collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}</div>
           <div><p>Kalëthon</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a><Link href="/journal">Journal</Link></div>
-          <div><p>Client service</p><a href="mailto:concierge@kalethon.com">Contact</a><Link href="/legal/delivery">Delivery</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
+          <div><p>Client service</p><a href="mailto:hello@kalethon.com">hello@kalethon.com</a><Link href="/legal/delivery">Delivery</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
           <div><p>Legal & privacy</p><Link href="/legal/terms-and-conditions">Terms</Link><Link href="/legal/privacy-policy">Privacy</Link><Link href="/legal/cookie-policy">Cookies</Link><Link href="/legal/accessibility">Accessibility</Link><CookieSettingsButton /></div>
         </div>
         <div className="footer-bottom"><span>© 2026 Kalëthon</span><span>London, United Kingdom</span></div>

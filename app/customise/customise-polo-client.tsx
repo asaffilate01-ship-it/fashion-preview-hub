@@ -279,6 +279,7 @@ export default function CustomisePoloClient() {
   const logoColour = colour(bodyColour).dark ? "#f1eadf" : "#10110f";
   const working = ["preparing", "queued", "processing"].includes(tryOnStage);
   const hasLiveColourPreview = product.key === "court-polo" || product.key === "performance-tee" || product.key === "performance-tank";
+  const fitScale = fit === "Athletic" ? 0.94 : fit === "Relaxed" ? 1.06 : 1;
 
   const chooseProduct = (nextKey: ProductKey) => {
     const nextProduct = productTemplates.find((template) => template.key === nextKey) ?? productTemplates[0];
@@ -336,10 +337,11 @@ export default function CustomisePoloClient() {
             layerContext.putImageData(pixels, 0, 0);
           };
           if (isPolo) {
-            layerContext.drawImage(garment, 32, 0, 736, 920);
+            const width = 736 * fitScale;
+            layerContext.drawImage(garment, (800 - width) / 2, 0, width, 920);
           } else {
             const scale = Math.min(700 / garment.naturalWidth, 840 / garment.naturalHeight);
-            const width = garment.naturalWidth * scale;
+            const width = garment.naturalWidth * scale * fitScale;
             const height = garment.naturalHeight * scale;
             layerContext.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
           }
@@ -351,10 +353,11 @@ export default function CustomisePoloClient() {
           layerContext.globalCompositeOperation = "multiply";
           layerContext.globalAlpha = selected.dark ? 0.48 : 0.34;
           if (isPolo) {
-            layerContext.drawImage(garment, 32, 0, 736, 920);
+            const width = 736 * fitScale;
+            layerContext.drawImage(garment, (800 - width) / 2, 0, width, 920);
           } else {
             const scale = Math.min(700 / garment.naturalWidth, 840 / garment.naturalHeight);
-            const width = garment.naturalWidth * scale;
+            const width = garment.naturalWidth * scale * fitScale;
             const height = garment.naturalHeight * scale;
             layerContext.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
           }
@@ -372,7 +375,8 @@ export default function CustomisePoloClient() {
           if (!maskedContext) return;
           maskedContext.drawImage(layer, 0, 0);
           maskedContext.globalCompositeOperation = "destination-in";
-          maskedContext.drawImage(mask, 32, 0, 736, 920);
+          const width = 736 * fitScale;
+          maskedContext.drawImage(mask, (800 - width) / 2, 0, width, 920);
           maskedContext.globalCompositeOperation = "source-over";
           context.drawImage(maskedLayer, 0, 0);
         };
@@ -383,7 +387,7 @@ export default function CustomisePoloClient() {
           context.fillStyle = "#eee9e1";
           context.fillRect(0, 0, canvas.width, canvas.height);
           const scale = Math.min(760 / garment.naturalWidth, 880 / garment.naturalHeight);
-          const width = garment.naturalWidth * scale;
+          const width = garment.naturalWidth * scale * fitScale;
           const height = garment.naturalHeight * scale;
           context.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
         }
@@ -419,7 +423,8 @@ export default function CustomisePoloClient() {
           markContext.globalCompositeOperation = "source-in";
           markContext.fillStyle = logoColour;
           markContext.fillRect(0, 0, markWidth, markHeight);
-          const markX = product.key === "court-polo" ? (isKMark ? 490 : 466) : (isKMark ? 500 : 460);
+          const baseMarkX = product.key === "court-polo" ? (isKMark ? 490 : 466) : (isKMark ? 500 : 460);
+          const markX = 400 + ((baseMarkX - 400) * fitScale);
           const markY = product.key === "court-polo" ? (isKMark ? 319 : 327) : 350;
           context.drawImage(markLayer, markX, markY);
         }
@@ -429,7 +434,7 @@ export default function CustomisePoloClient() {
     };
     void draw();
     return () => { active = false; };
-  }, [bodyColour, branding, collarColour, cuffColour, hasLiveColourPreview, logoColour, product, sleeve]);
+  }, [bodyColour, branding, collarColour, cuffColour, fit, fitScale, hasLiveColourPreview, logoColour, product, sleeve]);
 
   const setCaptureMode = (nextMode: CaptureMode) => {
     if (nextMode !== "camera") stopCamera();
@@ -605,15 +610,17 @@ export default function CustomisePoloClient() {
 
       <div className="customiser-shell">
         <div className="customiser-preview">
-          <div className="customiser-preview-top">
+          <div className="customiser-preview-top" aria-live="polite">
             <span>{hasLiveColourPreview ? "Live colour preview" : "Construction preview"}</span>
-            <b>{product.shortName} · {product.sleeves.length > 0 ? `${sleeve} · ` : ""}{bodyColour}</b>
+            <b>{product.shortName} · {product.sleeves.length > 0 ? `${sleeve} · ` : ""}{bodyColour} · {fit}</b>
           </div>
           <div className="customiser-canvas-frame"><canvas ref={canvasRef} aria-label={`Custom ${bodyColour} ${product.name} preview`} /></div>
           <div className="customiser-preview-footer">
             <div><i style={{ background: colour(bodyColour).hex }} /><span>Body<br /><b>{bodyColour}</b></span></div>
             {product.collar && <div><i style={{ background: colour(collarColour).hex }} /><span>Collar<br /><b>{collarColour}</b></span></div>}
             {product.cuffs && <div><i style={{ background: colour(cuffColour).hex }} /><span>{product.sizeMode === "men-bottom" ? "Ankle trim" : "Cuff trim"}<br /><b>{cuffColour}</b></span></div>}
+            <div className="custom-preview-choice"><i aria-hidden="true">↔</i><span>Fit<br /><b>{fit}</b></span></div>
+            <div className="custom-preview-choice"><i aria-hidden="true">K</i><span>Logo<br /><b>{branding === "K mark" ? "Small K" : "Wordmark"}</b></span></div>
           </div>
           <p>{hasLiveColourPreview ? "Colours shown on screen are indicative; final colour is confirmed before production." : "This image shows the garment construction. Your selected colours and finishes are recorded in the specification beside it."}</p>
         </div>
@@ -678,7 +685,7 @@ export default function CustomisePoloClient() {
 
           <details className="custom-specification" open>
             <summary>Your selected specification</summary>
-            <dl>
+            <dl aria-live="polite">
               <div><dt>Garment</dt><dd>{product.name}</dd></div>
               <div><dt>Main colour</dt><dd>{bodyColour}</dd></div>
               {product.collar && <div><dt>Collar</dt><dd>{collarColour}</dd></div>}
