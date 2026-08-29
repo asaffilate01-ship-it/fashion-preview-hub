@@ -4,7 +4,7 @@ import heroVideoAsset from "@/assets/kalethon-hero-walk-6s.mp4.asset.json";
 const slides = [
   {
     image: "/campaign/hero-six-models-v2.jpg",
-    video: "/campaign/kalethon-hero-walk-6s.mp4" as string | undefined,
+    video: heroVideoAsset.url as string | undefined,
     alt: "Five diverse Kalëthon models walking toward camera in premium polo, tracksuit, T-shirt and below-knee shorts looks",
     eyebrow: "Kalëthon campaign / 2026",
     title: (
