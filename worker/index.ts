@@ -34,7 +34,14 @@ const worker = {
     if (url.pathname === "/_vinext/image") {
       if (!env?.ASSETS || !env?.IMAGES) {
         const src = url.searchParams.get("url") || "";
-        return fetch(new Request(new URL(src, request.url), { headers: request.headers }));
+        if (!src) {
+          return new Response("Missing image URL", { status: 400 });
+        }
+
+        // Local preview has no image binding. Redirecting lets the browser load
+        // the source from the correct public origin without an internal Worker
+        // HTTPS request back to Vite (which causes WRONG_VERSION_NUMBER).
+        return Response.redirect(new URL(src, request.url), 307);
       }
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       return handleImageOptimization(request, {
