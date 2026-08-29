@@ -1,4 +1,5 @@
 import * as React from "react";
+import heroVideoAsset from "@/assets/kalethon-hero-walk-6s.mp4.asset.json";
 
 const slides = [
   {
