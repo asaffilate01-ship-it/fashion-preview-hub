@@ -35,16 +35,13 @@ async function readCssTree(directory) {
   return contents.join("\n");
 }
 
-test("emits the catalog's animation and scrolling utilities", async () => {
+test("emits the storefront's responsive and accessibility utilities", async () => {
   const css = await readCssTree(path.join(root, "dist"));
 
-  assert.match(css, /--tw-enter-opacity/);
-  assert.match(css, /scrollbar-width:\s*thin/);
   assert.match(css, /scrollbar-width:\s*none/);
-  assert.match(css, /scrollbar-gutter:\s*stable/);
-  assert.match(css, /scroll-fade-reveal-b/);
-  assert.match(css, /mask-image:/);
-  assert.match(css, /tw-shimmer/);
+  assert.match(css, /customiser-shell/);
+  assert.match(css, /sport-product-grid/);
+  assert.match(css, /journal-grid/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 

@@ -1,9 +1,21 @@
 import { NextResponse } from "next/server";
 
 const colours = new Set(["Bone", "Ink", "Navy", "Oxblood", "Sage", "Stone"]);
-const sizes = new Set(["XS", "S", "M", "L", "XL", "2XL", "3XL"]);
-const sleeves = new Set(["Short sleeve", "Long sleeve"]);
+const sizes = /^(XS|S|M|L|XL|2XL|3XL|UK (6|8|10|12|14|16|18|20|22|24)|(28|30|32|34|36|38|40|42|44)[SRL])$/;
+const sleeves = new Set(["Not applicable", "Sleeveless", "Short sleeve", "Long sleeve"]);
 const brandingOptions = new Set(["K mark", "Kalëthon wordmark"]);
+const fits = new Set(["Athletic", "Regular", "Relaxed"]);
+const products = {
+  "court-polo": { name: "Custom Court Polo", amount: 8500 },
+  "performance-tee": { name: "Custom Performance Tee", amount: 6800 },
+  "performance-tank": { name: "Custom Performance Tank", amount: 6400 },
+  "poise-hoodie": { name: "Custom Poise Hoodie", amount: 12500 },
+  "track-jacket": { name: "Custom Track Jacket", amount: 14500 },
+  "motion-jogger": { name: "Custom Motion Jogger", amount: 11000 },
+  "club-tracksuit": { name: "Custom Club Tracksuit", amount: 22500 },
+  "court-short": { name: "Custom Court Short", amount: 7800 },
+  "court-skirt": { name: "Custom Court Skort", amount: 9200 },
+} as const;
 
 export async function POST(request: Request) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -16,21 +28,25 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { bodyColour, branding, collarColour, cuffColour, size, sleeve } = body ?? {};
+    const { productId, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve } = body ?? {};
+    const product = products[productId as keyof typeof products];
     if (
+      !product ||
       !colours.has(bodyColour) ||
       !colours.has(collarColour) ||
       !colours.has(cuffColour) ||
-      !sizes.has(size) ||
+      typeof size !== "string" || !sizes.test(size) ||
       !sleeves.has(sleeve) ||
-      !brandingOptions.has(branding)
+      !brandingOptions.has(branding) ||
+      !fits.has(fit)
     ) {
       return NextResponse.json({ message: "The garment specification was not valid." }, { status: 400 });
     }
 
-    const amount = 8500 + (sleeve === "Long sleeve" ? 1000 : 0) + (branding === "Kalëthon wordmark" ? 800 : 0);
+    const hasSleeveUpgrade = sleeve === "Long sleeve" && ["court-polo", "performance-tee"].includes(productId);
+    const amount = product.amount + (hasSleeveUpgrade ? 1000 : 0) + (branding === "Kalëthon wordmark" ? 800 : 0);
     const origin = new URL(request.url).origin;
-    const description = `${bodyColour} body / ${collarColour} collar / ${cuffColour} cuffs / ${sleeve} / ${branding} / ${size}`;
+    const description = `${bodyColour} body / ${collarColour} trim / ${cuffColour} cuff / ${sleeve} / ${fit} fit / ${branding} / ${size}`;
     const form = new URLSearchParams();
     form.set("mode", "payment");
     form.set("success_url", `${origin}/?checkout=success#design-yours`);
@@ -47,13 +63,15 @@ export async function POST(request: Request) {
     form.set("line_items[0][quantity]", "1");
     form.set("line_items[0][price_data][currency]", "gbp");
     form.set("line_items[0][price_data][unit_amount]", String(amount));
-    form.set("line_items[0][price_data][product_data][name]", "Kalëthon Custom Court Polo");
+    form.set("line_items[0][price_data][product_data][name]", `Kalëthon ${product.name}`);
     form.set("line_items[0][price_data][product_data][description]", description);
+    form.set("metadata[product_id]", productId);
     form.set("metadata[body_colour]", bodyColour);
     form.set("metadata[collar_colour]", collarColour);
     form.set("metadata[cuff_colour]", cuffColour);
     form.set("metadata[sleeve]", sleeve);
     form.set("metadata[branding]", branding);
+    form.set("metadata[fit]", fit);
     form.set("metadata[size]", size);
 
     const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {

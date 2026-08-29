@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const PRODUCT_IDS = new Set(["court-polo", "custom-polo", "form-tee", "poise-hoodie", "track-jacket", "motion-jogger", "court-short", "court-skirt"]);
+const PRODUCT_IDS = new Set(["court-polo", "custom-polo", "form-tee", "performance-tank", "poise-hoodie", "track-jacket", "motion-jogger", "club-tracksuit", "court-short", "court-skirt"]);
 const DATA_URI = /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=\r\n]+$/i;
 const MAX_BODY_BYTES = 8 * 1024 * 1024;
 

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Measurement Guide | Kalëthon",
-  description: "Illustrated made-to-measure guide for Kalëthon menswear, womenswear and childrenswear.",
+  title: "International Clothing Size & Measurement Guide",
+  description: "Illustrated Kalëthon measurement guide and international clothing size conversion charts for men, women and children across UK, EU, US, Canada, AU/NZ, UAE and Pakistan.",
+  keywords: ["international clothing size chart", "UK EU US size conversion", "men trouser size chart", "women clothing size chart", "how to measure clothing size"],
+  alternates: { canonical: "/measurements" },
+  openGraph: { title: "International Clothing Size & Measurement Guide | Kalëthon", description: "Body measurement instructions and international size conversion charts.", url: "/measurements", images: ["/og.png"] },
 };
 
 const measurements = [
@@ -61,40 +65,47 @@ const profileNotes = [
 ] as const;
 
 const unisexTopSizes = [
-  ["XS", "84–89", "33–35", "69–74", "27–29", "44", "34"],
-  ["S", "90–95", "35½–37½", "75–80", "29½–31½", "46", "36"],
-  ["M", "96–101", "38–40", "81–86", "32–34", "48", "38"],
-  ["L", "102–107", "40–42", "87–92", "34–36", "50", "40"],
-  ["XL", "108–113", "42½–44½", "93–98", "36½–38½", "52", "42"],
-  ["2XL", "114–121", "45–47½", "99–106", "39–41½", "54–56", "44–46"],
-  ["3XL", "122–129", "48–51", "107–114", "42–45", "58–60", "48–50"],
+  ["XS", "84–89", "33–35", "44", "34", "34", "XS", "44", "XS"],
+  ["S", "90–95", "35½–37½", "46", "36", "36", "S", "46", "S"],
+  ["M", "96–101", "38–40", "48", "38", "38", "M", "48", "M"],
+  ["L", "102–107", "40–42", "50", "40", "40", "L", "50", "L"],
+  ["XL", "108–113", "42½–44½", "52", "42", "42", "XL", "52", "XL"],
+  ["2XL", "114–121", "45–47½", "54–56", "44–46", "44–46", "2XL", "54–56", "2XL"],
+  ["3XL", "122–129", "48–51", "58–60", "48–50", "48–50", "3XL", "58–60", "3XL"],
 ] as const;
 
 const womenBottomSizes = [
-  ["XS", "62–66", "24½–26", "86–90", "34–35½", "6–8", "34–36", "2–4", "6–8"],
-  ["S", "67–71", "26½–28", "91–95", "36–37½", "10", "38", "6", "10"],
-  ["M", "72–76", "28½–30", "96–100", "38–39½", "12", "40", "8", "12"],
-  ["L", "77–82", "30½–32½", "101–106", "40–41½", "14", "42", "10", "14"],
-  ["XL", "83–89", "32½–35", "107–113", "42–44½", "16", "44", "12", "16"],
-  ["2XL", "90–98", "35½–38½", "114–122", "45–48", "18–20", "46–48", "14–16", "18–20"],
-  ["3XL", "99–108", "39–42½", "123–132", "48½–52", "22–24", "50–52", "18–20", "22–24"],
+  ["6", "62–64", "86–88", "34", "2", "2", "6", "34", "6"], ["8", "65–67", "89–91", "36", "4", "4", "8", "36", "8"],
+  ["10", "68–71", "92–95", "38", "6", "6", "10", "38", "10"], ["12", "72–76", "96–100", "40", "8", "8", "12", "40", "12"],
+  ["14", "77–82", "101–106", "42", "10", "10", "14", "42", "14"], ["16", "83–89", "107–113", "44", "12", "12", "16", "44", "16"],
+  ["18", "90–94", "114–118", "46", "14", "14", "18", "46", "18"], ["20", "95–98", "119–122", "48", "16", "16", "20", "48", "20"],
+  ["22", "99–103", "123–127", "50", "18", "18", "22", "50", "22"], ["24", "104–108", "128–132", "52", "20", "20", "24", "52", "24"],
+] as const;
+
+const menBottomSizes = [
+  ["28", "71", "44", "28", "28", "28", "44", "28"], ["30", "76", "46", "30", "30", "30", "46", "30"],
+  ["32", "81", "48", "32", "32", "32", "48", "32"], ["34", "86", "50", "34", "34", "34", "50", "34"],
+  ["36", "91", "52", "36", "36", "36", "52", "36"], ["38", "97", "54", "38", "38", "38", "54", "38"],
+  ["40", "102", "56", "40", "40", "40", "56", "40"], ["42", "107", "58", "42", "42", "42", "58", "42"],
+  ["44", "112", "60", "44", "44", "44", "60", "44"],
 ] as const;
 
 export default function MeasurementsPage() {
   return <main className="measure-page">
-    <header className="measure-header"><a href="/" className="measure-brand"><Mark/><span>KALËTHON</span></a><a href="/#design-yours">Return to bespoke studio</a></header>
+    <header className="measure-header"><Link href="/" className="measure-brand"><Mark/><span>KALËTHON</span></Link><Link href="/#design-yours">Return to bespoke studio</Link></header>
     <section className="measure-hero"><p className="eyebrow">Kalëthon made to measure</p><h1>Measure once.<br/><em>Move without compromise.</em></h1><p>Use a flexible tape, measure in centimetres over light clothing, and keep the tape level without pulling it tight. For best results, ask another person to measure you.</p></section>
     <nav className="measure-profile-nav" aria-label="Measurement guides">{profileNotes.map((profile) => <a href={`#${profile.id}`} key={profile.id}>{profile.title}</a>)}</nav>
     <section className="measure-diagrams" aria-labelledby="diagram-title"><div className="measure-section-heading"><div><p className="eyebrow">Vector guide / Measurement points</p><h2 id="diagram-title">Where the tape starts<br/><em>and where it finishes.</em></h2></div><p>The numbered lines correspond to the complete measurement list below. Circumference measurements must stay horizontal and parallel with the floor.</p></div><div className="measure-figure-grid"><article><span>Front / Circumference</span><MeasurementFigure view="front"/></article><article><span>Back / Length</span><MeasurementFigure view="back"/></article><article><span>Side / Height & rise</span><MeasurementFigure view="side"/></article></div></section>
     <section className="measure-list" aria-labelledby="measure-list-title"><div className="measure-section-heading"><div><p className="eyebrow">Complete list / 20 points</p><h2 id="measure-list-title">What to measure.</h2></div><p>Record body measurements, not the dimensions of a favourite garment. Add a note in the bespoke studio if you want an unusually close or generous fit.</p></div><div className="measure-list-grid">{measurements.map(([number, name, instruction]) => <article key={number}><span>{number}</span><div><h3>{name}</h3><p>{instruction}</p></div></article>)}</div></section>
-    <section className="measure-profiles">{profileNotes.map((profile) => <article id={profile.id} key={profile.id}><span>{profile.title.slice(0, 1)}</span><div><p className="eyebrow">Guide for</p><h2>{profile.title}</h2><p>{profile.note}</p><ol><li>Stand barefoot with feet together.</li><li>Keep the tape flat and level.</li><li>Breathe normally; never hold the stomach in.</li><li>Repeat every measurement once.</li></ol><a href="/#design-yours">Enter {profile.title.toLowerCase()} measurements ↗</a></div></article>)}</section>
+    <section className="measure-profiles">{profileNotes.map((profile) => <article id={profile.id} key={profile.id}><span>{profile.title.slice(0, 1)}</span><div><p className="eyebrow">Guide for</p><h2>{profile.title}</h2><p>{profile.note}</p><ol><li>Stand barefoot with feet together.</li><li>Keep the tape flat and level.</li><li>Breathe normally; never hold the stomach in.</li><li>Repeat every measurement once.</li></ol><Link href="/#design-yours">Enter {profile.title.toLowerCase()} measurements ↗</Link></div></article>)}</section>
     <section className="international-sizes" aria-labelledby="international-sizes-title">
       <div className="measure-section-heading"><div><p className="eyebrow">Body first / International reference</p><h2 id="international-sizes-title">One Kalëthon size.<br/><em>Measured consistently.</em></h2></div><p>An S is not the same in every country. Use chest, waist and hip measurements as the deciding values; EU, UK, US and AU/NZ numbers are reference points only.</p></div>
-      <article className="size-chart-card"><div><span>01</span><h3>Unisex tops and polos</h3><p>Regular premium fit with approximately 8–10 cm of positive chest ease.</p></div><div className="size-chart-scroll"><table><thead><tr><th rowSpan={2}>Kalëthon</th><th colSpan={2}>Chest / bust</th><th colSpan={2}>Waist</th><th colSpan={2}>Top reference</th></tr><tr><th>cm</th><th>in</th><th>cm</th><th>in</th><th>EU</th><th>UK / US chest</th></tr></thead><tbody>{unisexTopSizes.map((row) => <tr key={row[0]}>{row.map((value, index) => index === 0 ? <th scope="row" key={index}>{value}</th> : <td key={index}>{value}</td>)}</tr>)}</tbody></table></div></article>
-      <article className="size-chart-card"><div><span>02</span><h3>Women’s shorts, skirts and skorts</h3><p>Choose by natural waist and fullest hip. Movement and coverage are confirmed during fit testing.</p></div><div className="size-chart-scroll"><table><thead><tr><th>Kalëthon</th><th>Waist cm</th><th>Waist in</th><th>Hip cm</th><th>Hip in</th><th>UK</th><th>EU</th><th>US</th><th>AU / NZ</th></tr></thead><tbody>{womenBottomSizes.map((row) => <tr key={row[0]}>{row.map((value, index) => index === 0 ? <th scope="row" key={index}>{value}</th> : <td key={index}>{value}</td>)}</tr>)}</tbody></table></div></article>
+      <article className="size-chart-card"><div><span>01</span><h3>Unisex tops and polos</h3><p>Choose from XS–3XL using body chest as the source of truth.</p></div><div className="size-chart-scroll"><table><thead><tr><th>Kalëthon</th><th>Chest cm</th><th>Chest in</th><th>EU</th><th>UK</th><th>US / Canada</th><th>AU / NZ</th><th>UAE</th><th>Pakistan</th></tr></thead><tbody>{unisexTopSizes.map((row) => <tr key={row[0]}>{row.map((value, index) => index === 0 ? <th scope="row" key={index}>{value}</th> : <td key={index}>{value}</td>)}</tr>)}</tbody></table></div></article>
+      <article className="size-chart-card"><div><span>02</span><h3>Women’s shorts, skirts and skorts</h3><p>UK 6–24. Choose by natural waist and fullest hip.</p></div><div className="size-chart-scroll"><table><thead><tr><th>UK</th><th>Waist cm</th><th>Hip cm</th><th>EU</th><th>US</th><th>Canada</th><th>AU / NZ</th><th>UAE</th><th>Pakistan</th></tr></thead><tbody>{womenBottomSizes.map((row) => <tr key={row[0]}>{row.map((value, index) => index === 0 ? <th scope="row" key={index}>{value}</th> : <td key={index}>{value}</td>)}</tr>)}</tbody></table></div></article>
+      <article className="size-chart-card"><div><span>03</span><h3>Men’s trousers and joggers</h3><p>Waist and leg code. S = 30 in, R = 32 in and L = 34 in; for example, 34R.</p></div><div className="size-chart-scroll"><table><thead><tr><th>UK waist</th><th>Waist cm</th><th>EU</th><th>US</th><th>Canada</th><th>AU / NZ</th><th>UAE</th><th>Pakistan</th></tr></thead><tbody>{menBottomSizes.map((row) => <tr key={row[0]}>{row.map((value, index) => index === 0 ? <th scope="row" key={index}>{value}</th> : <td key={index}>{value}</td>)}</tr>)}</tbody></table></div></article>
       <p className="international-size-note"><b>Source of truth:</b> Kalëthon body measurements and the product’s finished-garment chart. Never grade a pattern from country conversions. If you are between ranges, choose the larger size for a relaxed fit or contact the concierge.</p>
     </section>
     <section className="measure-collar-detail"><div><p className="eyebrow light">Collar detail / 19</p><h2>Lower collar height.</h2><p>Place the tape at the base neck seam and measure vertically to the preferred lower finished edge. Record the exact centimetres—do not include seam allowance.</p></div><svg viewBox="0 0 420 260" role="img" aria-label="Lower collar height measurement detail"><path d="M90 210c34-86 54-124 120-124s86 38 120 124M136 128c28 32 120 32 148 0M160 82c8 48 92 48 100 0" fill="none" stroke="white" strokeWidth="4"/><path d="M302 92v90" stroke="#d0b06c" strokeWidth="3" markerStart="url(#collar-arrow)" markerEnd="url(#collar-arrow)"/><defs><marker id="collar-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse"><path d="M0 0 8 4 0 8Z" fill="#d0b06c"/></marker></defs><text x="317" y="142" fill="#d0b06c" fontFamily="Arial" fontSize="18" fontWeight="700">19</text></svg></section>
-    <footer className="measure-footer"><a href="/">KALËTHON</a><p>Poise in motion.</p><a href="mailto:concierge@kalethon.com">Need help measuring?</a></footer>
+    <footer className="measure-footer"><Link href="/">KALËTHON</Link><p>Poise in motion.</p><a href="mailto:concierge@kalethon.com">Need help measuring?</a></footer>
   </main>;
 }

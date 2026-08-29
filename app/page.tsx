@@ -1,6 +1,8 @@
 import TryOnClient from "./try-on/try-on-client";
 import HeroCarousel from "./hero-carousel";
 import CustomisePoloClient from "./customise/customise-polo-client";
+import Link from "next/link";
+import SocialLinks from "@/components/social-links";
 
 const pieces = [
   { name: "The Court Polo", detail: "Mercerised cotton piqué", signature: "K embroidery", colours: "Bone / Ink / Sage / Oxblood", price: "£85", tone: "bone" },
@@ -101,12 +103,20 @@ const collections = [
     image: "collection-pickleball",
   },
   {
-    id: "casual",
-    name: "Casual",
-    note: "The off-court collection",
-    copy: "Substantial everyday pieces carrying Kalëthon's sporting restraint into travel, work and weekends.",
-    pieces: "Heavy tees / hoodies / tracksuits",
-    image: "collection-casual",
+    id: "running",
+    name: "Running",
+    note: "The movement collection",
+    copy: "Breathable layers designed for steady miles, recovery walks and a composed return to the city.",
+    pieces: "Performance tops / tanks / shorts / joggers",
+    image: "collection-running",
+  },
+  {
+    id: "training",
+    name: "Training",
+    note: "The studio collection",
+    copy: "Full-coverage performance essentials for strength, mobility and every considered session between.",
+    pieces: "Tanks / training tops / shorts / tracksuits",
+    image: "collection-training",
   },
 ];
 
@@ -138,7 +148,8 @@ export default function Home() {
           <a href="#collections">Collections</a>
           <a href="#pieces">New edit</a>
           <a href="#design-yours">Bespoke studio</a>
-          <a href="/measurements">Measurements</a>
+          <Link href="/measurements">Measurements</Link>
+          <Link href="/journal">Journal</Link>
           <a href="#hoodies">Hoodies</a>
           <a href="#graphic-tees">Graphic tees</a>
           <a href="#try-on">Try on</a>
@@ -152,7 +163,7 @@ export default function Home() {
 
       <nav className="collection-rail" aria-label="Shop by collection">
         <span>Shop by sport</span>
-        {collections.map((collection) => <a href={`#${collection.id}`} key={collection.id}>{collection.name}</a>)}
+        {collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}
       </nav>
 
       <HeroCarousel />
@@ -185,7 +196,7 @@ export default function Home() {
                 <h3>{collection.name}</h3>
                 <p>{collection.copy}</p>
                 <small>{collection.pieces}</small>
-                <a href="#pieces">Discover {collection.name} <Arrow /></a>
+                <Link href={`/sport/${collection.id}`}>Shop {collection.name} clothing <Arrow /></Link>
               </div>
             </article>
           ))}
@@ -215,11 +226,7 @@ export default function Home() {
                 </div>
                 <span>{piece.price}</span>
               </div>
-              {piece.name.includes("Polo") ? (
-                <a className="piece-try-link" href="#design-yours">Customise this polo <Arrow /></a>
-              ) : (
-                <span className="piece-try-link is-planned">Custom template planned</span>
-              )}
+              <a className="piece-try-link" href="#design-yours">Customise in the studio <Arrow /></a>
             </article>
           ))}
         </div>
@@ -228,10 +235,10 @@ export default function Home() {
       <section className="customiser" id="design-yours" aria-labelledby="customiser-title">
         <div className="customiser-heading">
           <div>
-            <p className="eyebrow">Polo studio / Live customiser</p>
-            <h2 id="customiser-title">Your polo, precisely.<br /><em>Made to move.</em></h2>
+            <p className="eyebrow">Kalëthon studio / Live customiser</p>
+            <h2 id="customiser-title">Your garment, precisely.<br /><em>Made to move.</em></h2>
           </div>
-          <p>The Court Polo is the first live Kalëthon custom template. Set the body, collar and cuff colours, choose short or long sleeves, select a signature and size, then try your exact design on privately. More garment customisers are in development.</p>
+          <p>Customise polos, performance tees, a full-length tank, hoodies, jackets, joggers, tracksuits, shorts and a court skort. Product-appropriate short, long and sleeveless options appear automatically, with international sizing inside the studio.</p>
         </div>
         <CustomisePoloClient />
       </section>
@@ -349,9 +356,9 @@ export default function Home() {
           <span>KALËTHON</span>
         </div>
         <div className="footer-links">
-          <div><p>Shop</p><a href="#design-yours">Bespoke studio</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a><a href="#tennis">Tennis</a><a href="#golf">Golf</a><a href="#padel">Padel</a><a href="#pickleball">Pickleball / USA</a><a href="#casual">Casual</a></div>
-          <div><p>Kalëthon</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a></div>
-          <div><p>Client service</p><a href="mailto:concierge@kalethon.com">Contact</a><a href="#pieces">Delivery & returns</a><a href="/measurements">Measurements & size guide</a></div>
+          <div><p>Shop</p><a href="#design-yours">Bespoke studio</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a>{collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}</div>
+          <div><p>Kalëthon</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a><Link href="/journal">Journal</Link></div>
+          <div><p>Client service</p><a href="mailto:concierge@kalethon.com">Contact</a><a href="#pieces">Delivery & returns</a><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
         </div>
         <div className="footer-bottom"><span>© 2026 Kalëthon</span><span>London, United Kingdom</span></div>
       </footer>

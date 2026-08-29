@@ -234,8 +234,7 @@ export default function TryOnClient() {
       }
 
       setStage("queued");
-      const startedAt = Date.now();
-      while (Date.now() - startedAt < 90_000) {
+      for (let attempt = 0; attempt < 36; attempt += 1) {
         await new Promise((resolve) => window.setTimeout(resolve, 2_500));
         const statusResponse = await fetch(`/api/try-on/status?id=${encodeURIComponent(runData.id)}`, {
           cache: "no-store",
