@@ -29,7 +29,13 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
+    // env.ASSETS / env.IMAGES only exist in the Cloudflare runtime; in local
+    // dev they are undefined, so fall back to serving the image directly.
     if (url.pathname === "/_vinext/image") {
+      if (!env?.ASSETS || !env?.IMAGES) {
+        const src = url.searchParams.get("url") || "";
+        return fetch(new Request(new URL(src, request.url), { headers: request.headers }));
+      }
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       return handleImageOptimization(request, {
         fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
@@ -39,6 +45,7 @@ const worker = {
         },
       }, allowedWidths);
     }
+
 
     return handler.fetch(request, env, ctx);
   },
