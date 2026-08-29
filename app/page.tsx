@@ -5,23 +5,7 @@ import Link from "next/link";
 import BagLink from "@/components/bag-link";
 import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
-
-const pieces = [
-  { name: "The Court Polo", category: "Polo shirt", detail: "Mercerised cotton piqué", signature: "Small K embroidery", colours: "4 colours", price: "£85", image: "/customise/polo-short.webp" },
-  { name: "The Form Tee", category: "Performance T-shirt", detail: "300gsm compact jersey", signature: "Kalëthon wordmark", colours: "4 colours", price: "£58", image: "/try-on/form-tee.jpg" },
-  { name: "The Poise Hoodie", category: "Pullover hoodie", detail: "Loopback cotton fleece", signature: "Small K embroidery", colours: "3 colours", price: "£125", image: "/try-on/poise-hoodie.jpg" },
-  { name: "The Track Jacket", category: "Zip track jacket", detail: "Matte technical twill", signature: "Small K embroidery", colours: "3 colours", price: "£145", image: "/try-on/track-jacket.jpg" },
-  { name: "The Motion Jogger", category: "Full-length jogger", detail: "Structured double-knit", signature: "Small K embroidery", colours: "4 colours", price: "£110", image: "/try-on/motion-jogger.jpg" },
-  { name: "The Court Long-Sleeve Polo", category: "Long-sleeve polo", detail: "Mercerised cotton piqué", signature: "Small K embroidery", colours: "3 colours", price: "£95", image: "/customise/polo-long.webp" },
-  { name: "The Links Long-Sleeve Polo", category: "Golf polo", detail: "Performance interlock jersey", signature: "Small K embroidery", colours: "3 colours", price: "£98", image: "/customise/polo-long.webp" },
-  { name: "The Heritage Long-Sleeve Polo", category: "Knitted polo", detail: "Fine-gauge cotton knit", signature: "Small K embroidery", colours: "3 colours", price: "£105", image: "/customise/polo-long.webp" },
-  { name: "The Club Jogging Suit", category: "Hoodie and jogger set", detail: "Coordinated 480gsm brushed fleece", signature: "Small K embroidery", colours: "4 colours", price: "£225", image: "/campaign-hoodie-track.png" },
-  { name: "The Performance Tracksuit", category: "Jacket and trouser set", detail: "Matte technical twill two-piece", signature: "Small K embroidery", colours: "3 colours", price: "£245", image: "/campaign-alpine-track.png" },
-  { name: "The Links Trouser", category: "Golf trouser", detail: "Four-way stretch woven cloth", signature: "Discreet K tab", colours: "4 colours", price: "£135", image: "/try-on/motion-jogger.jpg" },
-  { name: "The Baseline Tennis Set", category: "Tennis polo and trouser", detail: "Breathable full-coverage set", signature: "Small K embroidery", colours: "3 colours", price: "£185", image: "/collections/tennis.jpg" },
-  { name: "The Glass Court Padel Set", category: "Padel top and jogger", detail: "Quick-dry full-coverage set", signature: "Small K embroidery", colours: "3 colours", price: "£178", image: "/collections/padel.jpg" },
-  { name: "The Rally Pickleball Set", category: "T-shirt and jogger set", detail: "Compact jersey two-piece", signature: "Kalëthon wordmark", colours: "3 colours", price: "£168", image: "/collections/pickleball.jpg" },
-];
+import RetailCollection from "@/components/retail-collection";
 
 const hoodies = [
   {
@@ -205,36 +189,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="pieces" id="pieces" aria-labelledby="pieces-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">New arrivals</p>
-            <h2 id="pieces-title">Shop the collection</h2>
-          </div>
-          <a className="text-link" href="#all-pieces">View all pieces <Arrow /></a>
-        </div>
-
-        <div className="piece-grid" id="all-pieces">
-          {pieces.map((piece) => (
-            <article className="piece-card" key={piece.name}>
-              <div className="piece-image-wrap">
-                <img src={piece.image} alt={`${piece.name} — ${piece.category}`} />
-                <span className="piece-category">{piece.category}</span>
-              </div>
-              <div className="piece-info">
-                <div>
-                  <h3>{piece.name}</h3>
-                  <p>{piece.detail}</p>
-                  <small>{piece.signature}</small>
-                  <small className="piece-colour-note">{piece.colours}</small>
-                </div>
-                <span>{piece.price}</span>
-              </div>
-              <a className="piece-try-link" href="#design-yours">Choose colours and customise <Arrow /></a>
-            </article>
-          ))}
-        </div>
-      </section>
+      <RetailCollection />
 
       <section className="customiser" id="design-yours" aria-labelledby="customiser-title">
         <div className="customiser-heading">
