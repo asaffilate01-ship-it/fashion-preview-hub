@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="180" viewBox="0 0 840 180">
+  <g transform="translate(18 32)">
+    <path d="M8 8h18v85H8z" fill="#10110f"/>
+    <path d="m31 46 42-38h24L52 50z" fill="#10110f"/>
+    <path d="m31 54 21-8 45 47H72z" fill="#10110f"/>
+  </g>
+  <text x="150" y="111" fill="#10110f" font-family="Helvetica Neue,Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="14">KALËTHON</text>
+</svg>
