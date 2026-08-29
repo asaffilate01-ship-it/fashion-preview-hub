@@ -67,6 +67,7 @@ const productTemplates = [
     apiId: "custom-polo",
     name: "Court Polo",
     shortName: "Polo",
+    description: "Classic polo shirt",
     image: "/customise/polo-short.webp",
     price: 85,
     sleeves: ["Short sleeve", "Long sleeve"],
@@ -81,6 +82,7 @@ const productTemplates = [
     apiId: "form-tee",
     name: "Performance Tee",
     shortName: "Tee",
+    description: "Short or long sleeve top",
     image: "/customise/performance-tee-short.png",
     price: 68,
     sleeves: ["Short sleeve", "Long sleeve"],
@@ -95,6 +97,7 @@ const productTemplates = [
     apiId: "performance-tank",
     name: "Performance Tank",
     shortName: "Tank / vest",
+    description: "Sleeveless full-length top",
     image: "/customise/performance-tank.png",
     price: 64,
     sleeves: ["Sleeveless"],
@@ -109,6 +112,7 @@ const productTemplates = [
     apiId: "poise-hoodie",
     name: "Poise Hoodie",
     shortName: "Hoodie",
+    description: "Pullover with ribbed cuffs",
     image: "/try-on/poise-hoodie.jpg",
     price: 125,
     sleeves: ["Long sleeve"],
@@ -123,6 +127,7 @@ const productTemplates = [
     apiId: "track-jacket",
     name: "Track Jacket",
     shortName: "Track jacket",
+    description: "Full-zip sports jacket",
     image: "/try-on/track-jacket.jpg",
     price: 145,
     sleeves: ["Long sleeve"],
@@ -137,6 +142,7 @@ const productTemplates = [
     apiId: "motion-jogger",
     name: "Motion Jogger",
     shortName: "Jogger",
+    description: "Full-length cuffed trouser",
     image: "/try-on/motion-jogger.jpg",
     price: 110,
     sleeves: [],
@@ -151,6 +157,7 @@ const productTemplates = [
     apiId: "club-tracksuit",
     name: "Club Tracksuit",
     shortName: "Tracksuit",
+    description: "Jacket and jogger set",
     image: "/campaign-hoodie-track.png",
     price: 225,
     sleeves: ["Long sleeve"],
@@ -165,6 +172,7 @@ const productTemplates = [
     apiId: "court-short",
     name: "Court Short",
     shortName: "Short",
+    description: "Full-coverage sports short",
     image: "/try-on/court-short.jpg",
     price: 78,
     sleeves: [],
@@ -179,6 +187,7 @@ const productTemplates = [
     apiId: "court-skirt",
     name: "Court Skort",
     shortName: "Skort",
+    description: "Skirt with built-in short",
     image: "/try-on/court-skirt.jpg",
     price: 92,
     sleeves: [],
@@ -316,6 +325,16 @@ export default function CustomisePoloClient() {
           const layerContext = layer.getContext("2d");
           if (!layerContext) return layer;
           const selected = colour(selectedColour);
+          const removeDarkMatte = () => {
+            if (product.key !== "performance-tee" && product.key !== "performance-tank") return;
+            const pixels = layerContext.getImageData(0, 0, 800, 920);
+            for (let index = 0; index < pixels.data.length; index += 4) {
+              const luminance = (pixels.data[index] * .2126) + (pixels.data[index + 1] * .7152) + (pixels.data[index + 2] * .0722);
+              const matte = Math.max(0, Math.min(1, (luminance - 28) / 96));
+              pixels.data[index + 3] = Math.round(pixels.data[index + 3] * matte);
+            }
+            layerContext.putImageData(pixels, 0, 0);
+          };
           if (isPolo) {
             layerContext.drawImage(garment, 32, 0, 736, 920);
           } else {
@@ -324,6 +343,7 @@ export default function CustomisePoloClient() {
             const height = garment.naturalHeight * scale;
             layerContext.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
           }
+          removeDarkMatte();
           layerContext.globalCompositeOperation = "source-atop";
           layerContext.globalAlpha = selected.dark ? 0.94 : 0.72;
           layerContext.fillStyle = selected.hex;
@@ -338,6 +358,7 @@ export default function CustomisePoloClient() {
             const height = garment.naturalHeight * scale;
             layerContext.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
           }
+          removeDarkMatte();
           layerContext.globalCompositeOperation = "source-over";
           layerContext.globalAlpha = 1;
           return layer;
@@ -560,8 +581,9 @@ export default function CustomisePoloClient() {
       <div className="bespoke-base-picker" role="group" aria-label="Choose a product to customise">
         {productTemplates.map((template) => (
           <button className={productKey === template.key ? "is-selected" : ""} type="button" key={template.key} onClick={() => chooseProduct(template.key)}>
-            <span>{template.shortName}</span>
-            <small>From £{template.price}</small>
+            <img className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" />
+            <span><b>{template.shortName}</b><small>{template.description}</small></span>
+            <strong>From £{template.price}</strong>
           </button>
         ))}
       </div>

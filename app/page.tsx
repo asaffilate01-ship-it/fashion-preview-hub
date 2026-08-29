@@ -6,20 +6,20 @@ import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 
 const pieces = [
-  { name: "The Court Polo", detail: "Mercerised cotton piqué", signature: "K embroidery", colours: "Bone / Ink / Sage / Oxblood", price: "£85", tone: "bone" },
-  { name: "The Form Tee", detail: "300gsm compact jersey", signature: "Wordmark print", colours: "Ink / Bone / Stone / Oxblood", price: "£58", tone: "ink" },
-  { name: "The Poise Hoodie", detail: "Loopback cotton fleece", signature: "K embroidery", colours: "Sage / Ink / Bone", price: "£125", tone: "sage" },
-  { name: "The Track Jacket", detail: "Matte technical twill", signature: "K embroidery", colours: "Oxblood / Ink / Stone", price: "£145", tone: "oxblood" },
-  { name: "The Motion Jogger", detail: "Structured double-knit", signature: "K embroidery", colours: "Stone / Ink / Sage / Navy", price: "£110", tone: "stone" },
-  { name: "The Court Long-Sleeve Polo", detail: "Mercerised cotton piqué", signature: "Bone K embroidery", colours: "Ink / Navy / Oxblood", price: "£95", tone: "ink" },
-  { name: "The Links Long-Sleeve Polo", detail: "Performance interlock jersey", signature: "Ink K embroidery", colours: "Bone / Sage / Stone", price: "£98", tone: "sage" },
-  { name: "The Heritage Long-Sleeve Polo", detail: "Fine-gauge cotton knit", signature: "Oxblood K embroidery", colours: "Stone / Bone / Ink", price: "£105", tone: "bone" },
-  { name: "The Club Jogging Suit", detail: "Coordinated 480gsm brushed fleece", signature: "K embroidery", colours: "Bone / Stone / Sage / Ink", price: "£225", tone: "stone" },
-  { name: "The Performance Tracksuit", detail: "Matte technical twill two-piece", signature: "K embroidery", colours: "Oxblood / Ink / Navy", price: "£245", tone: "oxblood" },
-  { name: "The Links Trouser", detail: "Four-way stretch woven cloth", signature: "Discreet K tab", colours: "Ink / Stone / Navy / Bone", price: "£135", tone: "ink" },
-  { name: "The Baseline Tennis Set", detail: "Court polo with full-length trouser", signature: "K embroidery", colours: "Bone / Ink / Oxblood", price: "£185", tone: "bone" },
-  { name: "The Glass Court Padel Set", detail: "Performance top with full-length jogger", signature: "K embroidery", colours: "Ink / Sage / Stone", price: "£178", tone: "sage" },
-  { name: "The Rally Pickleball Set", detail: "Compact jersey tee with full-length jogger", signature: "Wordmark print", colours: "Stone / Ink / Oxblood", price: "£168", tone: "stone" },
+  { name: "The Court Polo", category: "Polo shirt", detail: "Mercerised cotton piqué", signature: "Small K embroidery", colours: "4 colours", price: "£85", image: "/customise/polo-short.webp" },
+  { name: "The Form Tee", category: "Performance T-shirt", detail: "300gsm compact jersey", signature: "Kalëthon wordmark", colours: "4 colours", price: "£58", image: "/try-on/form-tee.jpg" },
+  { name: "The Poise Hoodie", category: "Pullover hoodie", detail: "Loopback cotton fleece", signature: "Small K embroidery", colours: "3 colours", price: "£125", image: "/try-on/poise-hoodie.jpg" },
+  { name: "The Track Jacket", category: "Zip track jacket", detail: "Matte technical twill", signature: "Small K embroidery", colours: "3 colours", price: "£145", image: "/try-on/track-jacket.jpg" },
+  { name: "The Motion Jogger", category: "Full-length jogger", detail: "Structured double-knit", signature: "Small K embroidery", colours: "4 colours", price: "£110", image: "/try-on/motion-jogger.jpg" },
+  { name: "The Court Long-Sleeve Polo", category: "Long-sleeve polo", detail: "Mercerised cotton piqué", signature: "Small K embroidery", colours: "3 colours", price: "£95", image: "/customise/polo-long.webp" },
+  { name: "The Links Long-Sleeve Polo", category: "Golf polo", detail: "Performance interlock jersey", signature: "Small K embroidery", colours: "3 colours", price: "£98", image: "/customise/polo-long.webp" },
+  { name: "The Heritage Long-Sleeve Polo", category: "Knitted polo", detail: "Fine-gauge cotton knit", signature: "Small K embroidery", colours: "3 colours", price: "£105", image: "/customise/polo-long.webp" },
+  { name: "The Club Jogging Suit", category: "Hoodie and jogger set", detail: "Coordinated 480gsm brushed fleece", signature: "Small K embroidery", colours: "4 colours", price: "£225", image: "/campaign-hoodie-track.png" },
+  { name: "The Performance Tracksuit", category: "Jacket and trouser set", detail: "Matte technical twill two-piece", signature: "Small K embroidery", colours: "3 colours", price: "£245", image: "/campaign-alpine-track.png" },
+  { name: "The Links Trouser", category: "Golf trouser", detail: "Four-way stretch woven cloth", signature: "Discreet K tab", colours: "4 colours", price: "£135", image: "/try-on/motion-jogger.jpg" },
+  { name: "The Baseline Tennis Set", category: "Tennis polo and trouser", detail: "Breathable full-coverage set", signature: "Small K embroidery", colours: "3 colours", price: "£185", image: "/collections/tennis.jpg" },
+  { name: "The Glass Court Padel Set", category: "Padel top and jogger", detail: "Quick-dry full-coverage set", signature: "Small K embroidery", colours: "3 colours", price: "£178", image: "/collections/padel.jpg" },
+  { name: "The Rally Pickleball Set", category: "T-shirt and jogger set", detail: "Compact jersey two-piece", signature: "Kalëthon wordmark", colours: "3 colours", price: "£168", image: "/collections/pickleball.jpg" },
 ];
 
 const hoodies = [
@@ -147,8 +147,8 @@ export default function Home() {
         </a>
         <nav className="primary-nav" aria-label="Primary navigation">
           <a href="#collections">Collections</a>
-          <a href="#pieces">New edit</a>
-          <a href="#design-yours">Bespoke studio</a>
+          <a href="#pieces">Shop</a>
+          <a href="#design-yours">Customise</a>
           <Link href="/measurements">Measurements</Link>
           <Link href="/journal">Journal</Link>
           <a href="#hoodies">Hoodies</a>
@@ -181,16 +181,16 @@ export default function Home() {
         <div className="collections-heading">
           <div>
             <p className="eyebrow">Kalëthon sport / 2026</p>
-            <h2 id="collections-title">Made for every<br /><em>kind of court.</em></h2>
+            <h2 id="collections-title">Made for every<br /><em>kind of movement.</em></h2>
           </div>
-          <p>Five distinct edits. One standard of cloth, movement and restraint—from the first serve to the final round, then back into everyday life.</p>
+          <p>Six easy-to-shop sports collections—from tennis and golf to running and training—with the clothing for each activity clearly grouped together.</p>
         </div>
         <div className="collection-grid">
-          {collections.map((collection, index) => (
+          {collections.map((collection) => (
             <article className={`collection-card ${collection.image}`} id={collection.id} key={collection.id}>
               <div className="collection-card-shade" />
               <div className="collection-card-top">
-                <span>0{index + 1}</span>
+                <span>Sport collection</span>
                 <p>{collection.note}</p>
               </div>
               <div className="collection-card-copy">
@@ -207,17 +207,19 @@ export default function Home() {
       <section className="pieces" id="pieces" aria-labelledby="pieces-title">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Core collection / 01</p>
-            <h2 id="pieces-title">The first edit</h2>
+            <p className="eyebrow">New arrivals</p>
+            <h2 id="pieces-title">Shop the collection</h2>
           </div>
           <a className="text-link" href="#all-pieces">View all pieces <Arrow /></a>
         </div>
 
         <div className="piece-grid" id="all-pieces">
-          {pieces.map((piece, index) => (
-            <article className={`piece-card tone-${piece.tone}`} key={piece.name}>
-              <div className="piece-number">0{index + 1}</div>
-              <div className="piece-symbol" aria-hidden="true"><Mark /></div>
+          {pieces.map((piece) => (
+            <article className="piece-card" key={piece.name}>
+              <div className="piece-image-wrap">
+                <img src={piece.image} alt={`${piece.name} — ${piece.category}`} />
+                <span className="piece-category">{piece.category}</span>
+              </div>
               <div className="piece-info">
                 <div>
                   <h3>{piece.name}</h3>
@@ -227,7 +229,7 @@ export default function Home() {
                 </div>
                 <span>{piece.price}</span>
               </div>
-              <a className="piece-try-link" href="#design-yours">Customise in the studio <Arrow /></a>
+              <a className="piece-try-link" href="#design-yours">Choose colours and customise <Arrow /></a>
             </article>
           ))}
         </div>
@@ -236,8 +238,8 @@ export default function Home() {
       <section className="customiser" id="design-yours" aria-labelledby="customiser-title">
         <div className="customiser-heading">
           <div>
-            <p className="eyebrow">Kalëthon studio / Live customiser</p>
-            <h2 id="customiser-title">Your garment, precisely.<br /><em>Made to move.</em></h2>
+            <p className="eyebrow">Design your Kalëthon garment</p>
+            <h2 id="customiser-title">Choose your garment.<br /><em>Make it yours.</em></h2>
           </div>
           <p>Customise polos, performance tees, a full-length tank, hoodies, jackets, joggers, tracksuits, shorts and a court skort. Product-appropriate short, long and sleeveless options appear automatically, with international sizing inside the studio.</p>
         </div>
@@ -309,7 +311,7 @@ export default function Home() {
             <div><Mark /><span><strong>Kinetic K</strong>Polos, hoodies, tracksuits and joggers</span></div>
             <div><b>KALËTHON</b><span><strong>Full wordmark</strong>Statement tees and selected editions</span></div>
           </div>
-          <a className="button button-light" href="#pieces">Explore graphic tees <Arrow /></a>
+          <a className="button" href="#pieces">Explore graphic tees <Arrow /></a>
         </div>
       </section>
 
