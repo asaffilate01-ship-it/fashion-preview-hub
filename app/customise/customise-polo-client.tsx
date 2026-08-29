@@ -431,6 +431,68 @@ export default function CustomisePoloClient() {
           drawMaskedLayer(collarLayer, collarMask);
           const cuffLayer = tintedGarment(cuffColour);
           drawMaskedLayer(cuffLayer, cuffMask);
+
+          const garmentPoint = ([x, y]: [number, number]): [number, number] => [
+            drawX + ((x / 1120) * drawWidth),
+            drawY + ((y / 1400) * drawHeight),
+          ];
+          const strokeConstruction = (points: Array<[number, number]>, stroke: string, width: number, dash: number[] = []) => {
+            context.save();
+            context.beginPath();
+            points.map(garmentPoint).forEach(([x, y], index) => index === 0 ? context.moveTo(x, y) : context.lineTo(x, y));
+            context.strokeStyle = stroke;
+            context.lineWidth = width;
+            context.lineCap = "round";
+            context.lineJoin = "round";
+            context.setLineDash(dash);
+            context.stroke();
+            context.restore();
+          };
+
+          const collarSeams: Array<Array<[number, number]>> = sleeve === "Long sleeve"
+            ? [
+                [[478, 111], [445, 145], [412, 197], [425, 253], [471, 323]],
+                [[646, 111], [676, 146], [708, 196], [696, 252], [655, 322]],
+                [[471, 323], [506, 312], [539, 296]],
+                [[587, 295], [621, 311], [655, 322]],
+              ]
+            : [
+                [[455, 107], [434, 146], [416, 195], [424, 253], [453, 326]],
+                [[665, 107], [691, 147], [720, 196], [706, 254], [670, 328]],
+                [[453, 326], [492, 308], [531, 291]],
+                [[585, 291], [627, 309], [670, 328]],
+              ];
+          const cuffSeams: Array<Array<[number, number]>> = sleeve === "Long sleeve"
+            ? [
+                [[52, 1146], [99, 1160], [146, 1174], [192, 1187]],
+                [[43, 1188], [90, 1201], [137, 1214], [183, 1225]],
+                [[928, 1187], [975, 1174], [1022, 1160], [1068, 1146]],
+                [[937, 1225], [984, 1214], [1031, 1201], [1077, 1188]],
+              ]
+            : [
+                [[30, 552], [92, 589], [155, 626], [218, 662]],
+                [[18, 575], [79, 611], [142, 648], [206, 685]],
+                [[1090, 552], [1028, 589], [965, 626], [902, 662]],
+                [[1102, 575], [1041, 611], [978, 648], [914, 685]],
+              ];
+          const collarSeamColour = colour(collarColour).dark ? "rgba(255,255,255,.26)" : "rgba(16,17,15,.25)";
+          const cuffSeamColour = colour(cuffColour).dark ? "rgba(255,255,255,.26)" : "rgba(16,17,15,.25)";
+          collarSeams.forEach((points, index) => strokeConstruction(points, collarSeamColour, index < 2 ? 1.7 : 2.2));
+          cuffSeams.forEach((points, index) => strokeConstruction(points, cuffSeamColour, index % 2 === 0 ? 1.6 : 2.1, index % 2 === 1 ? [3, 4] : []));
+
+          if (finish === "Contrast trim") {
+            const tipping = colour(bodyColour).dark ? "rgba(242,238,231,.82)" : "rgba(16,17,15,.72)";
+            collarSeams.slice(2).forEach((points) => strokeConstruction(points, tipping, 2.6));
+            cuffSeams.filter((_, index) => index % 2 === 0).forEach((points) => strokeConstruction(points, tipping, 2.4));
+          }
+          if (finish === "Sport piping") {
+            const piping = colour(cuffColour).hex;
+            const shoulderPipes: Array<Array<[number, number]>> = sleeve === "Long sleeve"
+              ? [[[255, 192], [348, 152], [430, 128]], [[865, 192], [772, 152], [690, 128]]]
+              : [[[218, 205], [330, 154], [430, 128]], [[902, 205], [790, 154], [690, 128]]];
+            shoulderPipes.forEach((points) => strokeConstruction(points, piping, 3));
+            strokeConstruction([[548, 300], [548, 494]], piping, 2.2);
+          }
         }
 
         const accent = colour(cuffColour).hex;
@@ -454,11 +516,11 @@ export default function CustomisePoloClient() {
           context.fillRect(drawX + drawWidth * .18, drawY + drawHeight * y, drawWidth * .13, 12);
           context.fillRect(drawX + drawWidth * .69, drawY + drawHeight * y, drawWidth * .13, 12);
         }
-        if (finish === "Contrast trim") {
+        if (!isPolo && finish === "Contrast trim") {
           context.lineWidth = 9;
           context.beginPath(); context.moveTo(drawX + drawWidth * .25, drawY + drawHeight * .78); context.lineTo(drawX + drawWidth * .75, drawY + drawHeight * .78); context.stroke();
         }
-        if (finish === "Sport piping") {
+        if (!isPolo && finish === "Sport piping") {
           context.lineWidth = 5;
           context.beginPath(); context.moveTo(drawX + drawWidth * .22, drawY + drawHeight * .22); context.lineTo(drawX + drawWidth * .13, drawY + drawHeight * .66); context.stroke();
           context.beginPath(); context.moveTo(drawX + drawWidth * .78, drawY + drawHeight * .22); context.lineTo(drawX + drawWidth * .87, drawY + drawHeight * .66); context.stroke();
@@ -681,6 +743,29 @@ export default function CustomisePoloClient() {
     </fieldset>
   );
 
+  const trimColourGroup = (label: string, description: string, kind: "collar" | "cuff", value: ColourName, setter: (value: ColourName) => void) => (
+    <fieldset className="custom-trim-colour-group">
+      <legend>
+        <span className="custom-trim-icon" aria-hidden="true">
+          {kind === "collar" ? (
+            <svg viewBox="0 0 44 44"><path d="M9 11 20 8l2 9 2-9 11 3-5 19-8 6-8-6Z" /><path d="m14 15 8 8 8-8" /></svg>
+          ) : (
+            <svg viewBox="0 0 44 44"><path d="M11 8h22l-3 27H14Z" /><path d="M13 27h18M14 31h16" /></svg>
+          )}
+        </span>
+        <span className="custom-trim-copy"><b>{label}</b><small>{description}</small></span>
+        <strong><i style={{ background: colour(value).hex }} />{value}</strong>
+      </legend>
+      <div className="custom-colour-row custom-trim-swatches" role="group" aria-label={label}>
+        {colours.map((option) => (
+          <button className={value === option.name ? "is-selected" : ""} type="button" key={option.name} aria-label={`${label}: ${option.name}`} aria-pressed={value === option.name} onClick={() => setter(option.name)}>
+            <span style={{ backgroundColor: option.hex }} /><small>{option.name}</small>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+
   return (
     <>
       <div className="custom-product-picker">
@@ -733,8 +818,15 @@ export default function CustomisePoloClient() {
           {(product.collar || product.cuffs) && <div className="custom-config-section">
             <span className="custom-config-number">02</span>
             <div>
-              {product.collar && colourGroup("Collar colour", collarColour, setCollarColour)}
-              {product.cuffs && colourGroup(product.sizeMode === "men-bottom" ? "Ankle trim colour" : "Cuff colour", cuffColour, setCuffColour)}
+              <div className="custom-detail-heading"><b>Construction details</b><small>Colour stays inside the sewn garment panels so collars and cuffs retain their fabric texture, edge and stitch definition.</small></div>
+              {product.collar && trimColourGroup("Collar", "Full rib-knit collar with defined seam edges", "collar", collarColour, setCollarColour)}
+              {product.cuffs && trimColourGroup(
+                product.sizeMode === "men-bottom" ? "Ankle trim" : "Sleeve cuffs",
+                product.sizeMode === "men-bottom" ? "Ribbed ankle opening with twin-needle finish" : sleeve === "Long sleeve" ? "Shaped wrist cuff with a stitched opening" : "Sleeve-edge band with visible stitch detail",
+                "cuff",
+                cuffColour,
+                setCuffColour,
+              )}
             </div>
           </div>}
           <div className="custom-config-section">
