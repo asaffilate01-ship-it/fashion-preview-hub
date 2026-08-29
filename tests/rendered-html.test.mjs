@@ -28,7 +28,7 @@ test("renders Kalëthon search and social metadata", async () => {
   );
   const html = await response.text();
   assert.match(html, /Premium British Sportswear/);
-  assert.match(html, /property="og:image" content="https:\/\/kalethon\.com\/og\.png"/);
+  assert.match(html, /property="og:image" content="https:\/\/kalethon\.com\/og\.jpg"/);
   assert.match(html, /rel="icon" href="https:\/\/kalethon\.com\/favicon\.svg"/);
   assert.match(html, /application\/ld\+json/);
 });

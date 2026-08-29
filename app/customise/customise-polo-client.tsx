@@ -9,7 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useBag } from "@/components/bag-provider";
+import { storeFinishes, type StoreFinish } from "@/lib/store";
 
 const colours = [
   { name: "Bone", hex: "#e8dfd1", dark: false },
@@ -202,6 +203,7 @@ type ColourName = (typeof colours)[number]["name"];
 type Sleeve = "Not applicable" | "Sleeveless" | "Short sleeve" | "Long sleeve";
 type Branding = (typeof brandingOptions)[number];
 type Fit = (typeof fits)[number];
+type Finish = StoreFinish;
 type ProductKey = (typeof productTemplates)[number]["key"];
 type CaptureMode = "upload" | "camera";
 type TryOnStage = "idle" | "preparing" | "queued" | "processing" | "complete" | "error";
@@ -248,7 +250,16 @@ function stageCopy(stage: TryOnStage) {
   return "Your portrait is processed only to create this preview.";
 }
 
+function sizeScaleFor(size: string) {
+  const topScale: Record<string, number> = { XS: .95, S: .97, M: 1, L: 1.015, XL: 1.03, "2XL": 1.045, "3XL": 1.06 };
+  if (topScale[size]) return topScale[size];
+  if (size.startsWith("UK ")) return .96 + ((Number(size.slice(3)) - 6) * .005);
+  const waist = Number.parseInt(size, 10);
+  return Number.isFinite(waist) ? .96 + ((waist - 28) * .004) : 1;
+}
+
 export default function CustomisePoloClient() {
+  const { addItem } = useBag();
   const [productKey, setProductKey] = useState<ProductKey>("court-polo");
   const [bodyColour, setBodyColour] = useState<ColourName>("Bone");
   const [collarColour, setCollarColour] = useState<ColourName>("Oxblood");
@@ -257,6 +268,7 @@ export default function CustomisePoloClient() {
   const [branding, setBranding] = useState<Branding>("K mark");
   const [size, setSize] = useState<string>("M");
   const [fit, setFit] = useState<Fit>("Regular");
+  const [finish, setFinish] = useState<Finish>("Clean");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [sizeOpen, setSizeOpen] = useState(false);
   const [mode, setMode] = useState<CaptureMode>("upload");
@@ -278,14 +290,16 @@ export default function CustomisePoloClient() {
   const price = product.price + (sleeve === "Long sleeve" && product.sleeves.length > 1 ? 10 : 0) + (branding === "Kalëthon wordmark" ? 8 : 0);
   const logoColour = colour(bodyColour).dark ? "#f1eadf" : "#10110f";
   const working = ["preparing", "queued", "processing"].includes(tryOnStage);
-  const hasLiveColourPreview = product.key === "court-polo" || product.key === "performance-tee" || product.key === "performance-tank";
   const fitScale = fit === "Athletic" ? 0.94 : fit === "Relaxed" ? 1.06 : 1;
+  const sizeScale = sizeScaleFor(size);
 
   const chooseProduct = (nextKey: ProductKey) => {
     const nextProduct = productTemplates.find((template) => template.key === nextKey) ?? productTemplates[0];
     setProductKey(nextKey);
     setSleeve((nextProduct.sleeves[0] ?? "Not applicable") as Sleeve);
     setSize(nextProduct.sizeMode === "women-bottom" ? "UK 12" : nextProduct.sizeMode === "men-bottom" ? "34R" : "M");
+    setFit("Regular");
+    setFinish("Clean");
     setResult(null);
     setTryOnStage("idle");
   };
@@ -308,16 +322,31 @@ export default function CustomisePoloClient() {
       if (!context) return;
       try {
         const isPolo = product.key === "court-polo";
+        const isCutout = isPolo || product.key === "performance-tee" || product.key === "performance-tank";
         const garmentSource = isPolo
           ? (sleeve === "Long sleeve" ? "/customise/polo-long.webp" : "/customise/polo-short.webp")
           : product.key === "performance-tee"
             ? (sleeve === "Long sleeve" ? "/customise/performance-tee-long.png" : "/customise/performance-tee-short.png")
+            : product.key === "club-tracksuit"
+              ? "/try-on/track-jacket.jpg"
             : product.image;
         const garment = await loadImage(garmentSource);
         if (!active) return;
         canvas.width = 800;
         canvas.height = 920;
         context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#f4f0ea";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        const baseScale = isPolo ? 1 : Math.min(700 / garment.naturalWidth, 840 / garment.naturalHeight);
+        const baseWidth = isPolo ? 736 : garment.naturalWidth * baseScale;
+        const baseHeight = isPolo ? 920 : garment.naturalHeight * baseScale;
+        const drawWidth = baseWidth * fitScale * sizeScale;
+        const drawHeight = baseHeight * sizeScale;
+        const drawX = (800 - drawWidth) / 2;
+        const drawY = (920 - drawHeight) / 2;
+
+        const drawGarment = (target: CanvasRenderingContext2D) => target.drawImage(garment, drawX, drawY, drawWidth, drawHeight);
 
         const tintedGarment = (selectedColour: ColourName) => {
           const layer = document.createElement("canvas");
@@ -336,15 +365,7 @@ export default function CustomisePoloClient() {
             }
             layerContext.putImageData(pixels, 0, 0);
           };
-          if (isPolo) {
-            const width = 736 * fitScale;
-            layerContext.drawImage(garment, (800 - width) / 2, 0, width, 920);
-          } else {
-            const scale = Math.min(700 / garment.naturalWidth, 840 / garment.naturalHeight);
-            const width = garment.naturalWidth * scale * fitScale;
-            const height = garment.naturalHeight * scale;
-            layerContext.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
-          }
+          drawGarment(layerContext);
           removeDarkMatte();
           layerContext.globalCompositeOperation = "source-atop";
           layerContext.globalAlpha = selected.dark ? 0.94 : 0.72;
@@ -352,15 +373,7 @@ export default function CustomisePoloClient() {
           layerContext.fillRect(0, 0, 800, 920);
           layerContext.globalCompositeOperation = "multiply";
           layerContext.globalAlpha = selected.dark ? 0.48 : 0.34;
-          if (isPolo) {
-            const width = 736 * fitScale;
-            layerContext.drawImage(garment, (800 - width) / 2, 0, width, 920);
-          } else {
-            const scale = Math.min(700 / garment.naturalWidth, 840 / garment.naturalHeight);
-            const width = garment.naturalWidth * scale * fitScale;
-            const height = garment.naturalHeight * scale;
-            layerContext.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
-          }
+          drawGarment(layerContext);
           removeDarkMatte();
           layerContext.globalCompositeOperation = "source-over";
           layerContext.globalAlpha = 1;
@@ -375,21 +388,37 @@ export default function CustomisePoloClient() {
           if (!maskedContext) return;
           maskedContext.drawImage(layer, 0, 0);
           maskedContext.globalCompositeOperation = "destination-in";
-          const width = 736 * fitScale;
-          maskedContext.drawImage(mask, (800 - width) / 2, 0, width, 920);
+          maskedContext.drawImage(mask, drawX, drawY, drawWidth, drawHeight);
           maskedContext.globalCompositeOperation = "source-over";
           context.drawImage(maskedLayer, 0, 0);
         };
 
-        if (hasLiveColourPreview) {
+        if (isCutout) {
           context.drawImage(tintedGarment(bodyColour), 0, 0);
         } else {
-          context.fillStyle = "#eee9e1";
-          context.fillRect(0, 0, canvas.width, canvas.height);
-          const scale = Math.min(760 / garment.naturalWidth, 880 / garment.naturalHeight);
-          const width = garment.naturalWidth * scale * fitScale;
-          const height = garment.naturalHeight * scale;
-          context.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
+          drawGarment(context);
+          const regions: Partial<Record<ProductKey, number[][]>> = {
+            "poise-hoodie": [[.15,.17],[.85,.17],[.87,.83],[.13,.83]],
+            "track-jacket": [[.24,.18],[.76,.18],[.75,.80],[.25,.80]],
+            "motion-jogger": [[.17,.13],[.83,.13],[.77,.84],[.23,.84]],
+            "club-tracksuit": [[.24,.18],[.76,.18],[.75,.80],[.25,.80]],
+            "court-short": [[.19,.21],[.81,.21],[.79,.80],[.21,.80]],
+            "court-skirt": [[.19,.21],[.81,.21],[.82,.76],[.18,.76]],
+          };
+          const points = regions[product.key] ?? [[.14,.12],[.86,.12],[.86,.86],[.14,.86]];
+          context.save();
+          context.beginPath();
+          points.forEach(([x, y], index) => index === 0 ? context.moveTo(drawX + (x * drawWidth), drawY + (y * drawHeight)) : context.lineTo(drawX + (x * drawWidth), drawY + (y * drawHeight)));
+          context.closePath();
+          context.clip();
+          context.globalCompositeOperation = "color";
+          context.globalAlpha = .88;
+          context.fillStyle = colour(bodyColour).hex;
+          context.fillRect(drawX, drawY, drawWidth, drawHeight);
+          context.globalCompositeOperation = "multiply";
+          context.globalAlpha = colour(bodyColour).dark ? .32 : .12;
+          context.fillRect(drawX, drawY, drawWidth, drawHeight);
+          context.restore();
         }
         if (isPolo) {
           const maskPrefix = sleeve === "Long sleeve" ? "polo-long" : "polo-short";
@@ -404,12 +433,73 @@ export default function CustomisePoloClient() {
           drawMaskedLayer(cuffLayer, cuffMask);
         }
 
-        if (!hasLiveColourPreview) return;
+        const accent = colour(cuffColour).hex;
+        context.save();
+        context.strokeStyle = accent;
+        context.fillStyle = accent;
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.lineWidth = finish === "Sport piping" ? 5 : 10;
+        if (product.key === "performance-tee") {
+          if (sleeve === "Short sleeve") {
+            context.beginPath(); context.moveTo(drawX + drawWidth * .02, drawY + drawHeight * .39); context.lineTo(drawX + drawWidth * .19, drawY + drawHeight * .46); context.stroke();
+            context.beginPath(); context.moveTo(drawX + drawWidth * .98, drawY + drawHeight * .39); context.lineTo(drawX + drawWidth * .81, drawY + drawHeight * .46); context.stroke();
+          } else {
+            context.fillRect(drawX + drawWidth * .04, drawY + drawHeight * .77, drawWidth * .13, 18);
+            context.fillRect(drawX + drawWidth * .83, drawY + drawHeight * .77, drawWidth * .13, 18);
+          }
+        }
+        if (!isPolo && product.cuffs) {
+          const y = product.sizeMode === "men-bottom" ? .80 : .76;
+          context.fillRect(drawX + drawWidth * .18, drawY + drawHeight * y, drawWidth * .13, 12);
+          context.fillRect(drawX + drawWidth * .69, drawY + drawHeight * y, drawWidth * .13, 12);
+        }
+        if (finish === "Contrast trim") {
+          context.lineWidth = 9;
+          context.beginPath(); context.moveTo(drawX + drawWidth * .25, drawY + drawHeight * .78); context.lineTo(drawX + drawWidth * .75, drawY + drawHeight * .78); context.stroke();
+        }
+        if (finish === "Sport piping") {
+          context.lineWidth = 5;
+          context.beginPath(); context.moveTo(drawX + drawWidth * .22, drawY + drawHeight * .22); context.lineTo(drawX + drawWidth * .13, drawY + drawHeight * .66); context.stroke();
+          context.beginPath(); context.moveTo(drawX + drawWidth * .78, drawY + drawHeight * .22); context.lineTo(drawX + drawWidth * .87, drawY + drawHeight * .66); context.stroke();
+        }
+        context.restore();
+
+        const photoMarkRegions: Partial<Record<ProductKey, { x: number; y: number; width: number; height: number; sampleDirection?: 1 | -1 }>> = {
+          "poise-hoodie": { x: .61, y: .395, width: .058, height: .055 },
+          "track-jacket": { x: .545, y: .405, width: .055, height: .052, sampleDirection: 1 },
+          "motion-jogger": { x: .598, y: .278, width: .058, height: .052 },
+          "club-tracksuit": { x: .545, y: .405, width: .055, height: .052, sampleDirection: 1 },
+          "court-short": { x: .685, y: .405, width: .065, height: .055 },
+          "court-skirt": { x: .69, y: .41, width: .065, height: .055 },
+        };
+        const photoMark = photoMarkRegions[product.key];
+        let markAnchorX = drawX + (drawWidth * (product.key === "performance-tank" ? .61 : .625));
+        let markAnchorY = drawY + (drawHeight * (product.key === "performance-tank" ? .31 : .29));
+
+        if (!isCutout && photoMark) {
+          const patchX = drawX + (drawWidth * photoMark.x);
+          const patchY = drawY + (drawHeight * photoMark.y);
+          const patchWidth = drawWidth * photoMark.width;
+          const patchHeight = drawHeight * photoMark.height;
+          const patch = document.createElement("canvas");
+          patch.width = Math.max(1, Math.round(patchWidth));
+          patch.height = Math.max(1, Math.round(patchHeight));
+          const patchContext = patch.getContext("2d");
+          if (patchContext) {
+            const sampleDirection = photoMark.sampleDirection ?? -1;
+            patchContext.drawImage(canvas, patchX + (patchWidth * 1.35 * sampleDirection), patchY, patchWidth, patchHeight, 0, 0, patch.width, patch.height);
+            context.drawImage(patch, patchX, patchY, patchWidth, patchHeight);
+          }
+          markAnchorX = patchX + (patchWidth / 2);
+          markAnchorY = patchY + (patchHeight / 2);
+        }
+
         const mark = await loadImage(branding === "K mark" ? "/kalethon-mark.svg" : "/kalethon-logo.svg");
         if (!active) return;
         const isKMark = branding === "K mark";
-        const markWidth = isKMark ? 26 : 82;
-        const markHeight = isKMark ? 26 : 13;
+        const markWidth = isKMark ? 14 : 54;
+        const markHeight = isKMark ? 14 : 9;
         const markLayer = document.createElement("canvas");
         markLayer.width = markWidth;
         markLayer.height = markHeight;
@@ -423,10 +513,7 @@ export default function CustomisePoloClient() {
           markContext.globalCompositeOperation = "source-in";
           markContext.fillStyle = logoColour;
           markContext.fillRect(0, 0, markWidth, markHeight);
-          const baseMarkX = product.key === "court-polo" ? (isKMark ? 490 : 466) : (isKMark ? 500 : 460);
-          const markX = 400 + ((baseMarkX - 400) * fitScale);
-          const markY = product.key === "court-polo" ? (isKMark ? 319 : 327) : 350;
-          context.drawImage(markLayer, markX, markY);
+          context.drawImage(markLayer, markAnchorX - (markWidth / 2), markAnchorY - (markHeight / 2));
         }
       } catch {
         setMessage("The product preview could not be rendered.");
@@ -434,7 +521,7 @@ export default function CustomisePoloClient() {
     };
     void draw();
     return () => { active = false; };
-  }, [bodyColour, branding, collarColour, cuffColour, fit, fitScale, hasLiveColourPreview, logoColour, product, sleeve]);
+  }, [bodyColour, branding, collarColour, cuffColour, finish, fit, fitScale, logoColour, product, size, sizeScale, sleeve]);
 
   const setCaptureMode = (nextMode: CaptureMode) => {
     if (nextMode !== "camera") stopCamera();
@@ -565,7 +652,7 @@ export default function CustomisePoloClient() {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.key, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve, termsAccepted, marketingConsent }),
+        body: JSON.stringify({ productId: product.key, bodyColour, branding, collarColour, cuffColour, finish, fit, size, sleeve, termsAccepted, marketingConsent }),
       });
       const data = await response.json();
       if (!response.ok || typeof data.url !== "string") throw new Error(data.message || "Secure checkout could not start.");
@@ -576,18 +663,21 @@ export default function CustomisePoloClient() {
     }
   };
 
+  const addDesignToBag = () => {
+    addItem({ productId: product.key, name: `Custom ${product.name}`, image: product.image, bodyColour, collarColour, cuffColour, sleeve, branding, fit, finish, size });
+    setMessage(`${product.name} added to your bag with the selected ${fit.toLowerCase()} fit and size ${size}.`);
+  };
+
   const colourGroup = (label: string, value: ColourName, setter: (value: ColourName) => void) => (
     <fieldset className="custom-colour-group">
       <legend><span>{label}</span><b>{value}</b></legend>
-      <RadioGroup className="custom-colour-row" value={value} onValueChange={(next) => setter(next as ColourName)}>
+      <div className="custom-colour-row" role="group" aria-label={label}>
         {colours.map((option) => (
-          <label className={value === option.name ? "is-selected" : ""} key={option.name}>
-            <RadioGroupItem className="sr-only" value={option.name} aria-label={option.name} />
-            <span style={{ backgroundColor: option.hex }} />
-            <small>{option.name}</small>
-          </label>
+          <button className={value === option.name ? "is-selected" : ""} type="button" key={option.name} aria-pressed={value === option.name} onClick={() => setter(option.name)}>
+            <span style={{ backgroundColor: option.hex }} /><small>{option.name}</small>
+          </button>
         ))}
-      </RadioGroup>
+      </div>
     </fieldset>
   );
 
@@ -611,18 +701,20 @@ export default function CustomisePoloClient() {
       <div className="customiser-shell">
         <div className="customiser-preview">
           <div className="customiser-preview-top" aria-live="polite">
-            <span>{hasLiveColourPreview ? "Live colour preview" : "Construction preview"}</span>
-            <b>{product.shortName} · {product.sleeves.length > 0 ? `${sleeve} · ` : ""}{bodyColour} · {fit}</b>
+            <span>Interactive design preview</span>
+            <b>{product.shortName} · {product.sleeves.length > 0 ? `${sleeve} · ` : ""}{bodyColour} · {fit} · {size}</b>
           </div>
           <div className="customiser-canvas-frame"><canvas ref={canvasRef} aria-label={`Custom ${bodyColour} ${product.name} preview`} /></div>
           <div className="customiser-preview-footer">
             <div><i style={{ background: colour(bodyColour).hex }} /><span>Body<br /><b>{bodyColour}</b></span></div>
             {product.collar && <div><i style={{ background: colour(collarColour).hex }} /><span>Collar<br /><b>{collarColour}</b></span></div>}
             {product.cuffs && <div><i style={{ background: colour(cuffColour).hex }} /><span>{product.sizeMode === "men-bottom" ? "Ankle trim" : "Cuff trim"}<br /><b>{cuffColour}</b></span></div>}
+            <div className="custom-preview-choice"><i aria-hidden="true">◇</i><span>Style<br /><b>{finish}</b></span></div>
             <div className="custom-preview-choice"><i aria-hidden="true">↔</i><span>Fit<br /><b>{fit}</b></span></div>
+            <div className="custom-preview-choice"><i aria-hidden="true">{size}</i><span>Size<br /><b>{size}</b></span></div>
             <div className="custom-preview-choice"><i aria-hidden="true">K</i><span>Logo<br /><b>{branding === "K mark" ? "Small K" : "Wordmark"}</b></span></div>
           </div>
-          <p>{hasLiveColourPreview ? "Colours shown on screen are indicative; final colour is confirmed before production." : "This image shows the garment construction. Your selected colours and finishes are recorded in the specification beside it."}</p>
+          <p>Every selection updates the garment and specification. Preview colours and proportions are indicative; the final cloth, measurements and production sample are confirmed before manufacture.</p>
         </div>
 
         <div className="customiser-configurator">
@@ -650,15 +742,21 @@ export default function CustomisePoloClient() {
             <div>
               {product.sleeves.length > 0 && <fieldset className="custom-choice-group">
                 <legend>Sleeve style</legend>
-                <RadioGroup className="custom-choice-row" value={sleeve} onValueChange={(next) => setSleeve(next as Sleeve)}>
-                  {product.sleeves.map((option) => <label className={sleeve === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
-                </RadioGroup>
+                <div className="custom-choice-row" role="group" aria-label="Sleeve style">
+                  {product.sleeves.map((option) => <button className={sleeve === option ? "is-selected" : ""} type="button" aria-pressed={sleeve === option} onClick={() => setSleeve(option as Sleeve)} key={option}>{option}</button>)}
+                </div>
               </fieldset>}
               <fieldset className="custom-choice-group">
+                <legend>Garment finish</legend>
+                <div className="custom-choice-row custom-finish-row" role="group" aria-label="Garment finish">
+                  {storeFinishes.map((option) => <button className={finish === option ? "is-selected" : ""} type="button" aria-pressed={finish === option} onClick={() => setFinish(option)} key={option}><b>{option}</b><small>{option === "Clean" ? "Quiet, tonal construction" : option === "Contrast trim" ? "Defined cuff and hem detail" : "Fine athletic piping"}</small></button>)}
+                </div>
+              </fieldset>
+              <fieldset className="custom-choice-group">
                 <legend>Logo style</legend>
-                <RadioGroup className="custom-choice-row custom-signature-row" value={branding} onValueChange={(next) => setBranding(next as Branding)}>
-                  {brandingOptions.map((option) => <label className={branding === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} /><b>{option === "K mark" ? "Small K mark" : "Kalëthon name"}</b><small>{option === "K mark" ? "Discreet chest embroidery" : "Full wordmark finish"}</small></label>)}
-                </RadioGroup>
+                <div className="custom-choice-row custom-signature-row" role="group" aria-label="Logo style">
+                  {brandingOptions.map((option) => <button className={branding === option ? "is-selected" : ""} type="button" aria-pressed={branding === option} onClick={() => setBranding(option)} key={option}><b>{option === "K mark" ? "Small K mark" : "Kalëthon name"}</b><small>{option === "K mark" ? "Discreet chest embroidery" : "Full wordmark finish"}</small></button>)}
+                </div>
               </fieldset>
             </div>
           </div>
@@ -667,9 +765,9 @@ export default function CustomisePoloClient() {
             <div>
               <fieldset className="custom-choice-group">
                 <legend>Choose your fit</legend>
-                <RadioGroup className="custom-choice-row custom-fit-row" value={fit} onValueChange={(next) => setFit(next as Fit)}>
-                  {fits.map((option) => <label className={fit === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} /><b>{option}</b><small>{option === "Athletic" ? "Closer through the body" : option === "Regular" ? "Balanced everyday fit" : "More room and ease"}</small></label>)}
-                </RadioGroup>
+                <div className="custom-choice-row custom-fit-row" role="group" aria-label="Choose your fit">
+                  {fits.map((option) => <button className={fit === option ? "is-selected" : ""} type="button" aria-pressed={fit === option} onClick={() => setFit(option)} key={option}><b>{option}</b><small>{option === "Athletic" ? "Closer through the body" : option === "Regular" ? "Balanced everyday fit" : "More room and ease"}</small></button>)}
+                </div>
               </fieldset>
             </div>
           </div>
@@ -677,9 +775,9 @@ export default function CustomisePoloClient() {
             <span className="custom-config-number">05</span>
             <div className="custom-size-row">
               <div className="custom-size-heading"><span>Choose your size</span><button type="button" onClick={() => setSizeOpen(true)}>Size guide & measurements</button></div>
-              <RadioGroup className="custom-size-grid" value={size} onValueChange={setSize}>
-                {availableSizes.map((option) => <label className={size === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
-              </RadioGroup>
+              <div className="custom-size-grid" role="group" aria-label="Choose your size">
+                {availableSizes.map((option) => <button className={size === option ? "is-selected" : ""} type="button" aria-pressed={size === option} onClick={() => setSize(option)} key={option}>{option}</button>)}
+              </div>
             </div>
           </div>
 
@@ -691,7 +789,7 @@ export default function CustomisePoloClient() {
               {product.collar && <div><dt>Collar</dt><dd>{collarColour}</dd></div>}
               {product.cuffs && <div><dt>{product.sizeMode === "men-bottom" ? "Ankle trim" : "Cuffs"}</dt><dd>{cuffColour}</dd></div>}
               {product.sleeves.length > 0 && <div><dt>Sleeve</dt><dd>{sleeve}</dd></div>}
-              <div><dt>Logo</dt><dd>{branding}</dd></div><div><dt>Fit</dt><dd>{fit}</dd></div><div><dt>Size</dt><dd>{size}</dd></div>
+              <div><dt>Style</dt><dd>{finish}</dd></div><div><dt>Logo</dt><dd>{branding}</dd></div><div><dt>Fit</dt><dd>{fit}</dd></div><div><dt>Size</dt><dd>{size}</dd></div>
             </dl>
           </details>
           <details className="custom-product-details">
@@ -700,11 +798,12 @@ export default function CustomisePoloClient() {
           </details>
 
           <button className="custom-primary" type="button" onClick={() => setDialogOpen(true)}>See this design on you</button>
+          <button className="custom-add-bag" type="button" onClick={addDesignToBag}>Add design to bag · £{price}</button>
           <div className="custom-order-consent">
             <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked my specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>. <b>Required</b></span></label>
             <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>I would like occasional Kalëthon news by email. Optional; unsubscribe at any time.</span></label>
           </div>
-          <button className="custom-checkout" type="button" disabled={checkoutBusy || !termsAccepted} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : `Purchase custom design · £${price}`}</button>
+          <button className="custom-checkout" type="button" disabled={checkoutBusy || !termsAccepted} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : `Buy this design now · £${price}`}</button>
           {message && <p className="custom-message" role="alert">{message}</p>}
           <div className="custom-service-notes"><span>Secure checkout</span><span>Made-to-order tracking</span><span>Final specification saved</span></div>
           <small className="custom-lead-time">Lead time and final delivery date are confirmed at checkout.</small>

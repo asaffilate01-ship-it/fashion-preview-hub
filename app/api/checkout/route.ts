@@ -1,124 +1,97 @@
 import { NextResponse } from "next/server";
+import {
+  customProductCatalog,
+  storeBranding,
+  storeColours,
+  storeFinishes,
+  storeFits,
+  storeSleeves,
+  unitAmountFor,
+  type BagItem,
+  type CustomProductId,
+} from "@/lib/store";
 
-const colours = new Set(["Bone", "Ink", "Navy", "Oxblood", "Sage", "Stone"]);
 const sizes = /^(XS|S|M|L|XL|2XL|3XL|UK (6|8|10|12|14|16|18|20|22|24)|(28|30|32|34|36|38|40|42|44)[SRL])$/;
-const sleeves = new Set(["Not applicable", "Sleeveless", "Short sleeve", "Long sleeve"]);
-const brandingOptions = new Set(["K mark", "Kalëthon wordmark"]);
-const fits = new Set(["Athletic", "Regular", "Relaxed"]);
-const products = {
-  "court-polo": { name: "Custom Court Polo", amount: 8500 },
-  "performance-tee": { name: "Custom Performance Tee", amount: 6800 },
-  "performance-tank": { name: "Custom Performance Tank", amount: 6400 },
-  "poise-hoodie": { name: "Custom Poise Hoodie", amount: 12500 },
-  "track-jacket": { name: "Custom Track Jacket", amount: 14500 },
-  "motion-jogger": { name: "Custom Motion Jogger", amount: 11000 },
-  "club-tracksuit": { name: "Custom Club Tracksuit", amount: 22500 },
-  "court-short": { name: "Custom Court Short", amount: 7800 },
-  "court-skirt": { name: "Custom Court Skort", amount: 9200 },
-} as const;
+const colours = new Set<string>(storeColours);
+const sleeves = new Set<string>(storeSleeves);
+const brandingOptions = new Set<string>(storeBranding);
+const fits = new Set<string>(storeFits);
+const finishes = new Set<string>(storeFinishes);
 
 function stripeConnection(): { endpoint: string; headers: Record<string, string> } | null {
   const directKey = process.env.STRIPE_SECRET_KEY;
   if (directKey) return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${directKey}` } };
-
   const environment = process.env.PAYMENTS_ENVIRONMENT === "sandbox" ? "sandbox" : "live";
   const connectionKey = environment === "sandbox" ? process.env.STRIPE_SANDBOX_API_KEY : process.env.STRIPE_LIVE_API_KEY;
   const lovableKey = process.env.LOVABLE_API_KEY;
   if (!connectionKey || !lovableKey) return null;
+  return { endpoint: "https://connector-gateway.lovable.dev/stripe/v1/checkout/sessions", headers: { Authorization: `Bearer ${connectionKey}`, "X-Connection-Api-Key": connectionKey, "Lovable-API-Key": lovableKey } };
+}
+
+function validItem(value: unknown): value is BagItem {
+  if (!value || typeof value !== "object") return false;
+  const item = value as Partial<BagItem>;
+  return Boolean(
+    item.productId && customProductCatalog[item.productId as CustomProductId] &&
+    colours.has(String(item.bodyColour)) && colours.has(String(item.collarColour)) && colours.has(String(item.cuffColour)) &&
+    sleeves.has(String(item.sleeve)) && brandingOptions.has(String(item.branding)) && fits.has(String(item.fit)) && finishes.has(String(item.finish)) &&
+    typeof item.size === "string" && sizes.test(item.size) &&
+    Number.isInteger(item.quantity) && Number(item.quantity) >= 1 && Number(item.quantity) <= 5
+  );
+}
+
+function singleItem(body: Record<string, unknown>): BagItem {
+  const productId = body.productId as CustomProductId;
+  const product = customProductCatalog[productId];
   return {
-    endpoint: "https://connector-gateway.lovable.dev/stripe/v1/checkout/sessions",
-    headers: {
-      Authorization: `Bearer ${connectionKey}`,
-      "X-Connection-Api-Key": connectionKey,
-      "Lovable-API-Key": lovableKey,
-    },
+    id: "buy-now", productId, name: product?.name ?? "Custom garment", image: product?.image ?? "", quantity: 1,
+    bodyColour: body.bodyColour as BagItem["bodyColour"], collarColour: body.collarColour as BagItem["collarColour"], cuffColour: body.cuffColour as BagItem["cuffColour"],
+    sleeve: body.sleeve as BagItem["sleeve"], branding: body.branding as BagItem["branding"], fit: body.fit as BagItem["fit"],
+    finish: (body.finish ?? "Clean") as BagItem["finish"], size: String(body.size ?? ""),
   };
 }
 
 export async function POST(request: Request) {
   const stripe = stripeConnection();
-  if (!stripe) {
-    return NextResponse.json(
-      { code: "not_configured", message: "Secure checkout is temporarily unavailable while the live payment connection is completed." },
-      { status: 503 },
-    );
-  }
-
+  if (!stripe) return NextResponse.json({ code: "not_configured", message: "Secure checkout is temporarily unavailable while the live payment connection is completed." }, { status: 503 });
   try {
-    const body = await request.json();
-    const { productId, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve, termsAccepted, marketingConsent } = body ?? {};
-    const product = products[productId as keyof typeof products];
-    if (
-      !product ||
-      !colours.has(bodyColour) ||
-      !colours.has(collarColour) ||
-      !colours.has(cuffColour) ||
-      typeof size !== "string" || !sizes.test(size) ||
-      !sleeves.has(sleeve) ||
-      !brandingOptions.has(branding) ||
-      !fits.has(fit) ||
-      termsAccepted !== true ||
-      typeof marketingConsent !== "boolean"
-    ) {
-      return NextResponse.json({ message: "The garment specification was not valid." }, { status: 400 });
+    const body = await request.json() as Record<string, unknown>;
+    const submittedItems = Array.isArray(body.items) ? body.items : [singleItem(body)];
+    if (body.termsAccepted !== true || typeof body.marketingConsent !== "boolean" || submittedItems.length < 1 || submittedItems.length > 12 || !submittedItems.every(validItem)) {
+      return NextResponse.json({ message: "The bag or garment specification was not valid." }, { status: 400 });
     }
-
-    const hasSleeveUpgrade = sleeve === "Long sleeve" && ["court-polo", "performance-tee"].includes(productId);
-    const amount = product.amount + (hasSleeveUpgrade ? 1000 : 0) + (branding === "Kalëthon wordmark" ? 800 : 0);
+    const items = submittedItems as BagItem[];
     const origin = new URL(request.url).origin;
-    const description = `${bodyColour} body / ${collarColour} trim / ${cuffColour} cuff / ${sleeve} / ${fit} fit / ${branding} / ${size}`;
+    const fromBag = Array.isArray(body.items);
     const form = new URLSearchParams();
     form.set("mode", "payment");
-    form.set("success_url", `${origin}/customise?checkout=success`);
-    form.set("cancel_url", `${origin}/customise?checkout=cancelled`);
+    form.set("success_url", `${origin}/${fromBag ? "bag" : "customise"}?checkout=success`);
+    form.set("cancel_url", `${origin}/${fromBag ? "bag" : "customise"}?checkout=cancelled`);
     form.set("billing_address_collection", "required");
     form.set("phone_number_collection[enabled]", "true");
     form.set("allow_promotion_codes", "true");
     form.set("consent_collection[terms_of_service]", "required");
-    form.set("shipping_address_collection[allowed_countries][0]", "GB");
-    form.set("shipping_address_collection[allowed_countries][1]", "US");
-    form.set("shipping_address_collection[allowed_countries][2]", "CA");
-    form.set("shipping_address_collection[allowed_countries][3]", "AE");
-    form.set("shipping_address_collection[allowed_countries][4]", "DE");
-    form.set("shipping_address_collection[allowed_countries][5]", "FR");
-    form.set("shipping_address_collection[allowed_countries][6]", "IE");
-    form.set("shipping_address_collection[allowed_countries][7]", "IT");
-    form.set("shipping_address_collection[allowed_countries][8]", "ES");
-    form.set("shipping_address_collection[allowed_countries][9]", "NL");
-    form.set("shipping_address_collection[allowed_countries][10]", "AU");
-    form.set("shipping_address_collection[allowed_countries][11]", "NZ");
-    form.set("shipping_address_collection[allowed_countries][12]", "PK");
-    form.set("line_items[0][quantity]", "1");
-    form.set("line_items[0][price_data][currency]", "gbp");
-    form.set("line_items[0][price_data][unit_amount]", String(amount));
-    form.set("line_items[0][price_data][product_data][name]", `Kalëthon ${product.name}`);
-    form.set("line_items[0][price_data][product_data][description]", description);
-    form.set("metadata[product_id]", productId);
-    form.set("metadata[body_colour]", bodyColour);
-    form.set("metadata[collar_colour]", collarColour);
-    form.set("metadata[cuff_colour]", cuffColour);
-    form.set("metadata[sleeve]", sleeve);
-    form.set("metadata[branding]", branding);
-    form.set("metadata[fit]", fit);
-    form.set("metadata[size]", size);
-    form.set("metadata[site_terms_accepted]", "true");
-    form.set("metadata[marketing_consent]", marketingConsent ? "yes" : "no");
-    form.set("metadata[consent_recorded_at]", new Date().toISOString());
-
-    const stripeResponse = await fetch(stripe.endpoint, {
-      method: "POST",
-      headers: {
-        ...stripe.headers,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: form,
+    ["GB", "US", "CA", "AE", "DE", "FR", "IE", "IT", "ES", "NL", "AU", "NZ", "PK"].forEach((country, index) => form.set(`shipping_address_collection[allowed_countries][${index}]`, country));
+    items.forEach((item, index) => {
+      const product = customProductCatalog[item.productId];
+      const description = `${item.bodyColour} / ${item.finish} / ${item.sleeve} / ${item.fit} fit / ${item.branding} / ${item.size}`;
+      form.set(`line_items[${index}][quantity]`, String(item.quantity));
+      form.set(`line_items[${index}][price_data][currency]`, "gbp");
+      form.set(`line_items[${index}][price_data][unit_amount]`, String(unitAmountFor(item)));
+      form.set(`line_items[${index}][price_data][product_data][name]`, `Kalëthon ${product.name}`);
+      form.set(`line_items[${index}][price_data][product_data][description]`, description);
+      form.set(`line_items[${index}][price_data][product_data][metadata][specification]`, description);
+      form.set(`line_items[${index}][price_data][product_data][metadata][product_id]`, item.productId);
     });
+    form.set("metadata[item_count]", String(items.reduce((total, item) => total + item.quantity, 0)));
+    form.set("metadata[site_terms_accepted]", "true");
+    form.set("metadata[marketing_consent]", body.marketingConsent ? "yes" : "no");
+    form.set("metadata[consent_recorded_at]", new Date().toISOString());
+    const stripeResponse = await fetch(stripe.endpoint, { method: "POST", headers: { ...stripe.headers, "Content-Type": "application/x-www-form-urlencoded" }, body: form });
     const data = await stripeResponse.json().catch(() => ({}));
-    if (!stripeResponse.ok || typeof data.url !== "string") {
-      return NextResponse.json({ message: "Secure checkout could not start. Please try again." }, { status: 502 });
-    }
+    if (!stripeResponse.ok || typeof data.url !== "string") return NextResponse.json({ message: "Secure checkout could not start. Please try again." }, { status: 502 });
     return NextResponse.json({ url: data.url });
   } catch {
-    return NextResponse.json({ message: "Secure checkout could not read this design." }, { status: 400 });
+    return NextResponse.json({ message: "Secure checkout could not read this order." }, { status: 400 });
   }
 }

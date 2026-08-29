@@ -2,6 +2,7 @@ import TryOnClient from "./try-on/try-on-client";
 import HeroCarousel from "./hero-carousel";
 import CustomisePoloClient from "./customise/customise-polo-client";
 import Link from "next/link";
+import BagLink from "@/components/bag-link";
 import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 
@@ -157,8 +158,8 @@ export default function Home() {
           <a href="#story">Our standard</a>
         </nav>
         <div className="header-actions" aria-label="Shop shortcuts">
-          <a href="#pieces">Search</a>
-          <a href="#pieces">Bag <span className="bag-count">0</span></a>
+          <Link href="/search">Search</Link>
+          <BagLink />
         </div>
       </header>
 

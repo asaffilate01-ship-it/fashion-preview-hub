@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CustomisePoloClient from "./customise-polo-client";
+import BagLink from "@/components/bag-link";
 
 export const metadata: Metadata = {
   title: "Custom Sportswear Studio",
@@ -13,7 +14,7 @@ export default function CustomisePage() {
     <main className="studio-route-page">
       <header className="journal-header">
         <Link className="journal-brand" href="/">KALËTHON</Link>
-        <nav><Link href="/">Shop</Link><Link href="/measurements">Size guide</Link><Link href="/try-on">Virtual try-on</Link></nav>
+        <nav><Link href="/">Shop</Link><Link href="/measurements">Size guide</Link><Link href="/try-on">Virtual try-on</Link><BagLink /></nav>
       </header>
       <section className="customiser standalone-customiser" aria-labelledby="customise-page-title">
         <div className="customiser-heading">

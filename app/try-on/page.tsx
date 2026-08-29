@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import TryOnClient from "./try-on-client";
+import BagLink from "@/components/bag-link";
 
 export const metadata: Metadata = {
   title: "Virtual Sportswear Try-On",
@@ -13,7 +14,7 @@ export default function TryOnPage() {
     <main className="studio-route-page">
       <header className="journal-header journal-header-dark">
         <Link className="journal-brand" href="/">KALËTHON</Link>
-        <nav><Link href="/">Shop</Link><Link href="/customise">Customise</Link><Link href="/measurements">Size guide</Link></nav>
+        <nav><Link href="/">Shop</Link><Link href="/customise">Customise</Link><Link href="/measurements">Size guide</Link><BagLink /></nav>
       </header>
       <section className="tryon standalone-tryon" aria-labelledby="try-on-page-title">
         <div className="tryon-intro">

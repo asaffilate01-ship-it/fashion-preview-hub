@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import CookieConsent from "@/components/cookie-consent";
+import BagProvider from "@/components/bag-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kalethon.com"),
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
     default: "Kalëthon | Premium British Sportswear & Custom Clothing",
     template: "%s | Kalëthon",
   },
-  description: "Shop and customise premium British sportswear for tennis, golf, padel, pickleball, training and everyday city life. Polos, performance tops, tanks, hoodies, tracksuits, joggers and modest courtwear with private virtual try-on.",
+  description: "Premium British sport-to-city clothing with made-to-order customisation, international sizing and private virtual try-on.",
   keywords: [
     "Kalethon", "Kalëthon", "premium British sportswear", "custom sportswear UK", "custom polo shirt", "personalised polo shirt",
     "tennis clothing", "golf clothing", "padel clothing", "pickleball clothing", "performance clothing", "sports lifestyle clothing",
@@ -19,9 +20,12 @@ export const metadata: Metadata = {
   category: "Sportswear and fashion",
   alternates: { canonical: "/" },
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     type: "website",
@@ -30,28 +34,45 @@ export const metadata: Metadata = {
     title: "Kalëthon | Premium British Sportswear & Custom Clothing",
     description: "Premium sport-to-city clothing, garment customisation, international sizing and private virtual try-on.",
     locale: "en_GB",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Kalëthon — Poise in motion" }],
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Kalëthon — Poise in motion" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Kalëthon | Premium British Sportswear & Custom Clothing",
     description: "Premium sport-to-city clothing, garment customisation and private virtual try-on.",
-    images: ["/og.png"],
+    images: ["/og.jpg"],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
 };
 
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Kalëthon",
-  alternateName: "Kalethon",
-  url: "https://kalethon.com",
-  logo: "https://kalethon.com/kalethon-mark.svg",
-  description: "Premium British sportswear and custom sport-to-city clothing.",
-  areaServed: "Worldwide",
-  email: "hello@kalethon.com",
-  contactPoint: { "@type": "ContactPoint", email: "hello@kalethon.com", contactType: "customer service", availableLanguage: "English" },
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://kalethon.com/#organization",
+      name: "Kalëthon",
+      alternateName: "Kalethon",
+      url: "https://kalethon.com",
+      logo: "https://kalethon.com/kalethon-mark.svg",
+      description: "Premium British sportswear and custom sport-to-city clothing.",
+      areaServed: "Worldwide",
+      email: "hello@kalethon.com",
+      contactPoint: { "@type": "ContactPoint", email: "hello@kalethon.com", contactType: "customer service", availableLanguage: "English" },
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://kalethon.com/#website",
+      url: "https://kalethon.com",
+      name: "Kalëthon",
+      publisher: { "@id": "https://kalethon.com/#organization" },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: "https://kalethon.com/search?q={search_term_string}" },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -59,8 +80,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-        {children}
-        <CookieConsent />
+        <BagProvider>
+          {children}
+          <CookieConsent />
+        </BagProvider>
       </body>
     </html>
   );

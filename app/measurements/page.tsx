@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Illustrated Kalëthon measurement guide and international clothing size conversion charts for men, women and children across UK, EU, US, Canada, AU/NZ, UAE and Pakistan.",
   keywords: ["international clothing size chart", "UK EU US size conversion", "men trouser size chart", "women clothing size chart", "how to measure clothing size"],
   alternates: { canonical: "/measurements" },
-  openGraph: { title: "International Clothing Size & Measurement Guide | Kalëthon", description: "Body measurement instructions and international size conversion charts.", url: "/measurements", images: ["/og.png"] },
+  openGraph: { title: "International Clothing Size & Measurement Guide | Kalëthon", description: "Body measurement instructions and international size conversion charts.", url: "/measurements", images: ["/og.jpg"] },
 };
 
 const measurements = [
