@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const colours = [
   { name: "Bone", hex: "#e8dfd1", dark: false },
@@ -279,6 +278,7 @@ export default function CustomisePoloClient() {
   const price = product.price + (sleeve === "Long sleeve" && product.sleeves.length > 1 ? 10 : 0) + (branding === "Kalëthon wordmark" ? 8 : 0);
   const logoColour = colour(bodyColour).dark ? "#f1eadf" : "#10110f";
   const working = ["preparing", "queued", "processing"].includes(tryOnStage);
+  const hasLiveColourPreview = product.key === "court-polo" || product.key === "performance-tee" || product.key === "performance-tank";
 
   const chooseProduct = (nextKey: ProductKey) => {
     const nextProduct = productTemplates.find((template) => template.key === nextKey) ?? productTemplates[0];
@@ -377,7 +377,16 @@ export default function CustomisePoloClient() {
           context.drawImage(maskedLayer, 0, 0);
         };
 
-        context.drawImage(tintedGarment(bodyColour), 0, 0);
+        if (hasLiveColourPreview) {
+          context.drawImage(tintedGarment(bodyColour), 0, 0);
+        } else {
+          context.fillStyle = "#eee9e1";
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          const scale = Math.min(760 / garment.naturalWidth, 880 / garment.naturalHeight);
+          const width = garment.naturalWidth * scale;
+          const height = garment.naturalHeight * scale;
+          context.drawImage(garment, (800 - width) / 2, (920 - height) / 2, width, height);
+        }
         if (isPolo) {
           const maskPrefix = sleeve === "Long sleeve" ? "polo-long" : "polo-short";
           const [collarMask, cuffMask] = await Promise.all([
@@ -391,6 +400,7 @@ export default function CustomisePoloClient() {
           drawMaskedLayer(cuffLayer, cuffMask);
         }
 
+        if (!hasLiveColourPreview) return;
         const mark = await loadImage(branding === "K mark" ? "/kalethon-mark.svg" : "/kalethon-logo.svg");
         if (!active) return;
         const isKMark = branding === "K mark";
@@ -419,7 +429,7 @@ export default function CustomisePoloClient() {
     };
     void draw();
     return () => { active = false; };
-  }, [bodyColour, branding, collarColour, cuffColour, logoColour, product, sleeve]);
+  }, [bodyColour, branding, collarColour, cuffColour, hasLiveColourPreview, logoColour, product, sleeve]);
 
   const setCaptureMode = (nextMode: CaptureMode) => {
     if (nextMode !== "camera") stopCamera();
@@ -563,7 +573,7 @@ export default function CustomisePoloClient() {
 
   const colourGroup = (label: string, value: ColourName, setter: (value: ColourName) => void) => (
     <fieldset className="custom-colour-group">
-      <legend>{label}<span>{value}</span></legend>
+      <legend><span>{label}</span><b>{value}</b></legend>
       <RadioGroup className="custom-colour-row" value={value} onValueChange={(next) => setter(next as ColourName)}>
         {colours.map((option) => (
           <label className={value === option.name ? "is-selected" : ""} key={option.name}>
@@ -578,82 +588,119 @@ export default function CustomisePoloClient() {
 
   return (
     <>
-      <div className="bespoke-base-picker" role="group" aria-label="Choose a product to customise">
-        {productTemplates.map((template) => (
-          <button className={productKey === template.key ? "is-selected" : ""} type="button" key={template.key} onClick={() => chooseProduct(template.key)}>
-            <img className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" />
-            <span><b>{template.shortName}</b><small>{template.description}</small></span>
-            <strong>From £{template.price}</strong>
-          </button>
-        ))}
+      <div className="custom-product-picker">
+        <div className="custom-product-picker-heading">
+          <div><span>Step 1</span><h3>Choose your garment</h3></div>
+          <p>Select one product, then personalise its colour, finish, fit and size.</p>
+        </div>
+        <div className="bespoke-base-picker" role="group" aria-label="Choose a product to customise">
+          {productTemplates.map((template) => (
+            <button className={productKey === template.key ? "is-selected" : ""} type="button" key={template.key} onClick={() => chooseProduct(template.key)} aria-pressed={productKey === template.key}>
+              <span className="bespoke-picker-image"><img className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" /></span>
+              <span className="bespoke-picker-copy"><b>{template.shortName}</b><small>{template.description}</small><strong>From £{template.price}</strong></span>
+            </button>
+          ))}
+        </div>
       </div>
+
       <div className="customiser-shell">
-        <div className="customiser-controls">
-          <div className="customiser-step"><span>01</span><div><b>Compose your {product.shortName.toLowerCase()}</b><p>Only options suitable for this garment are shown.</p></div></div>
-          {colourGroup("Body colour", bodyColour, setBodyColour)}
-          {product.collar && colourGroup("Collar / neck trim", collarColour, setCollarColour)}
-          {product.cuffs && colourGroup(product.sizeMode === "men-bottom" ? "Ankle cuff / trim" : "Cuff / edge trim", cuffColour, setCuffColour)}
-          {product.sleeves.length > 0 && <fieldset className="custom-choice-group">
-            <legend>Sleeve</legend>
-            <RadioGroup className="custom-choice-row" value={sleeve} onValueChange={(next) => setSleeve(next as Sleeve)}>
-              {product.sleeves.map((option) => <label className={sleeve === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
-            </RadioGroup>
-          </fieldset>}
-          <fieldset className="custom-choice-group">
-            <legend>Signature</legend>
-            <RadioGroup className="custom-choice-row custom-signature-row" value={branding} onValueChange={(next) => setBranding(next as Branding)}>
-              {brandingOptions.map((option) => <label className={branding === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
-            </RadioGroup>
-          </fieldset>
-          <fieldset className="custom-choice-group">
-            <legend>Fit</legend>
-            <RadioGroup className="custom-choice-row" value={fit} onValueChange={(next) => setFit(next as Fit)}>
-              {fits.map((option) => <label className={fit === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
-            </RadioGroup>
-          </fieldset>
-          <div className="custom-size-row">
-            <label>Size</label>
-            <Select value={size} onValueChange={setSize}>
-              <SelectTrigger className="custom-size-trigger"><SelectValue /></SelectTrigger>
-              <SelectContent>{availableSizes.map((option) => <SelectItem value={option} key={option}>{option}</SelectItem>)}</SelectContent>
-            </Select>
-            <button type="button" onClick={() => setSizeOpen(true)}>Measurements & international chart</button>
-          </div>
-        </div>
-
         <div className="customiser-preview">
-          <div className="customiser-preview-top"><span>Live product sample</span><b>{product.shortName} · {product.sleeves.length > 0 ? `${sleeve} · ` : ""}{bodyColour}</b></div>
-          <canvas ref={canvasRef} aria-label={`Custom ${bodyColour} ${product.name} preview`} />
-          <p>Digital colour is indicative. Bulk production begins only after your approved lab dip and pre-production sample.</p>
+          <div className="customiser-preview-top">
+            <span>{hasLiveColourPreview ? "Live colour preview" : "Construction preview"}</span>
+            <b>{product.shortName} · {product.sleeves.length > 0 ? `${sleeve} · ` : ""}{bodyColour}</b>
+          </div>
+          <div className="customiser-canvas-frame"><canvas ref={canvasRef} aria-label={`Custom ${bodyColour} ${product.name} preview`} /></div>
+          <div className="customiser-preview-footer">
+            <div><i style={{ background: colour(bodyColour).hex }} /><span>Body<br /><b>{bodyColour}</b></span></div>
+            {product.collar && <div><i style={{ background: colour(collarColour).hex }} /><span>Collar<br /><b>{collarColour}</b></span></div>}
+            {product.cuffs && <div><i style={{ background: colour(cuffColour).hex }} /><span>{product.sizeMode === "men-bottom" ? "Ankle trim" : "Cuff trim"}<br /><b>{cuffColour}</b></span></div>}
+          </div>
+          <p>{hasLiveColourPreview ? "Colours shown on screen are indicative; final colour is confirmed before production." : "This image shows the garment construction. Your selected colours and finishes are recorded in the specification beside it."}</p>
         </div>
 
-        <div className="customiser-summary">
-          <p className="eyebrow">Your specification</p>
-          <h3>Custom {product.name}</h3>
-          <dl>
-            <div><dt>Body</dt><dd>{bodyColour}</dd></div>
-            {product.collar && <div><dt>Collar / neck trim</dt><dd>{collarColour}</dd></div>}
-            {product.cuffs && <div><dt>Cuff / edge trim</dt><dd>{cuffColour}</dd></div>}
-            {product.sleeves.length > 0 && <div><dt>Sleeve</dt><dd>{sleeve}</dd></div>}
-            <div><dt>Signature</dt><dd>{branding}</dd></div>
-            <div><dt>Fit</dt><dd>{fit}</dd></div>
-            <div><dt>Logo contrast</dt><dd>{colour(bodyColour).dark ? "Light" : "Dark"}</dd></div>
-            <div><dt>Size</dt><dd>{size}</dd></div>
-          </dl>
-          <div className="customiser-standard">
-            <span>Kalëthon cloth standard</span>
-            <p>{product.material}.</p>
-            <small>Target: {product.standard}.</small>
+        <div className="customiser-configurator">
+          <header className="custom-product-header">
+            <p>Made to order</p>
+            <div><h3>Custom {product.name}</h3><strong>£{price}</strong></div>
+            <span>{product.description}. Choose each detail below; only suitable options are shown.</span>
+          </header>
+
+          <div className="custom-config-progress" aria-label="Customisation progress"><span className="is-active">Colour</span><span>Style</span><span>Fit</span><span>Size</span></div>
+
+          <div className="custom-config-section">
+            <span className="custom-config-number">01</span>
+            <div>{colourGroup("Main colour", bodyColour, setBodyColour)}</div>
           </div>
-          <div className="customiser-total"><span>Made to your selected specification</span><strong>£{price}</strong></div>
-          <button className="custom-primary" type="button" onClick={() => setDialogOpen(true)}>View it on you</button>
+          {(product.collar || product.cuffs) && <div className="custom-config-section">
+            <span className="custom-config-number">02</span>
+            <div>
+              {product.collar && colourGroup("Collar colour", collarColour, setCollarColour)}
+              {product.cuffs && colourGroup(product.sizeMode === "men-bottom" ? "Ankle trim colour" : "Cuff colour", cuffColour, setCuffColour)}
+            </div>
+          </div>}
+          <div className="custom-config-section">
+            <span className="custom-config-number">03</span>
+            <div>
+              {product.sleeves.length > 0 && <fieldset className="custom-choice-group">
+                <legend>Sleeve style</legend>
+                <RadioGroup className="custom-choice-row" value={sleeve} onValueChange={(next) => setSleeve(next as Sleeve)}>
+                  {product.sleeves.map((option) => <label className={sleeve === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
+                </RadioGroup>
+              </fieldset>}
+              <fieldset className="custom-choice-group">
+                <legend>Logo style</legend>
+                <RadioGroup className="custom-choice-row custom-signature-row" value={branding} onValueChange={(next) => setBranding(next as Branding)}>
+                  {brandingOptions.map((option) => <label className={branding === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} /><b>{option === "K mark" ? "Small K mark" : "Kalëthon name"}</b><small>{option === "K mark" ? "Discreet chest embroidery" : "Full wordmark finish"}</small></label>)}
+                </RadioGroup>
+              </fieldset>
+            </div>
+          </div>
+          <div className="custom-config-section">
+            <span className="custom-config-number">04</span>
+            <div>
+              <fieldset className="custom-choice-group">
+                <legend>Choose your fit</legend>
+                <RadioGroup className="custom-choice-row custom-fit-row" value={fit} onValueChange={(next) => setFit(next as Fit)}>
+                  {fits.map((option) => <label className={fit === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} /><b>{option}</b><small>{option === "Athletic" ? "Closer through the body" : option === "Regular" ? "Balanced everyday fit" : "More room and ease"}</small></label>)}
+                </RadioGroup>
+              </fieldset>
+            </div>
+          </div>
+          <div className="custom-config-section">
+            <span className="custom-config-number">05</span>
+            <div className="custom-size-row">
+              <div className="custom-size-heading"><span>Choose your size</span><button type="button" onClick={() => setSizeOpen(true)}>Size guide & measurements</button></div>
+              <RadioGroup className="custom-size-grid" value={size} onValueChange={setSize}>
+                {availableSizes.map((option) => <label className={size === option ? "is-selected" : ""} key={option}><RadioGroupItem className="sr-only" value={option} />{option}</label>)}
+              </RadioGroup>
+            </div>
+          </div>
+
+          <details className="custom-specification" open>
+            <summary>Your selected specification</summary>
+            <dl>
+              <div><dt>Garment</dt><dd>{product.name}</dd></div>
+              <div><dt>Main colour</dt><dd>{bodyColour}</dd></div>
+              {product.collar && <div><dt>Collar</dt><dd>{collarColour}</dd></div>}
+              {product.cuffs && <div><dt>{product.sizeMode === "men-bottom" ? "Ankle trim" : "Cuffs"}</dt><dd>{cuffColour}</dd></div>}
+              {product.sleeves.length > 0 && <div><dt>Sleeve</dt><dd>{sleeve}</dd></div>}
+              <div><dt>Logo</dt><dd>{branding}</dd></div><div><dt>Fit</dt><dd>{fit}</dd></div><div><dt>Size</dt><dd>{size}</dd></div>
+            </dl>
+          </details>
+          <details className="custom-product-details">
+            <summary>Materials & performance</summary>
+            <p>{product.material}.</p><small>{product.standard}.</small>
+          </details>
+
+          <button className="custom-primary" type="button" onClick={() => setDialogOpen(true)}>See this design on you</button>
           <div className="custom-order-consent">
             <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked my specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>. <b>Required</b></span></label>
             <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>I would like occasional Kalëthon news by email. Optional; unsubscribe at any time.</span></label>
           </div>
-          <button className="custom-checkout" type="button" disabled={checkoutBusy || !termsAccepted} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : "Purchase this design"}</button>
+          <button className="custom-checkout" type="button" disabled={checkoutBusy || !termsAccepted} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : `Purchase custom design · £${price}`}</button>
           {message && <p className="custom-message" role="alert">{message}</p>}
-          <small>Made-to-order lead time and final delivery date are confirmed at checkout.</small>
+          <div className="custom-service-notes"><span>Secure checkout</span><span>Made-to-order tracking</span><span>Final specification saved</span></div>
+          <small className="custom-lead-time">Lead time and final delivery date are confirmed at checkout.</small>
         </div>
       </div>
 
