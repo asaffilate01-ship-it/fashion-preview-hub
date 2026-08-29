@@ -412,3 +412,10 @@ footer { padding: 70px 4vw 24px; background: var(--ink); color: #fff; }
   .footer-links div:last-child { grid-column: span 2; }
   .footer-bottom { gap: 20px; }
 }
+
+/* Hero carousel (fade) */
+.hero-carousel { position: relative; height: 100%; }
+.hero-carousel-track { position: relative; height: 100%; }
+.hero-carousel-item { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .9s ease; }
+.hero-carousel-item.is-current { opacity: 1; pointer-events: auto; }
+.hero-arrow { position: absolute; display: grid; place-items: center; padding: 0; cursor: pointer; font-size: 18px; line-height: 1; }

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTryOnIndexRouteImport } from './routes/api/try-on/index'
+import { Route as ApiTryOnStatusRouteImport } from './routes/api/try-on/status'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const ApiTryOnIndexRoute = ApiTryOnIndexRouteImport.update({
   path: '/api/try-on/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTryOnStatusRoute = ApiTryOnStatusRouteImport.update({
+  id: '/api/try-on/status',
+  path: '/api/try-on/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/try-on/status': typeof ApiTryOnStatusRoute
   '/api/try-on/': typeof ApiTryOnIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/try-on/status': typeof ApiTryOnStatusRoute
   '/api/try-on': typeof ApiTryOnIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/try-on/status': typeof ApiTryOnStatusRoute
   '/api/try-on/': typeof ApiTryOnIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/try-on/'
+  fullPaths: '/' | '/api/try-on/status' | '/api/try-on/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/try-on'
-  id: '__root__' | '/' | '/api/try-on/'
+  to: '/' | '/api/try-on/status' | '/api/try-on'
+  id: '__root__' | '/' | '/api/try-on/status' | '/api/try-on/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiTryOnStatusRoute: typeof ApiTryOnStatusRoute
   ApiTryOnIndexRoute: typeof ApiTryOnIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTryOnIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/try-on/status': {
+      id: '/api/try-on/status'
+      path: '/api/try-on/status'
+      fullPath: '/api/try-on/status'
+      preLoaderRoute: typeof ApiTryOnStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiTryOnStatusRoute: ApiTryOnStatusRoute,
   ApiTryOnIndexRoute: ApiTryOnIndexRoute,
 }
 export const routeTree = rootRouteImport
