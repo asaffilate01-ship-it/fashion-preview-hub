@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { productId, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve } = body ?? {};
+    const { productId, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve, termsAccepted, marketingConsent } = body ?? {};
     const product = products[productId as keyof typeof products];
     if (
       !product ||
@@ -38,7 +38,9 @@ export async function POST(request: Request) {
       typeof size !== "string" || !sizes.test(size) ||
       !sleeves.has(sleeve) ||
       !brandingOptions.has(branding) ||
-      !fits.has(fit)
+      !fits.has(fit) ||
+      termsAccepted !== true ||
+      typeof marketingConsent !== "boolean"
     ) {
       return NextResponse.json({ message: "The garment specification was not valid." }, { status: 400 });
     }
@@ -54,12 +56,20 @@ export async function POST(request: Request) {
     form.set("billing_address_collection", "required");
     form.set("phone_number_collection[enabled]", "true");
     form.set("allow_promotion_codes", "true");
+    form.set("consent_collection[terms_of_service]", "required");
     form.set("shipping_address_collection[allowed_countries][0]", "GB");
     form.set("shipping_address_collection[allowed_countries][1]", "US");
     form.set("shipping_address_collection[allowed_countries][2]", "CA");
     form.set("shipping_address_collection[allowed_countries][3]", "AE");
     form.set("shipping_address_collection[allowed_countries][4]", "DE");
     form.set("shipping_address_collection[allowed_countries][5]", "FR");
+    form.set("shipping_address_collection[allowed_countries][6]", "IE");
+    form.set("shipping_address_collection[allowed_countries][7]", "IT");
+    form.set("shipping_address_collection[allowed_countries][8]", "ES");
+    form.set("shipping_address_collection[allowed_countries][9]", "NL");
+    form.set("shipping_address_collection[allowed_countries][10]", "AU");
+    form.set("shipping_address_collection[allowed_countries][11]", "NZ");
+    form.set("shipping_address_collection[allowed_countries][12]", "PK");
     form.set("line_items[0][quantity]", "1");
     form.set("line_items[0][price_data][currency]", "gbp");
     form.set("line_items[0][price_data][unit_amount]", String(amount));
@@ -73,6 +83,9 @@ export async function POST(request: Request) {
     form.set("metadata[branding]", branding);
     form.set("metadata[fit]", fit);
     form.set("metadata[size]", size);
+    form.set("metadata[site_terms_accepted]", "true");
+    form.set("metadata[marketing_consent]", marketingConsent ? "yes" : "no");
+    form.set("metadata[consent_recorded_at]", new Date().toISOString());
 
     const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",

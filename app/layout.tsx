@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CookieConsent from "@/components/cookie-consent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kalethon.com"),
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

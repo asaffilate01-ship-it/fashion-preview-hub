@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -258,6 +259,8 @@ export default function CustomisePoloClient() {
   const [message, setMessage] = useState("");
   const [cameraReady, setCameraReady] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -516,13 +519,17 @@ export default function CustomisePoloClient() {
 
   const checkout = async () => {
     if (checkoutBusy) return;
+    if (!termsAccepted) {
+      setMessage("Please confirm the order terms and personalised-item returns notice before checkout.");
+      return;
+    }
     setCheckoutBusy(true);
     setMessage("");
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.key, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve }),
+        body: JSON.stringify({ productId: product.key, bodyColour, branding, collarColour, cuffColour, fit, size, sleeve, termsAccepted, marketingConsent }),
       });
       const data = await response.json();
       if (!response.ok || typeof data.url !== "string") throw new Error(data.message || "Secure checkout could not start.");
@@ -618,7 +625,11 @@ export default function CustomisePoloClient() {
           </div>
           <div className="customiser-total"><span>Made to your selected specification</span><strong>£{price}</strong></div>
           <button className="custom-primary" type="button" onClick={() => setDialogOpen(true)}>View it on you</button>
-          <button className="custom-checkout" type="button" disabled={checkoutBusy} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : "Purchase this design"}</button>
+          <div className="custom-order-consent">
+            <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked my specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>. <b>Required</b></span></label>
+            <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>I would like occasional Kalëthon news by email. Optional; unsubscribe at any time.</span></label>
+          </div>
+          <button className="custom-checkout" type="button" disabled={checkoutBusy || !termsAccepted} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : "Purchase this design"}</button>
           {message && <p className="custom-message" role="alert">{message}</p>}
           <small>Made-to-order lead time and final delivery date are confirmed at checkout.</small>
         </div>

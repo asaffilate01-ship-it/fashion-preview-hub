@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { journalArticles } from "@/lib/journal";
 import { sportCollections } from "@/lib/sports";
+import { legalPages } from "@/lib/legal";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const updated = new Date("2026-08-29T00:00:00Z");
@@ -20,5 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: 0.85,
     })),
+    { url: `${baseUrl}/legal`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.5 },
+    ...legalPages.map((page) => ({ url: `${baseUrl}/legal/${page.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.45 })),
   ];
 }

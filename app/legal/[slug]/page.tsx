@@ -1,0 +1,9 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getLegalPage, legalPages } from "@/lib/legal";
+
+export function generateStaticParams() { return legalPages.map(({ slug }) => ({ slug })); }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const { slug } = await params; const page = getLegalPage(slug); if (!page) return {}; return { title: page.title, description: page.summary, alternates: { canonical: `/legal/${slug}` }, robots: { index: true, follow: true } }; }
+
+export default async function LegalPolicyPage({ params }: { params: Promise<{ slug: string }> }) { const { slug } = await params; const page = getLegalPage(slug); if (!page) notFound(); return <main className="legal-page"><header className="journal-header"><Link className="journal-brand" href="/">KALËTHON</Link><nav><Link href="/legal">All policies</Link><Link href="mailto:concierge@kalethon.com">Contact</Link></nav></header><article className="legal-policy"><p className="eyebrow">Kalëthon / Customer care</p><h1>{page.title}</h1><p className="legal-updated">Last updated 29 August 2026 · UK store policy</p><p className="legal-summary">{page.summary}</p>{page.sections.map((section) => <section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}<aside><b>Required business details</b><p>The live policy flow is in place, but the operator&apos;s verified legal name, geographic address, registration details and returns address still need to replace the flagged placeholders. The policies should also be reviewed by a qualified UK solicitor or data-protection professional.</p></aside></article><footer className="journal-footer"><Link href="/">KALËTHON</Link><p>Poise in motion.</p><Link href="/legal">Legal hub</Link></footer></main>; }
