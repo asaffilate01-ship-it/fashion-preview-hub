@@ -56,12 +56,13 @@ export const Route = createFileRoute("/api/try-on/")({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              model_name: "tryon-v1.6",
+              model_name: "tryon-max",
               inputs: {
-                garment_image: productImage,
+                product_image: productImage,
                 model_image: modelImage,
-                mode: "balanced",
-                num_samples: 1,
+                resolution: "1k",
+                generation_mode: "fast",
+                num_images: 1,
                 output_format: "jpeg",
                 return_base64: true,
               },
