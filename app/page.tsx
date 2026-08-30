@@ -1,57 +1,36 @@
-import TryOnClient from "./try-on/try-on-client";
 import HeroCarousel from "./hero-carousel";
-import CustomisePoloClient from "./customise/customise-polo-client";
+import Image from "next/image";
 import Link from "next/link";
 import BagLink from "@/components/bag-link";
 import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 import RetailCollection from "@/components/retail-collection";
 
-const hoodies = [
+const standardColourways = [
+  {
+    name: "Casual Contrast Polo",
+    detail: "Bone body / oxblood collar and cuffs",
+    use: "Clubhouse and city",
+  },
+  {
+    name: "Links Golf Polo",
+    detail: "Sage body / bone rib-knit collar",
+    use: "Course and travel",
+  },
+  {
+    name: "Baseline Tennis Polo",
+    detail: "Bone body / navy collar and sleeve bands",
+    use: "Court and warm-up",
+  },
   {
     name: "Poise Hoodie",
-    detail: "420gsm loopback cotton",
-    fit: "Relaxed architectural fit",
-    signature: "Bone K embroidery",
-    price: "£125",
-    tone: "ink",
-    colors: ["Ink", "Bone", "Oxblood"],
+    detail: "Oxblood structured loopback cotton",
+    use: "Recovery and everyday",
   },
   {
-    name: "Club Hoodie",
-    detail: "480gsm brushed fleece",
-    fit: "Structured oversized fit",
-    signature: "Ink K embroidery",
-    price: "£135",
-    tone: "bone",
-    colors: ["Bone", "Stone", "Sage"],
-  },
-  {
-    name: "Court Zip Hoodie",
-    detail: "Double-face cotton jersey",
-    fit: "Clean athletic fit",
-    signature: "Bone K embroidery",
-    price: "£145",
-    tone: "oxblood",
-    colors: ["Oxblood", "Ink", "Navy"],
-  },
-  {
-    name: "Travel Hoodie",
-    detail: "Compact technical fleece",
-    fit: "Easy travel fit",
-    signature: "Ink K embroidery",
-    price: "£150",
-    tone: "sage",
-    colors: ["Sage", "Stone", "Ink"],
-  },
-  {
-    name: "Graphic Hoodie",
-    detail: "Heavy compact cotton",
-    fit: "Boxed contemporary fit",
-    signature: "Oxblood wordmark print",
-    price: "£140",
-    tone: "stone",
-    colors: ["Stone", "Bone", "Ink"],
+    name: "Heritage Tracksuit",
+    detail: "Navy set / restrained bone piping",
+    use: "Training and travel",
   },
 ];
 
@@ -133,12 +112,11 @@ export default function Home() {
         <nav className="primary-nav" aria-label="Primary navigation">
           <a href="#collections">Collections</a>
           <a href="#pieces">Shop</a>
-          <Link href="/customise">Customise</Link>
           <Link href="/measurements">Measurements</Link>
           <Link href="/journal">Journal</Link>
           <a href="#hoodies">Hoodies</a>
           <a href="#graphic-tees">Graphic tees</a>
-          <Link href="/try-on">Try on</Link>
+          <Link href="/try-on">Virtual room</Link>
           <a href="#story">Our standard</a>
         </nav>
         <div className="header-actions" aria-label="Shop shortcuts">
@@ -191,68 +169,37 @@ export default function Home() {
 
       <RetailCollection />
 
-      <section className="customiser" id="design-yours" aria-labelledby="customiser-title">
-        <div className="customiser-heading">
-          <div>
-            <p className="eyebrow">Design your KALËTHON garment</p>
-            <h2 id="customiser-title">Choose your garment.<br /><em>Make it yours.</em></h2>
-          </div>
-          <p>Customise polos, performance tees, a full-length tank, hoodies, jackets, joggers, tracksuits, shorts and a court skort. Product-appropriate short, long and sleeveless options appear automatically, with international sizing inside the studio.</p>
+      <section className="standard-colourways" id="hoodies" aria-labelledby="colourways-title">
+        <div className="standard-colourways-image">
+          <Image src="/catalog/standard-colourways-capsule.webp" alt="KALËTHON casual polo, golf polo, tennis polo, hoodie and tracksuit standard colourways" fill sizes="(max-width: 900px) 100vw, 56vw" />
         </div>
-        <CustomisePoloClient />
-      </section>
-
-      <section className="hoodies" id="hoodies" aria-labelledby="hoodies-title">
-        <div className="hoodies-heading">
-          <div>
-            <p className="eyebrow light">The hoodie edit / 01</p>
-            <h2 id="hoodies-title">Weight, warmth<br /><em>and restraint.</em></h2>
+        <div className="standard-colourways-copy">
+          <p className="eyebrow">Finished designs / Ready to choose</p>
+          <h2 id="colourways-title">Contrast, already<br /><em>considered.</em></h2>
+          <p>Distinctive collars, cuffs and piping are now offered as complete KALËTHON colourways. No design tools, no guesswork—just resolved garments in clear sizes.</p>
+          <div className="standard-colourways-list">
+            {standardColourways.map((colourway, index) => (
+              <div key={colourway.name}>
+                <span>0{index + 1}</span>
+                <b>{colourway.name}</b>
+                <small>{colourway.detail}</small>
+                <em>{colourway.use}</em>
+              </div>
+            ))}
           </div>
-          <div className="hoodies-heading-copy">
-            <p>Five considered constructions, from substantial cotton fleece to a lighter travel layer. Dark cloth carries lighter embroidery; light cloth carries the mark in ink.</p>
-            <span>Five forms / fifteen colourways</span>
-          </div>
-        </div>
-
-        <div className="hoodie-grid">
-          {hoodies.map((hoodie, index) => (
-            <article className={`hoodie-card hoodie-${hoodie.tone}`} key={hoodie.name}>
-              <div className="hoodie-card-top">
-                <span>H / 0{index + 1}</span>
-                <span>{hoodie.signature}</span>
-              </div>
-              <div className="hoodie-visual" aria-hidden="true">
-                {hoodie.name === "Graphic Hoodie" ? <b>KALËTHON</b> : <Mark />}
-              </div>
-              <div className="hoodie-card-copy">
-                <div>
-                  <h3>{hoodie.name}</h3>
-                  <p>{hoodie.detail}</p>
-                  <small>{hoodie.fit}</small>
-                </div>
-                <strong>{hoodie.price}</strong>
-              </div>
-              <div className="hoodie-colors" aria-label={`${hoodie.name} colours`}>
-                {hoodie.colors.map((color) => <span key={color}>{color}</span>)}
-              </div>
-              <a href="#try-on">Try this hoodie <Arrow /></a>
-            </article>
-          ))}
+          <a className="button dark" href="#pieces">Shop the standard colourways <Arrow /></a>
         </div>
       </section>
 
-      <section className="tryon" id="try-on" aria-labelledby="tryon-title">
-        <div className="tryon-intro">
-          <div>
-            <p className="eyebrow light">Virtual fitting room / Powered by FASHN</p>
-            <h2 id="tryon-title">Your look.<br /><em>In motion.</em></h2>
-          </div>
-          <div className="tryon-intro-copy">
-            <p>Select a KALËTHON piece, add a portrait or capture a live camera frame, then enter the private AI fitting room.</p>
-            <span><b>Private by design.</b> Your portrait is processed only to create the preview and is not stored by KALËTHON.</span>
-          </div>
+      <section className="tryon-entry" id="try-on" aria-labelledby="tryon-title">
+        <div className="tryon-entry-image" aria-hidden="true" />
+        <div className="tryon-entry-copy">
+          <p className="eyebrow light">Virtual Viewing Room / Powered by FASHN</p>
+          <h2 id="tryon-title">See the piece.<br /><em>On you.</em></h2>
+          <p>Choose a real KALËTHON garment photo, add a clear portrait and receive a private AI style preview in three guided steps.</p>
+          <ul><li>Real garment photography</li><li>Camera or photo upload</li><li>Private, temporary result</li></ul>
+          <Link className="button" href="/try-on">Enter the Virtual Viewing Room <Arrow /></Link>
         </div>
-        <TryOnClient />
       </section>
 
       <section className="graphic-story" id="graphic-tees" aria-labelledby="graphic-title">

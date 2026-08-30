@@ -44,14 +44,14 @@ const products = [
     name: "The Women’s Court Short",
     detail: "Navy / integrated liner",
     price: "£78",
-    image: "/try-on/court-short.jpg",
+    image: "/try-on/court-short-photo.webp",
   },
   {
     id: "court-skirt",
     name: "The Women’s Court Skort",
     detail: "Oxblood / integrated short",
     price: "£92",
-    image: "/try-on/court-skirt.jpg",
+    image: "/try-on/court-skort-photo.webp",
   },
 ] as const;
 
@@ -69,7 +69,7 @@ function dataUrlFromBlob(blob: Blob): Promise<string> {
 
 function loadImage(source: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const image = new Image();
+    const image = new window.Image();
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error("We could not prepare that image."));
     image.src = source;
@@ -99,7 +99,7 @@ function stageCopy(stage: TryOnStage) {
 }
 
 export default function TryOnClient() {
-  const [mode, setMode] = useState<CaptureMode>("camera");
+  const [mode, setMode] = useState<CaptureMode>("upload");
   const [selectedId, setSelectedId] = useState<(typeof products)[number]["id"]>("court-polo");
   const [personImage, setPersonImage] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
@@ -261,7 +261,13 @@ export default function TryOnClient() {
   };
 
   return (
-    <div className="tryon-studio">
+    <>
+      <div className="tryon-checklist" aria-label="How the Virtual Viewing Room works">
+        <span><b>01</b>Choose a photographed garment</span>
+        <span><b>02</b>Add a clear, full-length portrait</span>
+        <span><b>03</b>Create and save your private preview</span>
+      </div>
+      <div className="tryon-studio">
       <div className="tryon-products" aria-label="Choose a KALËTHON piece">
         <div className="tryon-step-heading"><span>01</span><h3>Select a piece</h3></div>
         <div className="tryon-product-grid">
@@ -273,7 +279,8 @@ export default function TryOnClient() {
               onClick={() => {
                 setSelectedId(product.id);
                 setResultImage(null);
-                if (stage === "complete") setStage("idle");
+                setMessage("");
+                if (stage === "complete" || stage === "error") setStage("idle");
               }}
               aria-pressed={selectedId === product.id}
             >
@@ -333,7 +340,7 @@ export default function TryOnClient() {
             </>
           ) : (
             <div className="result-placeholder">
-              <span className="result-mark" aria-hidden="true">K</span>
+              <Image className="result-garment-preview" src={selected.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" aria-hidden="true" />
               <p>{working ? stageCopy(stage) : "Your private try-on preview will appear here."}</p>
               {working && <span className="progress-line" aria-hidden="true"><i /></span>}
             </div>
@@ -360,6 +367,7 @@ export default function TryOnClient() {
         )}
         <p className="camera-disclaimer">Camera-assisted AI preview—not a continuous AR overlay. Results are illustrative and may vary from actual fit.</p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

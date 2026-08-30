@@ -35,14 +35,14 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
   const articleSchema = { "@context": "https://schema.org", "@type": "Article", headline: article.title, description: article.description, image: `https://kalethon.com${article.image}`, author: { "@type": "Organization", name: "KALËTHON" }, publisher: { "@type": "Organization", name: "KALËTHON", logo: { "@type": "ImageObject", url: "https://kalethon.com/kalethon-mark.svg" } }, mainEntityOfPage: canonical, datePublished: "2026-08-29", dateModified: "2026-08-29" };
   return <main className="article-page">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}/>
-    <header className="journal-header"><Link href="/" className="journal-brand">KALËTHON</Link><nav><Link href="/journal">Journal</Link><Link href="/customise">Customise</Link><BagLink /></nav></header>
+    <header className="journal-header"><Link href="/" className="journal-brand">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/journal">Journal</Link><BagLink /></nav></header>
     <article>
       <div className="article-heading"><p className="eyebrow">{article.category} / {article.readTime}</p><h1>{article.title}</h1><p>{article.dek}</p></div>
       <figure><Image src={article.image} alt={article.imageAlt} width={1380} height={860}/><figcaption>KALËTHON Journal / {article.category}</figcaption></figure>
       <div className="article-body">{article.sections.map((section) => <section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}</div>
       <ShareButtons title={article.title} url={canonical}/>
       <nav className="journal-related" aria-label="Continue reading"><Link href={`/journal/${previousArticle.slug}`}><span>Previous story</span><b>{previousArticle.title}</b></Link><Link href={`/journal/${nextArticle.slug}`}><span>Next story</span><b>{nextArticle.title}</b></Link></nav>
-      <aside><p className="eyebrow">Continue with KALËTHON</p><h2>Build your own specification.</h2><Link href="/customise">Enter the customisation studio ↗</Link></aside>
+      <aside><p className="eyebrow">Continue with KALËTHON</p><h2>Find your finished colourway.</h2><Link href="/#pieces">Shop the collection ↗</Link></aside>
     </article>
     <footer className="journal-footer"><Link href="/journal">← All journal stories</Link><Link href="/">KALËTHON</Link></footer>
   </main>;

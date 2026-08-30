@@ -34,7 +34,7 @@ export default function BagClient() {
   };
 
   if (!ready) return <section className="bag-shell"><p>Preparing your bag…</p></section>;
-  if (items.length === 0) return <section className="bag-empty"><span>0</span><h2>Your bag is ready for a design.</h2><p>Choose a garment, set the details and add the finished specification here.</p><Link href="/customise">Enter the customisation studio ↗</Link></section>;
+  if (items.length === 0) return <section className="bag-empty"><span>0</span><h2>Your bag is ready.</h2><p>Choose a finished colourway and size from the collection.</p><Link href="/#pieces">Shop KALËTHON clothing ↗</Link></section>;
 
   return <section className="bag-shell">
     <div className="bag-items">
@@ -46,13 +46,13 @@ export default function BagClient() {
       </article>)}
     </div>
     <aside className="bag-summary">
-      <p className="eyebrow light">Order summary</p><div><span>Custom garments</span><b>{formatGBP(subtotal)}</b></div><div><span>UK delivery</span><b>{subtotal >= 15000 ? "Complimentary" : "Calculated at checkout"}</b></div><div className="bag-total"><span>Total</span><strong>{formatGBP(subtotal)}</strong></div>
+      <p className="eyebrow light">Order summary</p><div><span>Garments</span><b>{formatGBP(subtotal)}</b></div><div><span>UK delivery</span><b>{subtotal >= 15000 ? "Complimentary" : "Calculated at checkout"}</b></div><div className="bag-total"><span>Total</span><strong>{formatGBP(subtotal)}</strong></div>
       <p>Taxes, international delivery and duties are confirmed during checkout.</p>
       <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked every specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>.</span></label>
       <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>Send me occasional KALËTHON news. Optional.</span></label>
       <button type="button" disabled={!termsAccepted || busy} onClick={checkout}>{busy ? "Opening secure checkout…" : "Continue to secure checkout"}</button>
       {message && <p className="bag-error" role="alert">{message}</p>}
-      <small>Secure payment is completed with Stripe. Your final design specification is attached to the order.</small>
+      <small>Secure payment is completed with Stripe. Your selected colourway and size are attached to the order.</small>
     </aside>
   </section>;
 }

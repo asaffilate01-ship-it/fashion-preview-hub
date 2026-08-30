@@ -10,7 +10,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: baseUrl, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${baseUrl}/measurements`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${baseUrl}/customise`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/try-on`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
     { url: `${baseUrl}/journal`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     ...journalArticles.map((article) => ({

@@ -44,7 +44,7 @@ function singleItem(body: Record<string, unknown>): BagItem {
   const productId = body.productId as CustomProductId;
   const product = customProductCatalog[productId];
   return {
-    id: "buy-now", productId, name: product?.name ?? "Custom garment", image: product?.image ?? "", quantity: 1,
+    id: "buy-now", productId, name: product?.name ?? "KALËTHON garment", image: product?.image ?? "", quantity: 1,
     bodyColour: body.bodyColour as BagItem["bodyColour"], collarColour: body.collarColour as BagItem["collarColour"], cuffColour: body.cuffColour as BagItem["cuffColour"],
     sleeve: body.sleeve as BagItem["sleeve"], branding: body.branding as BagItem["branding"], fit: body.fit as BagItem["fit"],
     finish: (body.finish ?? "Clean") as BagItem["finish"], size: String(body.size ?? ""),
@@ -62,11 +62,10 @@ export async function POST(request: Request) {
     }
     const items = submittedItems as BagItem[];
     const origin = new URL(request.url).origin;
-    const fromBag = Array.isArray(body.items);
     const form = new URLSearchParams();
     form.set("mode", "payment");
-    form.set("success_url", `${origin}/${fromBag ? "bag" : "customise"}?checkout=success`);
-    form.set("cancel_url", `${origin}/${fromBag ? "bag" : "customise"}?checkout=cancelled`);
+    form.set("success_url", `${origin}/bag?checkout=success`);
+    form.set("cancel_url", `${origin}/bag?checkout=cancelled`);
     form.set("billing_address_collection", "required");
     form.set("phone_number_collection[enabled]", "true");
     form.set("allow_promotion_codes", "true");

@@ -27,9 +27,10 @@ test("renders KALËTHON search and social metadata", async () => {
     /^text\/html\b/i,
   );
   const html = await response.text();
-  assert.match(html, /<title>KALËTHON \| Premium British Sportswear/);
+  assert.match(html, /<title>KALËTHON \| Premium British Sport-to-City Clothing/);
   assert.doesNotMatch(html, /Kalëthon/);
-  assert.match(html, /Premium British Sportswear/);
+  assert.match(html, /Premium British sport-to-city clothing/);
+  assert.doesNotMatch(html, /href="\/customise"/);
   assert.match(html, /property="og:image" content="https:\/\/kalethon\.com\/og\.jpg"/);
   assert.match(html, /rel="icon" href="https:\/\/kalethon\.com\/favicon\.svg"/);
   assert.match(html, /application\/ld\+json/);
