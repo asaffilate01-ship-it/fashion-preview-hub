@@ -1,7 +1,7 @@
 import HeroCarousel from "./hero-carousel";
 import Image from "next/image";
 import Link from "next/link";
-import BagLink from "@/components/bag-link";
+import SiteNavigation from "@/components/site-navigation";
 import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 import RetailCollection from "@/components/retail-collection";
@@ -118,26 +118,7 @@ export default function Home() {
     <main>
       <div className="announcement">Complimentary UK delivery on orders over £150</div>
 
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="KALËTHON home">
-          <Mark className="brand-mark" />
-          <span>KALËTHON</span>
-        </a>
-        <nav className="primary-nav" aria-label="Primary navigation">
-          <a href="#collections">Collections</a>
-          <a href="#pieces">Shop</a>
-          <Link href="/measurements">Measurements</Link>
-          <Link href="/journal">Journal</Link>
-          <a href="#hoodies">Hoodies</a>
-          <a href="#graphic-tees">Graphic tees</a>
-          <Link href="/try-on">Virtual room</Link>
-          <a href="#story">Our standard</a>
-        </nav>
-        <div className="header-actions" aria-label="Shop shortcuts">
-          <Link href="/search">Search</Link>
-          <BagLink />
-        </div>
-      </header>
+      <SiteNavigation home />
 
       <nav className="collection-rail" aria-label="Shop by collection">
         <span>Shop by sport</span>

@@ -2,58 +2,129 @@
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import GarmentColourPreview from "@/components/garment-colour-preview";
+import { createGarmentColourDataUrl } from "@/lib/garment-preview";
+import type { StoreColour } from "@/lib/store";
 
-const products = [
+type TryOnColourway = {
+  key: string;
+  label: string;
+  body: StoreColour;
+  collar: StoreColour;
+  cuff: StoreColour;
+  image?: string;
+};
+
+type TryOnProduct = {
+  id: string;
+  name: string;
+  detail: string;
+  price: string;
+  image: string;
+  colourways: TryOnColourway[];
+};
+
+function colour(key: string, label: string, body: StoreColour, collar: StoreColour = body, cuff: StoreColour = collar, image?: string): TryOnColourway {
+  return { key, label, body, collar, cuff, image };
+}
+
+const products: TryOnProduct[] = [
   {
     id: "court-polo",
     name: "The Court Polo",
-    detail: "Bone / exact oxblood K",
+    detail: "Mercerised cotton piqué / contrast trim",
     price: "£85",
     image: "/catalog/court-polo-k.webp",
+    colourways: [
+      colour("bone-navy", "Bone / Navy", "Bone", "Navy", "Navy", "/catalog/court-polo-k.webp"),
+      colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone", "/catalog/court-polo-oxblood.webp"),
+      colour("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"),
+      colour("sage-navy", "Sage / Navy", "Sage", "Navy", "Navy"),
+      colour("stone-oxblood", "Stone / Oxblood", "Stone", "Oxblood", "Oxblood"),
+    ],
   },
   {
-    id: "form-tee",
+    id: "casual-polo",
+    name: "The Casual Contrast Polo",
+    detail: "Soft cotton piqué / relaxed drape",
+    price: "£85",
+    image: "/campaign-polo.png",
+    colourways: [colour("oxblood", "Oxblood", "Oxblood"), colour("bone", "Bone", "Bone"), colour("navy", "Navy", "Navy"), colour("sage", "Sage", "Sage"), colour("stone", "Stone", "Stone")],
+  },
+  {
+    id: "golf-polo",
+    name: "The Links Golf Polo",
+    detail: "Stretch performance piqué / golf cut",
+    price: "£85",
+    image: "/collections/golf.jpg",
+    colourways: [colour("sage", "Sage", "Sage"), colour("navy-bone", "Navy / Bone", "Navy", "Navy", "Bone"), colour("bone-sage", "Bone / Sage", "Bone", "Sage", "Sage"), colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Oxblood", "Bone"), colour("stone-navy", "Stone / Navy", "Stone", "Stone", "Navy")],
+  },
+  {
+    id: "tennis-polo",
+    name: "The Baseline Tennis Polo",
+    detail: "Recycled stretch jersey / court cut",
+    price: "£85",
+    image: "/collections/tennis.jpg",
+    colourways: [colour("bone-oxblood", "Bone / Oxblood", "Bone", "Oxblood", "Oxblood"), colour("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"), colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone"), colour("sage-bone", "Sage / Bone", "Sage", "Bone", "Bone"), colour("stone-navy", "Stone / Navy", "Stone", "Navy", "Navy")],
+  },
+  {
+    id: "performance-tee",
     name: "The Form Tee",
-    detail: "Ink / wordmark print",
-    price: "£58",
+    detail: "Performance jersey / KALËTHON wordmark",
+    price: "£76",
     image: "/try-on/form-tee.jpg",
+    colourways: [colour("ink", "Ink", "Ink", "Ink", "Ink", "/try-on/form-tee.jpg"), colour("bone", "Bone", "Bone"), colour("navy", "Navy", "Navy"), colour("oxblood", "Oxblood", "Oxblood"), colour("sage", "Sage", "Sage")],
   },
   {
     id: "poise-hoodie",
     name: "The Poise Pullover Hoodie",
-    detail: "Bone / exact oxblood K",
+    detail: "Loopback cotton / structured hood",
     price: "£125",
     image: "/catalog/poise-pullover-hoodie.webp",
+    colourways: [colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/poise-pullover-hoodie.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/poise-pullover-hoodie-sage.webp"), colour("navy", "Navy", "Navy"), colour("oxblood", "Oxblood", "Oxblood"), colour("stone", "Stone", "Stone")],
   },
   {
     id: "club-zip-hoodie",
     name: "The Club Zip Hoodie",
-    detail: "Navy / full KALËTHON wordmark",
+    detail: "Brushed loopback / two-way zip",
     price: "£133",
-    image: "/catalog/club-zip-hoodie.webp",
+    image: "/catalog/club-zip-hoodie-clean.png",
+    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/club-zip-hoodie-clean.png"), colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/club-zip-hoodie-stone.webp"), colour("ink", "Ink", "Ink"), colour("oxblood", "Oxblood", "Oxblood"), colour("sage", "Sage", "Sage")],
   },
   {
     id: "motion-jogger",
     name: "The Motion Jogger",
-    detail: "Stone / ink K",
+    detail: "Structured double-knit / articulated knee",
     price: "£110",
     image: "/try-on/motion-jogger.jpg",
+    colourways: [colour("stone", "Stone", "Stone", "Stone", "Stone", "/try-on/motion-jogger.jpg"), colour("ink", "Ink", "Ink"), colour("navy", "Navy", "Navy"), colour("sage", "Sage", "Sage"), colour("oxblood", "Oxblood", "Oxblood")],
   },
   {
     id: "court-short",
     name: "The Women’s Court Short",
-    detail: "Navy / integrated liner",
+    detail: "Stretch woven shell / integrated liner",
     price: "£78",
     image: "/try-on/court-short-photo.webp",
+    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/try-on/court-short-photo.webp"), colour("ink", "Ink", "Ink"), colour("bone", "Bone", "Bone"), colour("sage", "Sage", "Sage"), colour("oxblood", "Oxblood", "Oxblood")],
   },
   {
     id: "court-skirt",
     name: "The Women’s Court Skort",
-    detail: "Oxblood / integrated short",
+    detail: "Stretch woven shell / integrated short",
     price: "£92",
     image: "/try-on/court-skort-photo.webp",
+    colourways: [colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/try-on/court-skort-photo.webp"), colour("navy", "Navy", "Navy"), colour("bone", "Bone", "Bone"), colour("sage", "Sage", "Sage"), colour("ink", "Ink", "Ink")],
   },
-] as const;
+  {
+    id: "club-tracksuit",
+    name: "The Club Tracksuit",
+    detail: "Coordinated brushed fleece set",
+    price: "£225",
+    image: "/campaign-hoodie-track.png",
+    colourways: [colour("ink", "Ink", "Ink"), colour("navy", "Navy", "Navy"), colour("stone", "Stone", "Stone"), colour("sage", "Sage", "Sage"), colour("oxblood", "Oxblood", "Oxblood")],
+  },
+];
 
 type CaptureMode = "camera" | "upload";
 type TryOnStage = "idle" | "preparing" | "queued" | "processing" | "complete" | "error";
@@ -99,8 +170,12 @@ function stageCopy(stage: TryOnStage) {
 }
 
 export default function TryOnClient() {
+  const searchParams = useSearchParams();
+  const requestedProduct = products.find((option) => option.id === searchParams.get("product"));
+  const requestedColourway = requestedProduct?.colourways.find((option) => option.body.toLowerCase() === searchParams.get("colour")?.toLowerCase());
   const [mode, setMode] = useState<CaptureMode>("upload");
-  const [selectedId, setSelectedId] = useState<(typeof products)[number]["id"]>("court-polo");
+  const [selectedId, setSelectedId] = useState(() => requestedProduct?.id ?? "court-polo");
+  const [selectedColourKey, setSelectedColourKey] = useState(() => requestedColourway?.key ?? requestedProduct?.colourways[0].key ?? "bone-navy");
   const [personImage, setPersonImage] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
@@ -111,6 +186,7 @@ export default function TryOnClient() {
   const streamRef = useRef<MediaStream | null>(null);
 
   const selected = products.find((product) => product.id === selectedId) ?? products[0];
+  const selectedColour = selected.colourways.find((option) => option.key === selectedColourKey) ?? selected.colourways[0];
   const working = ["preparing", "queued", "processing"].includes(stage);
 
   const stopCamera = () => {
@@ -213,9 +289,14 @@ export default function TryOnClient() {
     setStage("preparing");
 
     try {
-      const productResponse = await fetch(selected.image);
-      if (!productResponse.ok) throw new Error("The selected piece could not be prepared.");
-      const productData = await dataUrlFromBlob(await productResponse.blob());
+      let productData: string;
+      if (selectedColour.image) {
+        const productResponse = await fetch(selectedColour.image);
+        if (!productResponse.ok) throw new Error("The selected piece could not be prepared.");
+        productData = await dataUrlFromBlob(await productResponse.blob());
+      } else {
+        productData = await createGarmentColourDataUrl(selected.id, selectedColour.body, selectedColour.collar, selectedColour.cuff);
+      }
 
       const runResponse = await fetch("/api/try-on", {
         method: "POST",
@@ -224,6 +305,7 @@ export default function TryOnClient() {
           productId: selected.id,
           modelImage: personImage,
           productImage: productData,
+          colour: selectedColour.label,
         }),
       });
       const runData = await runResponse.json();
@@ -263,7 +345,7 @@ export default function TryOnClient() {
   return (
     <>
       <div className="tryon-checklist" aria-label="How the Virtual Viewing Room works">
-        <span><b>01</b>Choose a photographed garment</span>
+        <span><b>01</b>Choose a garment and colour</span>
         <span><b>02</b>Add a clear, full-length portrait</span>
         <span><b>03</b>Create and save your private preview</span>
       </div>
@@ -278,6 +360,7 @@ export default function TryOnClient() {
               key={product.id}
               onClick={() => {
                 setSelectedId(product.id);
+                setSelectedColourKey(product.colourways[0].key);
                 setResultImage(null);
                 setMessage("");
                 if (stage === "complete" || stage === "error") setStage("idle");
@@ -289,6 +372,12 @@ export default function TryOnClient() {
               <b>{product.price}</b>
             </button>
           ))}
+        </div>
+        <div className="tryon-colour-picker" aria-label={`Choose a colour for ${selected.name}`}>
+          <div><span>Selected colour</span><strong>{selectedColour.label}</strong><small>{selected.colourways.length} finished options</small></div>
+          <div role="group" aria-label={`${selected.name} colours`}>
+            {selected.colourways.map((option) => <button type="button" className={option.key === selectedColour.key ? "is-selected" : ""} aria-pressed={option.key === selectedColour.key} aria-label={option.label} title={option.label} onClick={() => { setSelectedColourKey(option.key); setResultImage(null); setMessage(""); if (stage === "complete" || stage === "error") setStage("idle"); }} key={option.key}><i className={`swatch-${option.body.toLowerCase()}`} /><i className={`swatch-${option.collar.toLowerCase()}`} /></button>)}
+          </div>
         </div>
       </div>
 
@@ -340,7 +429,7 @@ export default function TryOnClient() {
             </>
           ) : (
             <div className="result-placeholder">
-              <Image className="result-garment-preview" src={selected.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" aria-hidden="true" unoptimized />
+              {selectedColour.image ? <Image className="result-garment-preview" src={selectedColour.image} alt={`${selected.name} in ${selectedColour.label}`} fill sizes="(max-width: 640px) 100vw, 33vw" unoptimized /> : <GarmentColourPreview productId={selected.id} name={selected.name} bodyColour={selectedColour.body} collarColour={selectedColour.collar} cuffColour={selectedColour.cuff} className="result-garment-preview live-result-garment" />}
               <p>{working ? stageCopy(stage) : "Your private try-on preview will appear here."}</p>
               {working && <span className="progress-line" aria-hidden="true"><i /></span>}
             </div>
@@ -362,7 +451,7 @@ export default function TryOnClient() {
           </div>
         ) : (
           <button type="button" className="studio-button create-button" disabled={!personImage || !consent || working} onClick={createTryOn}>
-            {working ? "Creating your look…" : `Try on ${selected.name.replace("The ", "")}`}
+            {working ? "Creating your look…" : `Try on ${selected.name.replace("The ", "")} · ${selectedColour.label}`}
           </button>
         )}
         <p className="camera-disclaimer">Camera-assisted AI preview—not a continuous AR overlay. Results are illustrative and may vary from actual fit.</p>

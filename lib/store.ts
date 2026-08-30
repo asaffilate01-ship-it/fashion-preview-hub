@@ -34,6 +34,7 @@ export type BagItem = {
   unitAmount?: number;
   name: string;
   image: string;
+  previewMode?: "photograph" | "live";
   quantity: number;
   bodyColour: StoreColour;
   collarColour: StoreColour;

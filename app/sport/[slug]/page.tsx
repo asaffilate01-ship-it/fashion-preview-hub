@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import SocialLinks from "@/components/social-links";
 import { getSportCollection, sportCollections } from "@/lib/sports";
-import BagLink from "@/components/bag-link";
+import SiteNavigation from "@/components/site-navigation";
 
 export function generateStaticParams() {
   return sportCollections.map(({ slug }) => ({ slug }));
@@ -53,7 +53,7 @@ export default async function SportPage({ params }: { params: Promise<{ slug: st
     },
   };
   return <main className="sport-page">
-    <header className="journal-header"><Link className="journal-brand" href="/">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/measurements">Measurements</Link><Link href="/journal">Journal</Link><BagLink /></nav></header>
+    <SiteNavigation />
     <section className="sport-hero" style={{ backgroundImage: `linear-gradient(90deg, rgba(14,15,13,.82), rgba(14,15,13,.16)), url('${collection.image}')` }}>
       <div><p className="eyebrow light">{collection.eyebrow}</p><h1>{collection.name}<br/><em>clothing.</em></h1><p>{collection.description}</p><a className="button button-light" href="#sport-products">Shop the collection <span>↓</span></a></div>
     </section>

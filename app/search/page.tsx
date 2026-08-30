@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import BagLink from "@/components/bag-link";
+import SiteNavigation from "@/components/site-navigation";
 import { customProductCatalog } from "@/lib/store";
 import { journalArticles } from "@/lib/journal";
 import { sportCollections } from "@/lib/sports";
@@ -17,7 +17,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const stories = journalArticles.filter((article) => !query || `${article.title} ${article.dek} ${article.category} ${article.keywords.join(" ")}`.toLowerCase().includes(query));
   const resultCount = garments.length + sports.length + stories.length;
   return <main className="search-page">
-    <header className="journal-header"><Link className="journal-brand" href="/">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/journal">Journal</Link><BagLink /></nav></header>
+    <SiteNavigation />
     <section className="search-heading"><p className="eyebrow">Find your KALËTHON</p><h1>Search garments,<br/><em>sports and stories.</em></h1><form action="/search"><label htmlFor="site-search">What are you looking for?</label><div><input id="site-search" name="q" defaultValue={q} placeholder="Try polo, tennis, sizing…" autoFocus/><button type="submit">Search</button></div></form></section>
     <section className="search-results" aria-live="polite"><p>{query ? `${resultCount} results for “${q}”` : "Browse everything"}</p>
       {resultCount === 0 && <div className="search-empty"><h2>No exact match yet.</h2><p>Try a garment, sport, city or fabric term—or browse the finished collection.</p><Link href="/#pieces">Shop all garments ↗</Link></div>}

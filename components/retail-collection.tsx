@@ -4,7 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useBag } from "@/components/bag-provider";
+import GarmentColourPreview from "@/components/garment-colour-preview";
 import { formatGBP, type StoreBranding, type StoreColour, type StoreFinish, type StoreSleeve } from "@/lib/store";
+import { livePreviewAssets } from "@/lib/garment-preview";
 import type { StorefrontProduct } from "@/lib/commerce-types";
 
 type RetailCategory = "All" | "Polos" | "Tops" | "Layers" | "Bottoms" | "Sets";
@@ -135,6 +137,11 @@ const baseProducts: RetailProduct[] = rawProducts.filter((product) => !groupedId
   colourways: colourwaySets[product.sku] ?? [colourway(product.colour.toLowerCase(), product.colour, product.colour, product.collarColour, product.cuffColour, product.sku, product.image, product.signatureTone)],
 }));
 
+function ProductColourImage({ product, selected, exactPhotography }: { product: RetailProduct; selected: RetailColourway; exactPhotography: boolean }) {
+  if (exactPhotography || !livePreviewAssets[product.id]) return <Image key={selected.image ?? product.image} className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={selected.image ?? product.image} alt={`${product.name} — ${selected.label}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />;
+  return <GarmentColourPreview productId={product.id} name={product.name} bodyColour={selected.colour} collarColour={selected.collarColour} cuffColour={selected.cuffColour} className="retail-live-colour-preview" />;
+}
+
 function ProductSignature({ branding, signatureTone: tone = "ink" }: Pick<RetailProduct, "branding" | "signatureTone">) {
   return (
     <div className={`product-signature ${branding === "K mark" ? "product-signature-mark" : "product-signature-word"} signature-${tone}`} aria-label={branding}>
@@ -210,6 +217,7 @@ export default function RetailCollection() {
       unitAmount: selected.amount ?? product.amount,
       name: product.name,
       image: selected.image ?? product.image,
+      previewMode: selected.image ? "photograph" : "live",
       bodyColour: selected.colour,
       collarColour: selected.collarColour,
       cuffColour: selected.cuffColour,
@@ -255,16 +263,15 @@ export default function RetailCollection() {
           const selectedAmount = selectedColourway.amount ?? product.amount;
           const selectedAvailable = selectedColourway.available ?? product.available;
           const selectedTracked = selectedColourway.tracked ?? product.tracked;
-          const displayedImage = selectedColourway.image ?? product.image;
           const exactPhotography = Boolean(selectedColourway.image);
           return (
             <article className="retail-product-card" id={`product-${product.sku}`} key={product.sku}>
               <div className="retail-product-image">
-                <Image key={displayedImage} className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={displayedImage} alt={`${product.name} — ${selectedColourway.label}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />
+                <ProductColourImage product={product} selected={selectedColourway} exactPhotography={exactPhotography} />
                 {product.signatureOnImage && <ProductSignature branding={product.branding} signatureTone={selectedColourway.signatureTone ?? product.signatureTone} />}
                 <span>{product.category}</span>
                 <b>Made to order</b>
-                <small className={exactPhotography ? "retail-image-caption" : "retail-image-caption is-reference"}>{exactPhotography ? `${selectedColourway.label} shown` : `${selectedColourway.label} selected · photography is a colour reference`}</small>
+                <small className={exactPhotography ? "retail-image-caption" : "retail-image-caption is-live"}>{exactPhotography ? `${selectedColourway.label} photographed` : `${selectedColourway.label} · live colour preview`}</small>
               </div>
               <div className="retail-product-copy">
                 <div><p>{product.type}</p><h3>{product.name}</h3></div>
