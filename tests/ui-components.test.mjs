@@ -66,6 +66,13 @@ test("ships fixed model photography for every people-based colourway", async () 
     "casual-polo-bone.webp", "casual-polo-navy.webp", "casual-polo-sage.webp", "casual-polo-stone.webp",
     "club-hoodie-ink.webp", "club-hoodie-navy.webp", "club-hoodie-oxblood.webp", "club-hoodie-stone.webp",
     "club-tracksuit-ink.webp", "club-tracksuit-navy.webp", "club-tracksuit-stone.webp", "club-tracksuit-sage.webp", "club-tracksuit-oxblood.webp",
+    "court-polo-navy-bone.webp", "court-polo-sage-navy.webp", "court-polo-stone-oxblood.webp",
+    "performance-tee-bone.webp", "performance-tee-navy.webp", "performance-tee-oxblood.webp", "performance-tee-sage.webp",
+    "poise-hoodie-navy.webp", "poise-hoodie-oxblood.webp", "poise-hoodie-stone.webp",
+    "club-zip-hoodie-ink.webp", "club-zip-hoodie-oxblood.webp", "club-zip-hoodie-sage.webp",
+    "motion-jogger-ink.webp", "motion-jogger-navy.webp", "motion-jogger-sage.webp", "motion-jogger-oxblood.webp",
+    "court-short-ink.webp", "court-short-bone.webp", "court-short-sage.webp", "court-short-oxblood.webp",
+    "court-skort-navy.webp", "court-skort-bone.webp", "court-skort-sage.webp", "court-skort-ink.webp",
   ];
 
   await Promise.all(assets.map((asset) => access(path.join(root, "public/catalog/colourways", asset))));
@@ -74,6 +81,11 @@ test("ships fixed model photography for every people-based colourway", async () 
   assert.match(tryOnSource, /golf-navy-bone\.webp/);
   assert.match(tryOnSource, /tennis-navy-bone\.webp/);
   assert.match(tryOnSource, /club-tracksuit-ink\.webp/);
+  assert.match(tryOnSource, /court-short-bone\.webp/);
+  assert.match(tryOnSource, /court-skort-sage\.webp/);
+  assert.match(tryOnSource, /motion-jogger-oxblood\.webp/);
+  assert.doesNotMatch(retailSource, /GarmentColourPreview/);
+  assert.doesNotMatch(tryOnSource, /GarmentColourPreview/);
 });
 
 test("forwards progress semantics to the primitive", async () => {

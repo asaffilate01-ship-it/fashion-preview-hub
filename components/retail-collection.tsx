@@ -4,9 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useBag } from "@/components/bag-provider";
-import GarmentColourPreview from "@/components/garment-colour-preview";
 import { formatGBP, type StoreBranding, type StoreColour, type StoreFinish, type StoreSleeve } from "@/lib/store";
-import { livePreviewAssets } from "@/lib/garment-preview";
 import type { StorefrontProduct } from "@/lib/commerce-types";
 
 type RetailCategory = "All" | "Polos" | "Tops" | "Layers" | "Bottoms" | "Sets";
@@ -79,9 +77,9 @@ const colourwaySets: Record<string, RetailColourway[]> = {
   "court-polo-bone": [
     colourway("bone-navy", "Bone / Navy", "Bone", "Navy", "Navy", "court-polo-bone", "/catalog/court-polo-k.webp"),
     colourway("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone", "court-polo-oxblood", "/catalog/court-polo-oxblood.webp"),
-    colourway("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"),
-    colourway("sage-navy", "Sage / Navy", "Sage", "Navy", "Navy"),
-    colourway("stone-oxblood", "Stone / Oxblood", "Stone", "Oxblood", "Oxblood"),
+    colourway("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone", undefined, "/catalog/colourways/court-polo-navy-bone.webp"),
+    colourway("sage-navy", "Sage / Navy", "Sage", "Navy", "Navy", undefined, "/catalog/colourways/court-polo-sage-navy.webp"),
+    colourway("stone-oxblood", "Stone / Oxblood", "Stone", "Oxblood", "Oxblood", undefined, "/catalog/colourways/court-polo-stone-oxblood.webp"),
   ],
   "casual-contrast-polo": [
     colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "casual-contrast-polo", "/campaign-polo.png"),
@@ -106,12 +104,17 @@ const colourwaySets: Record<string, RetailColourway[]> = {
   ],
   "performance-tee-ink": [
     colourway("ink", "Ink", "Ink", "Ink", "Ink", "performance-tee-ink", "/try-on/form-tee.jpg", "bone"),
-    colourway("bone", "Bone", "Bone", "Bone", "Bone", undefined, undefined, "ink"), colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, undefined, "bone"),
+    colourway("bone", "Bone", "Bone", "Bone", "Bone", undefined, "/catalog/colourways/performance-tee-bone.webp", "ink"),
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, "/catalog/colourways/performance-tee-navy.webp", "bone"),
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, "/catalog/colourways/performance-tee-oxblood.webp", "bone"),
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, "/catalog/colourways/performance-tee-sage.webp", "bone"),
   ],
   "poise-hoodie-bone": [
     colourway("bone", "Bone", "Bone", "Bone", "Bone", "poise-hoodie-bone", "/catalog/poise-pullover-hoodie.webp", "ink"),
     colourway("sage", "Sage", "Sage", "Sage", "Sage", "poise-hoodie-sage", "/catalog/poise-pullover-hoodie-sage.webp", "bone"),
-    colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("stone", "Stone", "Stone", "Stone", "Stone", undefined, undefined, "ink"),
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, "/catalog/colourways/poise-hoodie-navy.webp", "bone"),
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, "/catalog/colourways/poise-hoodie-oxblood.webp", "bone"),
+    colourway("stone", "Stone", "Stone", "Stone", "Stone", undefined, "/catalog/colourways/poise-hoodie-stone.webp", "ink"),
   ],
   "club-hoodie-bone": [
     colourway("bone", "Bone", "Bone", "Bone", "Bone", "club-hoodie-bone", "/campaign-hoodie-track.png", "ink"),
@@ -123,19 +126,30 @@ const colourwaySets: Record<string, RetailColourway[]> = {
   "club-zip-hoodie": [
     colourway("navy", "Navy", "Navy", "Navy", "Navy", "club-zip-hoodie", "/catalog/club-zip-hoodie-clean.png", "bone"),
     colourway("stone", "Stone", "Stone", "Stone", "Stone", "club-zip-hoodie-stone", "/catalog/club-zip-hoodie-stone.webp", "ink"),
-    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, undefined, "bone"),
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, "/catalog/colourways/club-zip-hoodie-ink.webp", "bone"),
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, "/catalog/colourways/club-zip-hoodie-oxblood.webp", "bone"),
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, "/catalog/colourways/club-zip-hoodie-sage.webp", "bone"),
   ],
   "motion-jogger-stone": [
     colourway("stone", "Stone", "Stone", "Stone", "Stone", "motion-jogger-stone", "/try-on/motion-jogger.jpg"),
-    colourway("ink", "Ink", "Ink"), colourway("navy", "Navy", "Navy"), colourway("sage", "Sage", "Sage"), colourway("oxblood", "Oxblood", "Oxblood"),
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, "/catalog/colourways/motion-jogger-ink.webp"),
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, "/catalog/colourways/motion-jogger-navy.webp"),
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, "/catalog/colourways/motion-jogger-sage.webp"),
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, "/catalog/colourways/motion-jogger-oxblood.webp"),
   ],
   "court-short-navy": [
     colourway("navy", "Navy", "Navy", "Navy", "Navy", "court-short-navy", "/try-on/court-short-photo.webp"),
-    colourway("ink", "Ink", "Ink"), colourway("bone", "Bone", "Bone"), colourway("sage", "Sage", "Sage"), colourway("oxblood", "Oxblood", "Oxblood"),
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, "/catalog/colourways/court-short-ink.webp"),
+    colourway("bone", "Bone", "Bone", "Bone", "Bone", undefined, "/catalog/colourways/court-short-bone.webp"),
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, "/catalog/colourways/court-short-sage.webp"),
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, "/catalog/colourways/court-short-oxblood.webp"),
   ],
   "court-skirt-oxblood": [
     colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "court-skirt-oxblood", "/try-on/court-skort-photo.webp"),
-    colourway("navy", "Navy", "Navy"), colourway("bone", "Bone", "Bone"), colourway("sage", "Sage", "Sage"), colourway("ink", "Ink", "Ink"),
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, "/catalog/colourways/court-skort-navy.webp"),
+    colourway("bone", "Bone", "Bone", "Bone", "Bone", undefined, "/catalog/colourways/court-skort-bone.webp"),
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, "/catalog/colourways/court-skort-sage.webp"),
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, "/catalog/colourways/court-skort-ink.webp"),
   ],
   "club-tracksuit-ink": [
     colourway("ink", "Ink", "Ink", "Ink", "Ink", "club-tracksuit-ink", "/catalog/colourways/club-tracksuit-ink.webp"),
@@ -152,9 +166,8 @@ const baseProducts: RetailProduct[] = rawProducts.filter((product) => !groupedId
   colourways: colourwaySets[product.sku] ?? [colourway(product.colour.toLowerCase(), product.colour, product.colour, product.collarColour, product.cuffColour, product.sku, product.image, product.signatureTone)],
 }));
 
-function ProductColourImage({ product, selected, exactPhotography }: { product: RetailProduct; selected: RetailColourway; exactPhotography: boolean }) {
-  if (exactPhotography || !livePreviewAssets[product.id]) return <Image key={selected.image ?? product.image} className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={selected.image ?? product.image} alt={`${product.name} — ${selected.label}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />;
-  return <GarmentColourPreview productId={product.id} name={product.name} bodyColour={selected.colour} collarColour={selected.collarColour} cuffColour={selected.cuffColour} className="retail-live-colour-preview" />;
+function ProductColourImage({ product, selected }: { product: RetailProduct; selected: RetailColourway }) {
+  return <Image key={selected.image ?? product.image} className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={selected.image ?? product.image} alt={`${product.name} — ${selected.label}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />;
 }
 
 function ProductSignature({ branding, signatureTone: tone = "ink" }: Pick<RetailProduct, "branding" | "signatureTone">) {
@@ -232,7 +245,7 @@ export default function RetailCollection() {
       unitAmount: selected.amount ?? product.amount,
       name: product.name,
       image: selected.image ?? product.image,
-      previewMode: selected.image ? "photograph" : "live",
+      previewMode: "photograph",
       bodyColour: selected.colour,
       collarColour: selected.collarColour,
       cuffColour: selected.cuffColour,
@@ -278,15 +291,14 @@ export default function RetailCollection() {
           const selectedAmount = selectedColourway.amount ?? product.amount;
           const selectedAvailable = selectedColourway.available ?? product.available;
           const selectedTracked = selectedColourway.tracked ?? product.tracked;
-          const exactPhotography = Boolean(selectedColourway.image);
           return (
             <article className="retail-product-card" id={`product-${product.sku}`} key={product.sku}>
               <div className="retail-product-image">
-                <ProductColourImage product={product} selected={selectedColourway} exactPhotography={exactPhotography} />
+                <ProductColourImage product={product} selected={selectedColourway} />
                 {product.signatureOnImage && <ProductSignature branding={product.branding} signatureTone={selectedColourway.signatureTone ?? product.signatureTone} />}
                 <span>{product.category}</span>
                 <b>Made to order</b>
-                <small className={exactPhotography ? "retail-image-caption" : "retail-image-caption is-live"}>{exactPhotography ? `${selectedColourway.label} photographed` : `${selectedColourway.label} · product preview`}</small>
+                <small className="retail-image-caption">{selectedColourway.label} · finished colourway</small>
               </div>
               <div className="retail-product-copy">
                 <div><p>{product.type}</p><h3>{product.name}</h3></div>

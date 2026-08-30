@@ -3,7 +3,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import GarmentColourPreview from "@/components/garment-colour-preview";
 import { createGarmentColourDataUrl } from "@/lib/garment-preview";
 import type { StoreColour } from "@/lib/store";
 
@@ -40,9 +39,9 @@ const products: TryOnProduct[] = [
     colourways: [
       colour("bone-navy", "Bone / Navy", "Bone", "Navy", "Navy", "/catalog/court-polo-k.webp"),
       colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone", "/catalog/court-polo-oxblood.webp"),
-      colour("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"),
-      colour("sage-navy", "Sage / Navy", "Sage", "Navy", "Navy"),
-      colour("stone-oxblood", "Stone / Oxblood", "Stone", "Oxblood", "Oxblood"),
+      colour("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone", "/catalog/colourways/court-polo-navy-bone.webp"),
+      colour("sage-navy", "Sage / Navy", "Sage", "Navy", "Navy", "/catalog/colourways/court-polo-sage-navy.webp"),
+      colour("stone-oxblood", "Stone / Oxblood", "Stone", "Oxblood", "Oxblood", "/catalog/colourways/court-polo-stone-oxblood.webp"),
     ],
   },
   {
@@ -93,7 +92,7 @@ const products: TryOnProduct[] = [
     detail: "Performance jersey / KALËTHON wordmark",
     price: "£76",
     image: "/try-on/form-tee.jpg",
-    colourways: [colour("ink", "Ink", "Ink", "Ink", "Ink", "/try-on/form-tee.jpg"), colour("bone", "Bone", "Bone"), colour("navy", "Navy", "Navy"), colour("oxblood", "Oxblood", "Oxblood"), colour("sage", "Sage", "Sage")],
+    colourways: [colour("ink", "Ink", "Ink", "Ink", "Ink", "/try-on/form-tee.jpg"), colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/colourways/performance-tee-bone.webp"), colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/performance-tee-navy.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/performance-tee-oxblood.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/performance-tee-sage.webp")],
   },
   {
     id: "poise-hoodie",
@@ -101,7 +100,7 @@ const products: TryOnProduct[] = [
     detail: "Loopback cotton / structured hood",
     price: "£125",
     image: "/catalog/poise-pullover-hoodie.webp",
-    colourways: [colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/poise-pullover-hoodie.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/poise-pullover-hoodie-sage.webp"), colour("navy", "Navy", "Navy"), colour("oxblood", "Oxblood", "Oxblood"), colour("stone", "Stone", "Stone")],
+    colourways: [colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/poise-pullover-hoodie.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/poise-pullover-hoodie-sage.webp"), colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/poise-hoodie-navy.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/poise-hoodie-oxblood.webp"), colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/colourways/poise-hoodie-stone.webp")],
   },
   {
     id: "club-zip-hoodie",
@@ -109,7 +108,7 @@ const products: TryOnProduct[] = [
     detail: "Brushed loopback / two-way zip",
     price: "£133",
     image: "/catalog/club-zip-hoodie-clean.png",
-    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/club-zip-hoodie-clean.png"), colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/club-zip-hoodie-stone.webp"), colour("ink", "Ink", "Ink"), colour("oxblood", "Oxblood", "Oxblood"), colour("sage", "Sage", "Sage")],
+    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/club-zip-hoodie-clean.png"), colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/club-zip-hoodie-stone.webp"), colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/club-zip-hoodie-ink.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/club-zip-hoodie-oxblood.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/club-zip-hoodie-sage.webp")],
   },
   {
     id: "motion-jogger",
@@ -117,7 +116,7 @@ const products: TryOnProduct[] = [
     detail: "Structured double-knit / articulated knee",
     price: "£110",
     image: "/try-on/motion-jogger.jpg",
-    colourways: [colour("stone", "Stone", "Stone", "Stone", "Stone", "/try-on/motion-jogger.jpg"), colour("ink", "Ink", "Ink"), colour("navy", "Navy", "Navy"), colour("sage", "Sage", "Sage"), colour("oxblood", "Oxblood", "Oxblood")],
+    colourways: [colour("stone", "Stone", "Stone", "Stone", "Stone", "/try-on/motion-jogger.jpg"), colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/motion-jogger-ink.webp"), colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/motion-jogger-navy.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/motion-jogger-sage.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/motion-jogger-oxblood.webp")],
   },
   {
     id: "court-short",
@@ -125,7 +124,7 @@ const products: TryOnProduct[] = [
     detail: "Stretch woven shell / integrated liner",
     price: "£78",
     image: "/try-on/court-short-photo.webp",
-    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/try-on/court-short-photo.webp"), colour("ink", "Ink", "Ink"), colour("bone", "Bone", "Bone"), colour("sage", "Sage", "Sage"), colour("oxblood", "Oxblood", "Oxblood")],
+    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/try-on/court-short-photo.webp"), colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/court-short-ink.webp"), colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/colourways/court-short-bone.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/court-short-sage.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/court-short-oxblood.webp")],
   },
   {
     id: "court-skirt",
@@ -133,7 +132,7 @@ const products: TryOnProduct[] = [
     detail: "Stretch woven shell / integrated short",
     price: "£92",
     image: "/try-on/court-skort-photo.webp",
-    colourways: [colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/try-on/court-skort-photo.webp"), colour("navy", "Navy", "Navy"), colour("bone", "Bone", "Bone"), colour("sage", "Sage", "Sage"), colour("ink", "Ink", "Ink")],
+    colourways: [colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/try-on/court-skort-photo.webp"), colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/court-skort-navy.webp"), colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/colourways/court-skort-bone.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/court-skort-sage.webp"), colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/court-skort-ink.webp")],
   },
   {
     id: "club-tracksuit",
@@ -454,7 +453,7 @@ export default function TryOnClient() {
             </>
           ) : (
             <div className="result-placeholder">
-              {selectedColour.image ? <Image className="result-garment-preview" src={selectedColour.image} alt={`${selected.name} in ${selectedColour.label}`} fill sizes="(max-width: 640px) 100vw, 33vw" unoptimized /> : <GarmentColourPreview productId={selected.id} name={selected.name} bodyColour={selectedColour.body} collarColour={selectedColour.collar} cuffColour={selectedColour.cuff} className="result-garment-preview live-result-garment" />}
+              <Image className="result-garment-preview" src={selectedColour.image ?? selected.image} alt={`${selected.name} in ${selectedColour.label}`} fill sizes="(max-width: 640px) 100vw, 33vw" unoptimized />
               <p>{working ? stageCopy(stage) : "Your private try-on preview will appear here."}</p>
               {working && <span className="progress-line" aria-hidden="true"><i /></span>}
             </div>
