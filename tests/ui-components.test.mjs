@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import test, { after } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -48,15 +48,32 @@ test("emits the storefront's responsive and accessibility utilities", async () =
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 
-test("maps photographed garments to distinct realistic colour layers", async () => {
+test("keeps live colour layers off photographed people", async () => {
   const { garmentColourValues, garmentToneStrength, livePreviewAssets } = await vite.ssrLoadModule("/lib/garment-preview.ts");
 
-  assert.equal(livePreviewAssets["golf-polo"].base, "/collections/golf.jpg");
-  assert.equal(livePreviewAssets["tennis-polo"].base, "/collections/tennis.jpg");
-  assert.match(livePreviewAssets["golf-polo"].bodyMask, /golf-player-body-mask\.svg/);
-  assert.match(livePreviewAssets["tennis-polo"].cuffMask, /tennis-player-cuff-mask\.svg/);
+  assert.equal(livePreviewAssets["golf-polo"], undefined);
+  assert.equal(livePreviewAssets["tennis-polo"], undefined);
   assert.notEqual(garmentColourValues.Bone, garmentColourValues.Navy);
   assert.ok(garmentToneStrength.Navy.depth > garmentToneStrength.Bone.depth);
+});
+
+test("ships fixed model photography for every people-based colourway", async () => {
+  const retailSource = await readFile(path.join(root, "components/retail-collection.tsx"), "utf8");
+  const tryOnSource = await readFile(path.join(root, "app/try-on/try-on-client.tsx"), "utf8");
+  const assets = [
+    "golf-navy-bone.webp", "golf-bone-sage.webp", "golf-oxblood-bone.webp", "golf-stone-navy.webp",
+    "tennis-navy-bone.webp", "tennis-oxblood-bone.webp", "tennis-sage-bone.webp", "tennis-stone-navy.webp",
+    "casual-polo-bone.webp", "casual-polo-navy.webp", "casual-polo-sage.webp", "casual-polo-stone.webp",
+    "club-hoodie-ink.webp", "club-hoodie-navy.webp", "club-hoodie-oxblood.webp", "club-hoodie-stone.webp",
+    "club-tracksuit-ink.webp", "club-tracksuit-navy.webp", "club-tracksuit-stone.webp", "club-tracksuit-sage.webp", "club-tracksuit-oxblood.webp",
+  ];
+
+  await Promise.all(assets.map((asset) => access(path.join(root, "public/catalog/colourways", asset))));
+  for (const asset of assets) assert.match(retailSource, new RegExp(asset.replace(".", "\\.")));
+  assert.match(tryOnSource, /modelPhotography/);
+  assert.match(tryOnSource, /golf-navy-bone\.webp/);
+  assert.match(tryOnSource, /tennis-navy-bone\.webp/);
+  assert.match(tryOnSource, /club-tracksuit-ink\.webp/);
 });
 
 test("forwards progress semantics to the primitive", async () => {

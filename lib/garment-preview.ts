@@ -19,8 +19,6 @@ export const garmentColourValues: Record<StoreColour, string> = {
 export const livePreviewAssets: Record<string, GarmentPreviewAsset> = {
   "court-polo": { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" },
   "casual-polo": { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" },
-  "golf-polo": { base: "/collections/golf.jpg", bodyMask: "/customise/golf-player-body-mask.svg", collarMask: "/customise/golf-player-collar-mask.svg", cuffMask: "/customise/golf-player-cuff-mask.svg" },
-  "tennis-polo": { base: "/collections/tennis.jpg", bodyMask: "/customise/tennis-player-body-mask.svg", collarMask: "/customise/tennis-player-collar-mask.svg", cuffMask: "/customise/tennis-player-cuff-mask.svg" },
   "performance-tee": { base: "/customise/performance-tee-short.png", bodyMask: "/customise/performance-tee-short.png", cuffMask: "/customise/performance-tee-short-cuff-mask.svg" },
   "poise-hoodie": { base: "/try-on/poise-hoodie.jpg", bodyMask: "/customise/poise-hoodie-body-mask.svg", cuffMask: "/customise/poise-hoodie-cuff-mask.svg" },
   "club-zip-hoodie": { base: "/try-on/track-jacket.jpg", bodyMask: "/customise/track-jacket-body-mask.svg", collarMask: "/customise/track-jacket-collar-mask.svg", cuffMask: "/customise/track-jacket-cuff-mask.svg" },
