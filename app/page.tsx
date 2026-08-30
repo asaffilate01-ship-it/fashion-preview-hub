@@ -13,6 +13,11 @@ const standardColourways = [
     use: "Court and city",
   },
   {
+    name: "Court Polo — Oxblood",
+    detail: "Oxblood body / bone trim / Kinetic K",
+    use: "Court and city",
+  },
+  {
     name: "Poise Pullover Hoodie",
     detail: "Bone loopback / Kinetic K",
     use: "Recovery and everyday",
@@ -20,6 +25,11 @@ const standardColourways = [
   {
     name: "Club Zip Hoodie",
     detail: "Navy loopback / full wordmark",
+    use: "Training and travel",
+  },
+  {
+    name: "Club Zip Hoodie — Stone",
+    detail: "Stone loopback / ink wordmark",
     use: "Training and travel",
   },
   {
@@ -268,13 +278,16 @@ export default function Home() {
         url: "https://kalethon.com/#pieces",
         itemListElement: [
           ["Court Polo", "court-polo-bone", "/catalog/court-polo-k.webp", "85.00"],
+          ["Court Polo — Oxblood", "court-polo-oxblood", "/catalog/court-polo-oxblood.webp", "85.00"],
           ["Casual Contrast Polo", "casual-contrast-polo", "/campaign-polo.png", "85.00"],
           ["Links Golf Polo", "links-golf-polo", "/collections/golf.jpg", "85.00"],
           ["Baseline Tennis Polo", "baseline-tennis-polo", "/collections/tennis.jpg", "85.00"],
           ["Performance Tee", "performance-tee-ink", "/try-on/form-tee.jpg", "76.00"],
           ["Poise Pullover Hoodie", "poise-hoodie-bone", "/catalog/poise-pullover-hoodie.webp", "125.00"],
+          ["Poise Pullover Hoodie — Sage", "poise-hoodie-sage", "/catalog/poise-pullover-hoodie-sage.webp", "125.00"],
           ["Club Pullover Hoodie", "club-hoodie-bone", "/campaign-hoodie-track.png", "125.00"],
           ["Club Zip Hoodie", "club-zip-hoodie", "/catalog/club-zip-hoodie-clean.png", "133.00"],
+          ["Club Zip Hoodie — Stone", "club-zip-hoodie-stone", "/catalog/club-zip-hoodie-stone.webp", "133.00"],
           ["Motion Jogger", "motion-jogger-stone", "/try-on/motion-jogger.jpg", "110.00"],
           ["Court Short", "court-short-navy", "/try-on/court-short-photo.webp", "78.00"],
           ["Court Skort", "court-skirt-oxblood", "/try-on/court-skort-photo.webp", "92.00"],
@@ -318,7 +331,7 @@ export default function Home() {
           <span>KALËTHON</span>
         </div>
         <div className="footer-links">
-          <div><p>Shop</p><a href="#design-yours">Bespoke studio</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a>{collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}</div>
+          <div><p>Shop</p><a href="#pieces">Finished colourways</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a>{collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}</div>
           <div><p>KALËTHON</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a><Link href="/journal">Journal</Link></div>
           <div><p>Client service</p><a href="mailto:hello@kalethon.com">hello@kalethon.com</a><Link href="/legal/delivery">Delivery</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
           <div><p>Legal & privacy</p><Link href="/legal/terms-and-conditions">Terms</Link><Link href="/legal/privacy-policy">Privacy</Link><Link href="/legal/cookie-policy">Cookies</Link><Link href="/legal/accessibility">Accessibility</Link><CookieSettingsButton /></div>
