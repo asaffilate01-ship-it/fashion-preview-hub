@@ -17,7 +17,12 @@ export const metadata: Metadata = {
     "men's sportswear UK", "women's sportswear UK", "international clothing size guide", "virtual try on clothing", "London sportswear brand",
   ],
   applicationName: "KALËTHON",
+  authors: [{ name: "KALËTHON", url: "https://kalethon.com" }],
+  creator: "KALËTHON",
+  publisher: "KALËTHON",
   category: "Sportswear and fashion",
+  manifest: "/manifest.webmanifest",
+  formatDetection: { email: false, address: false, telephone: false },
   alternates: { canonical: "/" },
   icons: {
     icon: [
@@ -57,6 +62,7 @@ const structuredData = {
       logo: "https://kalethon.com/kalethon-mark.svg",
       description: "Premium British sportswear and considered sport-to-city clothing.",
       areaServed: "Worldwide",
+      slogan: "Poise in motion.",
       email: "hello@kalethon.com",
       contactPoint: { "@type": "ContactPoint", email: "hello@kalethon.com", contactType: "customer service", availableLanguage: "English" },
     },
@@ -71,6 +77,15 @@ const structuredData = {
         target: { "@type": "EntryPoint", urlTemplate: "https://kalethon.com/search?q={search_term_string}" },
         "query-input": "required name=search_term_string",
       },
+    },
+    {
+      "@type": "Brand",
+      "@id": "https://kalethon.com/#brand",
+      name: "KALËTHON",
+      alternateName: "KALETHON",
+      slogan: "Poise in motion.",
+      logo: "https://kalethon.com/kalethon-mark.svg",
+      url: "https://kalethon.com",
     },
   ],
 };

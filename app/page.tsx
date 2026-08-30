@@ -99,6 +99,10 @@ function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
 
+function WordmarkOverlay() {
+  return <span className="exact-wordmark" aria-hidden="true">KALËTHON</span>;
+}
+
 export default function Home() {
   return (
     <main>
@@ -173,7 +177,7 @@ export default function Home() {
         <div className="standard-colourways-image">
           <div><Image src="/catalog/court-polo-k.webp" alt="KALËTHON Court Polo with exact Kinetic K" fill sizes="(max-width: 900px) 100vw, 38vw" unoptimized /></div>
           <div><Image src="/catalog/poise-pullover-hoodie.webp" alt="KALËTHON pullover hoodie with exact Kinetic K" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /></div>
-          <div><Image src="/catalog/club-zip-hoodie.webp" alt="KALËTHON zip hoodie with full wordmark" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /></div>
+          <div className="has-exact-wordmark"><Image src="/catalog/club-zip-hoodie-clean.png" alt="Navy KALËTHON zip hoodie with aligned full wordmark" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /><WordmarkOverlay /></div>
         </div>
         <div className="standard-colourways-copy">
           <p className="eyebrow">Finished designs / Ready to choose</p>
@@ -205,7 +209,7 @@ export default function Home() {
             <span className="hoodie-construction-copy"><small>01 / K Icon line</small><b>Poise Pullover Hoodie</b><em>420 GSM loopback · £125</em></span>
           </Link>
           <Link href="#product-club-zip-hoodie">
-            <span className="hoodie-construction-image"><Image src="/catalog/club-zip-hoodie.webp" alt="Navy KALËTHON full-zip hoodie with the complete wordmark" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized /></span>
+            <span className="hoodie-construction-image has-exact-wordmark"><Image src="/catalog/club-zip-hoodie-clean.png" alt="Navy KALËTHON full-zip hoodie with the complete aligned wordmark" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized /><WordmarkOverlay /></span>
             <span className="hoodie-construction-copy"><small>02 / Wordmark line</small><b>Club Zip Hoodie</b><em>450 GSM loopback · £133</em></span>
           </Link>
         </div>
@@ -256,6 +260,38 @@ export default function Home() {
           </div>
         </article>
       </section>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "The essential KALËTHON edit",
+        url: "https://kalethon.com/#pieces",
+        itemListElement: [
+          ["Court Polo", "court-polo-bone", "/catalog/court-polo-k.webp", "85.00"],
+          ["Casual Contrast Polo", "casual-contrast-polo", "/campaign-polo.png", "85.00"],
+          ["Links Golf Polo", "links-golf-polo", "/collections/golf.jpg", "85.00"],
+          ["Baseline Tennis Polo", "baseline-tennis-polo", "/collections/tennis.jpg", "85.00"],
+          ["Performance Tee", "performance-tee-ink", "/try-on/form-tee.jpg", "76.00"],
+          ["Poise Pullover Hoodie", "poise-hoodie-bone", "/catalog/poise-pullover-hoodie.webp", "125.00"],
+          ["Club Pullover Hoodie", "club-hoodie-bone", "/campaign-hoodie-track.png", "125.00"],
+          ["Club Zip Hoodie", "club-zip-hoodie", "/catalog/club-zip-hoodie-clean.png", "133.00"],
+          ["Motion Jogger", "motion-jogger-stone", "/try-on/motion-jogger.jpg", "110.00"],
+          ["Court Short", "court-short-navy", "/try-on/court-short-photo.webp", "78.00"],
+          ["Court Skort", "court-skirt-oxblood", "/try-on/court-skort-photo.webp", "92.00"],
+          ["Club Tracksuit", "club-tracksuit-ink", "/campaign-hoodie-track.png", "225.00"],
+        ].map(([name, id, image, price], index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "Product",
+            name,
+            image: `https://kalethon.com${image}`,
+            brand: { "@type": "Brand", name: "KALËTHON" },
+            url: `https://kalethon.com/#product-${id}`,
+            offers: { "@type": "Offer", priceCurrency: "GBP", price, availability: "https://schema.org/PreOrder", url: `https://kalethon.com/#product-${id}` },
+          },
+        })),
+      }) }} />
 
       <section className="standard" id="story">
         <div className="standard-mark"><Mark /></div>
