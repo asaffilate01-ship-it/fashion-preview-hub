@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   },
   description: "Premium British sport-to-city clothing in considered standard colourways, with international sizing and private virtual try-on.",
   keywords: [
+    "luxury athleisure", "premium sportswear New York", "premium sportswear Boston", "premium sportswear Miami",
+    "premium sportswear Washington DC", "premium sportswear Chicago", "premium sportswear Los Angeles", "premium sportswear Seattle",
+    "British sportswear Europe", "padel clothing Spain", "tennis clothing France", "sportswear Germany",
+    "premium sportswear Dubai", "padel clothing Dubai", "sportswear UAE", "worldwide sportswear delivery",
     "KALETHON", "KALËTHON", "premium British sportswear", "sport to city clothing", "contrast collar polo", "British polo shirt",
     "tennis clothing", "golf clothing", "padel clothing", "pickleball clothing", "performance clothing", "sports lifestyle clothing",
     "premium hoodies", "premium tracksuits", "performance joggers", "golf polo shirt", "tennis polo shirt", "modest sportswear women",
