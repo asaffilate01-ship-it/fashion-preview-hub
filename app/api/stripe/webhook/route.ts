@@ -1,15 +1,22 @@
 import { NextResponse } from "next/server";
+import { recordPaidStripeOrder } from "@/db/commerce";
 
 type StripeLineItem = {
   description?: string;
   quantity?: number;
   amount_total?: number;
   currency?: string;
+  price?: {
+    unit_amount?: number;
+    product?: { name?: string; metadata?: Record<string, string> };
+  };
 };
 
 type StripeSession = {
   id: string;
   amount_total?: number;
+  amount_subtotal?: number;
+  total_details?: { amount_shipping?: number; amount_tax?: number };
   currency?: string;
   payment_status?: string;
   customer_details?: { email?: string; name?: string };
@@ -57,6 +64,7 @@ function formatMoney(amount = 0, currency = "gbp") {
 async function retrieveSession(sessionId: string, secretKey: string): Promise<StripeSession> {
   const query = new URLSearchParams();
   query.append("expand[]", "line_items");
+  query.append("expand[]", "line_items.data.price.product");
   const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}?${query}`, {
     headers: { Authorization: `Bearer ${secretKey}` },
   });
@@ -111,7 +119,10 @@ export async function POST(request: Request) {
     const sessionId = event.data?.object?.id;
     if (!sessionId) return NextResponse.json({ message: "Stripe session is missing." }, { status: 400 });
     const session = await retrieveSession(sessionId, stripeSecret);
-    if (session.payment_status === "paid") await notifyOrder(event.id, session);
+    if (session.payment_status === "paid") {
+      await recordPaidStripeOrder(event.id, event.type, session);
+      await notifyOrder(event.id, session);
+    }
   }
   return NextResponse.json({ received: true });
 }

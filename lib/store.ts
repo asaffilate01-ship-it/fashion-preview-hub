@@ -29,7 +29,9 @@ export type StoreSleeve = (typeof storeSleeves)[number];
 
 export type BagItem = {
   id: string;
-  productId: CustomProductId;
+  productId: string;
+  sku?: string;
+  unitAmount?: number;
   name: string;
   image: string;
   quantity: number;
@@ -43,8 +45,10 @@ export type BagItem = {
   size: string;
 };
 
-export function unitAmountFor(item: Pick<BagItem, "productId" | "sleeve" | "branding">) {
-  const product = customProductCatalog[item.productId];
+export function unitAmountFor(item: Pick<BagItem, "productId" | "sleeve" | "branding" | "unitAmount">) {
+  if (Number.isInteger(item.unitAmount) && Number(item.unitAmount) >= 0) return Number(item.unitAmount);
+  const product = customProductCatalog[item.productId as CustomProductId];
+  if (!product) return 0;
   const sleeveUpgrade = item.sleeve === "Long sleeve" && ["court-polo", "casual-polo", "golf-polo", "tennis-polo", "performance-tee"].includes(item.productId) ? 1000 : 0;
   const brandingUpgrade = item.branding === "KALËTHON wordmark" ? 800 : 0;
   return product.amount + sleeveUpgrade + brandingUpgrade;
