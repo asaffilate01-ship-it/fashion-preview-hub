@@ -20,8 +20,17 @@ const finishes = new Set<string>(storeFinishes);
 
 function stripeConnection(): { endpoint: string; headers: Record<string, string> } | null {
   const secretKey = process.env.STRIPE_SECRET_KEY;
-  if (!secretKey || !/^(sk|rk)_(test|live)_/.test(secretKey)) return null;
-  return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${secretKey}` } };
+  if (secretKey && /^(sk|rk)_(test|live)_/.test(secretKey)) {
+    return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${secretKey}` } };
+  }
+  const environment = process.env.PAYMENTS_ENVIRONMENT === "sandbox" ? "sandbox" : "live";
+  const connectionKey = environment === "sandbox" ? process.env.STRIPE_SANDBOX_API_KEY : process.env.STRIPE_LIVE_API_KEY;
+  const lovableKey = process.env.LOVABLE_API_KEY;
+  if (!connectionKey || !lovableKey) return null;
+  return {
+    endpoint: "https://connector-gateway.lovable.dev/stripe/v1/checkout/sessions",
+    headers: { Authorization: `Bearer ${connectionKey}`, "X-Connection-Api-Key": connectionKey, "Lovable-API-Key": lovableKey },
+  };
 }
 
 function storefrontOrigin(request: Request) {
