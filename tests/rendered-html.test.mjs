@@ -70,7 +70,10 @@ test("serves Virtual Viewing Room products without the broken image optimiser", 
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /src="\/catalog\/court-polo-k\.webp"/);
-  assert.match(html, /src="\/catalog\/club-zip-hoodie\.webp"/);
+  assert.match(html, /src="\/catalog\/club-zip-hoodie-clean\.png"/);
+  assert.match(html, /Choose a garment and colour/);
+  assert.match(html, /Selected colour/);
+  assert.match(html, /5(?:<!-- -->)? finished options/);
   assert.doesNotMatch(html, /\/_vinext\/image\?/);
 });
 

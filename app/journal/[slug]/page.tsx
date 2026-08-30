@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getJournalArticle, journalArticles } from "@/lib/journal";
 import ShareButtons from "../share-buttons";
-import BagLink from "@/components/bag-link";
+import SiteNavigation from "@/components/site-navigation";
 
 export function generateStaticParams() {
   return journalArticles.map((article) => ({ slug: article.slug }));
@@ -35,7 +35,7 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
   const articleSchema = { "@context": "https://schema.org", "@type": "Article", headline: article.title, description: article.description, image: `https://kalethon.com${article.image}`, author: { "@type": "Organization", name: "KALËTHON" }, publisher: { "@type": "Organization", name: "KALËTHON", logo: { "@type": "ImageObject", url: "https://kalethon.com/kalethon-mark.svg" } }, mainEntityOfPage: canonical, datePublished: "2026-08-29", dateModified: "2026-08-29" };
   return <main className="article-page">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}/>
-    <header className="journal-header"><Link href="/" className="journal-brand">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/journal">Journal</Link><BagLink /></nav></header>
+    <SiteNavigation />
     <article>
       <div className="article-heading"><p className="eyebrow">{article.category} / {article.readTime}</p><h1>{article.title}</h1><p>{article.dek}</p></div>
       <figure><Image src={article.image} alt={article.imageAlt} width={1380} height={860} unoptimized/><figcaption>KALËTHON Journal / {article.category}</figcaption></figure>

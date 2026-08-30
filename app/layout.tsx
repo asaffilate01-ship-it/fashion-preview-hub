@@ -1,7 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import CookieConsent from "@/components/cookie-consent";
 import BagProvider from "@/components/bag-provider";
+import SiteTools from "@/components/site-tools";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#10110f",
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kalethon.com"),
@@ -15,13 +24,9 @@ export const metadata: Metadata = {
     "tennis clothing", "golf clothing", "padel clothing", "pickleball clothing", "performance clothing", "sports lifestyle clothing",
     "premium hoodies", "premium tracksuits", "performance joggers", "golf polo shirt", "tennis polo shirt", "modest sportswear women",
     "men's sportswear UK", "women's sportswear UK", "international clothing size guide", "virtual try on clothing", "London sportswear brand",
-    "luxury athleisure", "premium sportswear New York", "premium sportswear Boston", "premium sportswear Miami",
-    "premium sportswear Washington DC", "premium sportswear Chicago", "premium sportswear Los Angeles", "premium sportswear Seattle",
-    "British sportswear Europe", "padel clothing Spain", "tennis clothing France", "sportswear Germany",
-    "premium sportswear Dubai", "padel clothing Dubai", "sportswear UAE", "worldwide sportswear delivery",
   ],
-
   applicationName: "KALËTHON",
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "KALËTHON" },
   authors: [{ name: "KALËTHON", url: "https://kalethon.com" }],
   creator: "KALËTHON",
   publisher: "KALËTHON",
@@ -102,6 +107,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
         <BagProvider>
           {children}
+          <SiteTools />
           <CookieConsent />
         </BagProvider>
       </body>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { journalArticles } from "@/lib/journal";
 import SocialLinks from "@/components/social-links";
-import BagLink from "@/components/bag-link";
+import SiteNavigation from "@/components/site-navigation";
 
 export const metadata: Metadata = {
   title: "Sportswear Journal",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function JournalPage() {
   return <main className="journal-page">
-    <header className="journal-header"><Link href="/" className="journal-brand">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/measurements">Measurements</Link><BagLink /></nav></header>
+    <SiteNavigation />
     <section className="journal-hero"><p className="eyebrow">The KALËTHON journal</p><h1>Sport, cloth<br/><em>and the city.</em></h1><p>Practical thinking on how performance clothing is made, measured and worn—from court conditions to city streets.</p></section>
     <section className="journal-grid" aria-label="Journal articles">
       {journalArticles.map((article, index) => <article className={index === 0 ? "journal-card is-featured" : "journal-card"} key={article.slug}>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ContactForm from "./contact-form";
+import SiteNavigation from "@/components/site-navigation";
 
 export const metadata: Metadata = {
   title: "Contact KALËTHON",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return <main className="contact-page">
-    <header className="journal-header"><Link className="journal-brand" href="/">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/journal">Journal</Link></nav></header>
+    <SiteNavigation />
     <section className="contact-shell">
       <div className="contact-intro"><p className="eyebrow">Client service</p><h1>How can we<br/><em>help?</em></h1><p>Questions about a garment, fit, delivery, an existing order or the private virtual viewing room are handled by the KALËTHON team.</p><div><small>Email</small><a href="mailto:hello@kalethon.com">hello@kalethon.com</a></div><div><small>Response time</small><b>Within two working days</b></div></div>
       <ContactForm />

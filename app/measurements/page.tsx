@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SiteNavigation from "@/components/site-navigation";
 
 export const metadata: Metadata = {
   title: "International Clothing Size & Measurement Guide",
@@ -31,10 +32,6 @@ const measurements = [
   ["19", "Lower collar height", "From the base neck seam vertically to the preferred finished lower edge of the collar."],
   ["20", "Head circumference", "For hood fit, level around the forehead and the fullest point at the back of the head."],
 ] as const;
-
-function Mark() {
-  return <svg className="measure-brand-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 8h11v48H8z" fill="currentColor"/><path d="m22 30 24-22h13L33 32z" fill="currentColor"/><path d="m22 34 12-4 25 26H45z" fill="currentColor"/></svg>;
-}
 
 function MeasurementFigure({ view }: { view: "front" | "back" | "side" }) {
   const isSide = view === "side";
@@ -92,7 +89,7 @@ const menBottomSizes = [
 
 export default function MeasurementsPage() {
   return <main className="measure-page">
-    <header className="measure-header"><Link href="/" className="measure-brand"><Mark/><span>KALËTHON</span></Link><Link href="/#design-yours">Return to bespoke studio</Link></header>
+    <SiteNavigation />
     <section className="measure-hero"><p className="eyebrow">KALËTHON made to measure</p><h1>Measure once.<br/><em>Move without compromise.</em></h1><p>Use a flexible tape, measure in centimetres over light clothing, and keep the tape level without pulling it tight. For best results, ask another person to measure you.</p></section>
     <nav className="measure-profile-nav" aria-label="Measurement guides">{profileNotes.map((profile) => <a href={`#${profile.id}`} key={profile.id}>{profile.title}</a>)}</nav>
     <section className="measure-diagrams" aria-labelledby="diagram-title"><div className="measure-section-heading"><div><p className="eyebrow">Vector guide / Measurement points</p><h2 id="diagram-title">Where the tape starts<br/><em>and where it finishes.</em></h2></div><p>The numbered lines correspond to the complete measurement list below. Circumference measurements must stay horizontal and parallel with the floor.</p></div><div className="measure-figure-grid"><article><span>Front / Circumference</span><MeasurementFigure view="front"/></article><article><span>Back / Length</span><MeasurementFigure view="back"/></article><article><span>Side / Height & rise</span><MeasurementFigure view="side"/></article></div></section>

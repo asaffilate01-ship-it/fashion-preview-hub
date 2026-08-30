@@ -1,7 +1,7 @@
 import HeroCarousel from "./hero-carousel";
 import Image from "next/image";
 import Link from "next/link";
-import BagLink from "@/components/bag-link";
+import SiteNavigation from "@/components/site-navigation";
 import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 import RetailCollection from "@/components/retail-collection";
@@ -118,26 +118,7 @@ export default function Home() {
     <main>
       <div className="announcement">Complimentary UK delivery on orders over £150</div>
 
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="KALËTHON home">
-          <Mark className="brand-mark" />
-          <span>KALËTHON</span>
-        </a>
-        <nav className="primary-nav" aria-label="Primary navigation">
-          <a href="#collections">Collections</a>
-          <a href="#pieces">Shop</a>
-          <Link href="/measurements">Measurements</Link>
-          <Link href="/journal">Journal</Link>
-          <a href="#hoodies">Hoodies</a>
-          <a href="#graphic-tees">Graphic tees</a>
-          <Link href="/try-on">Virtual room</Link>
-          <a href="#story">Our standard</a>
-        </nav>
-        <div className="header-actions" aria-label="Shop shortcuts">
-          <Link href="/search">Search</Link>
-          <BagLink />
-        </div>
-      </header>
+      <SiteNavigation home />
 
       <nav className="collection-rail" aria-label="Shop by collection">
         <span>Shop by sport</span>
@@ -333,7 +314,7 @@ export default function Home() {
         <div className="footer-links">
           <div><p>Shop</p><a href="#pieces">Finished colourways</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a>{collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}</div>
           <div><p>KALËTHON</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a><Link href="/journal">Journal</Link></div>
-          <div><p>Client service</p><Link href="/contact">Contact and questions</Link><a href="mailto:hello@kalethon.com">hello@kalethon.com</a><Link href="/legal/delivery">Delivery</Link><Link href="/delivery-to">Where we deliver</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
+          <div><p>Client service</p><Link href="/contact">Contact and questions</Link><a href="mailto:hello@kalethon.com">hello@kalethon.com</a><Link href="/legal/delivery">Delivery</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
           <div><p>Legal & privacy</p><Link href="/legal/terms-and-conditions">Terms</Link><Link href="/legal/privacy-policy">Privacy</Link><Link href="/legal/cookie-policy">Cookies</Link><Link href="/legal/accessibility">Accessibility</Link><CookieSettingsButton /></div>
         </div>
         <div className="footer-bottom"><span>© 2026 KALËTHON</span><span>London, United Kingdom</span></div>
