@@ -14,7 +14,7 @@ export const sportCollections: SportCollection[] = [
     description: "Premium tennis clothing for considered movement: polos, training tops, shorts, skorts and warm-up layers built for the court and composed beyond it.",
     keywords: ["tennis clothing", "tennis shirts", "tennis shorts", "tennis training tops", "tennis skorts"],
     products: [
-      { name: "Court Polo", category: "Shirts", detail: "Mercerised piqué · short or long sleeve", price: "£85" },
+      { name: "Baseline Tennis Polo", category: "Tennis shirts", detail: "175 GSM recycled stretch jersey · oxblood tipping", price: "£85" },
       { name: "Performance Tee", category: "Training tops", detail: "Compact technical jersey", price: "£68" },
       { name: "Court Short", category: "Shorts", detail: "Four-way stretch · modest liner", price: "£78" },
       { name: "Court Skort", category: "Skirts & skorts", detail: "Woven skirt · integrated short", price: "£92" },
@@ -27,7 +27,7 @@ export const sportCollections: SportCollection[] = [
     description: "Refined golf clothing with breathable polos, long-sleeve layers, stretch trousers and quiet club-ready construction.",
     keywords: ["golf clothing", "golf polos", "golf shirts", "golf trousers", "golf quarter zip"],
     products: [
-      { name: "Links Polo", category: "Golf shirts", detail: "Performance interlock · short sleeve", price: "£88" },
+      { name: "Links Golf Polo", category: "Golf shirts", detail: "175 GSM stretch piqué · longer back hem", price: "£85" },
       { name: "Links Long-Sleeve Polo", category: "Golf shirts", detail: "Performance interlock · long sleeve", price: "£98" },
       { name: "Links Quarter-Zip", category: "Midlayers", detail: "Fine-gauge technical knit", price: "£125" },
       { name: "Links Trouser", category: "Golf trousers", detail: "Four-way stretch woven cloth", price: "£135" },
@@ -87,4 +87,3 @@ export const sportCollections: SportCollection[] = [
 export function getSportCollection(slug: string) {
   return sportCollections.find((collection) => collection.slug === slug);
 }
-

@@ -29,7 +29,28 @@ export default async function SportPage({ params }: { params: Promise<{ slug: st
   const structuredData = {
     "@context": "https://schema.org", "@type": "CollectionPage", name: `${collection.name} Clothing`,
     description: collection.description, url: `https://kalethon.com/sport/${collection.slug}`,
-    mainEntity: { "@type": "ItemList", itemListElement: collection.products.map((product, index) => ({ "@type": "ListItem", position: index + 1, name: product.name })) },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: collection.products.map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: product.name,
+          description: product.detail,
+          category: product.category,
+          image: `https://kalethon.com${collection.image}`,
+          brand: { "@type": "Brand", name: "KALËTHON" },
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "GBP",
+            price: product.price.replace("£", ""),
+            availability: "https://schema.org/PreOrder",
+            url: `https://kalethon.com/#pieces`,
+          },
+        },
+      })),
+    },
   };
   return <main className="sport-page">
     <header className="journal-header"><Link className="journal-brand" href="/">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/measurements">Measurements</Link><Link href="/journal">Journal</Link><BagLink /></nav></header>

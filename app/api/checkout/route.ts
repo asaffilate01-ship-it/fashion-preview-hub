@@ -19,13 +19,29 @@ const fits = new Set<string>(storeFits);
 const finishes = new Set<string>(storeFinishes);
 
 function stripeConnection(): { endpoint: string; headers: Record<string, string> } | null {
-  const directKey = process.env.STRIPE_SECRET_KEY;
-  if (directKey) return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${directKey}` } };
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (secretKey && /^(sk|rk)_(test|live)_/.test(secretKey)) {
+    return { endpoint: "https://api.stripe.com/v1/checkout/sessions", headers: { Authorization: `Bearer ${secretKey}` } };
+  }
   const environment = process.env.PAYMENTS_ENVIRONMENT === "sandbox" ? "sandbox" : "live";
   const connectionKey = environment === "sandbox" ? process.env.STRIPE_SANDBOX_API_KEY : process.env.STRIPE_LIVE_API_KEY;
   const lovableKey = process.env.LOVABLE_API_KEY;
   if (!connectionKey || !lovableKey) return null;
-  return { endpoint: "https://connector-gateway.lovable.dev/stripe/v1/checkout/sessions", headers: { Authorization: `Bearer ${connectionKey}`, "X-Connection-Api-Key": connectionKey, "Lovable-API-Key": lovableKey } };
+  return {
+    endpoint: "https://connector-gateway.lovable.dev/stripe/v1/checkout/sessions",
+    headers: { Authorization: `Bearer ${connectionKey}`, "X-Connection-Api-Key": connectionKey, "Lovable-API-Key": lovableKey },
+  };
+}
+
+function storefrontOrigin(request: Request) {
+  const configured = process.env.SITE_URL?.trim();
+  if (configured) {
+    const url = new URL(configured);
+    if (url.protocol !== "https:" && url.hostname !== "localhost") throw new Error("SITE_URL must use HTTPS");
+    return url.origin;
+  }
+  const requestUrl = new URL(request.url);
+  return requestUrl.hostname === "localhost" ? requestUrl.origin : "https://kalethon.com";
 }
 
 function validItem(value: unknown): value is BagItem {
@@ -61,11 +77,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "The bag or garment specification was not valid." }, { status: 400 });
     }
     const items = submittedItems as BagItem[];
-    const origin = new URL(request.url).origin;
+    const origin = storefrontOrigin(request);
     const form = new URLSearchParams();
     form.set("mode", "payment");
-    form.set("success_url", `${origin}/bag?checkout=success`);
+    form.set("success_url", `${origin}/bag?checkout=success&session_id={CHECKOUT_SESSION_ID}`);
     form.set("cancel_url", `${origin}/bag?checkout=cancelled`);
+    form.set("submit_type", "pay");
+    form.set("customer_creation", "always");
     form.set("billing_address_collection", "required");
     form.set("phone_number_collection[enabled]", "true");
     form.set("allow_promotion_codes", "true");
@@ -79,6 +97,7 @@ export async function POST(request: Request) {
       form.set(`line_items[${index}][price_data][unit_amount]`, String(unitAmountFor(item)));
       form.set(`line_items[${index}][price_data][product_data][name]`, `KALËTHON ${product.name}`);
       form.set(`line_items[${index}][price_data][product_data][description]`, description);
+      form.set(`line_items[${index}][price_data][product_data][images][0]`, `${origin}${product.image}`);
       form.set(`line_items[${index}][price_data][product_data][metadata][specification]`, description);
       form.set(`line_items[${index}][price_data][product_data][metadata][product_id]`, item.productId);
     });
@@ -86,6 +105,8 @@ export async function POST(request: Request) {
     form.set("metadata[site_terms_accepted]", "true");
     form.set("metadata[marketing_consent]", body.marketingConsent ? "yes" : "no");
     form.set("metadata[consent_recorded_at]", new Date().toISOString());
+    form.set("payment_intent_data[description]", `KALËTHON order · ${items.reduce((total, item) => total + item.quantity, 0)} garment(s)`);
+    form.set("payment_intent_data[metadata][order_source]", "kalethon.com");
     const stripeResponse = await fetch(stripe.endpoint, { method: "POST", headers: { ...stripe.headers, "Content-Type": "application/x-www-form-urlencoded" }, body: form });
     const data = await stripeResponse.json().catch(() => ({}));
     if (!stripeResponse.ok || typeof data.url !== "string") return NextResponse.json({ message: "Secure checkout could not start. Please try again." }, { status: 502 });

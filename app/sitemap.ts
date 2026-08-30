@@ -6,7 +6,7 @@ import { legalPages } from "@/lib/legal";
 const baseUrl = "https://kalethon.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date("2026-08-29T00:00:00Z");
+  const now = new Date("2026-08-30T00:00:00Z");
   return [
     { url: baseUrl, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${baseUrl}/measurements`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },

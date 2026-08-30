@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useBag } from "@/components/bag-provider";
@@ -12,7 +12,23 @@ export default function BagClient() {
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [checkoutNotice, setCheckoutNotice] = useState("");
   const subtotal = items.reduce((total, item) => total + (unitAmountFor(item) * item.quantity), 0);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const status = new URLSearchParams(window.location.search).get("checkout");
+      if (status === "success") {
+        setCheckoutNotice("Payment received. Your KALËTHON order confirmation is being sent by email.");
+        clear();
+        window.history.replaceState({}, "", "/bag");
+      } else if (status === "cancelled") {
+        setCheckoutNotice("Checkout was cancelled. Your pieces are still in the bag.");
+        window.history.replaceState({}, "", "/bag");
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [clear]);
 
   const checkout = async () => {
     if (!termsAccepted || items.length === 0 || busy) return;
@@ -34,7 +50,7 @@ export default function BagClient() {
   };
 
   if (!ready) return <section className="bag-shell"><p>Preparing your bag…</p></section>;
-  if (items.length === 0) return <section className="bag-empty"><span>0</span><h2>Your bag is ready.</h2><p>Choose a finished colourway and size from the collection.</p><Link href="/#pieces">Shop KALËTHON clothing ↗</Link></section>;
+  if (items.length === 0) return <section className="bag-empty"><span>0</span>{checkoutNotice && <p className="bag-success" role="status">{checkoutNotice}</p>}<h2>{checkoutNotice ? "Order received." : "Your bag is ready."}</h2><p>{checkoutNotice || "Choose a finished colourway and size from the collection."}</p><Link href="/#pieces">Shop KALËTHON clothing ↗</Link></section>;
 
   return <section className="bag-shell">
     <div className="bag-items">
@@ -46,6 +62,7 @@ export default function BagClient() {
       </article>)}
     </div>
     <aside className="bag-summary">
+      {checkoutNotice && <p className="bag-success" role="status">{checkoutNotice}</p>}
       <p className="eyebrow light">Order summary</p><div><span>Garments</span><b>{formatGBP(subtotal)}</b></div><div><span>UK delivery</span><b>{subtotal >= 15000 ? "Complimentary" : "Calculated at checkout"}</b></div><div className="bag-total"><span>Total</span><strong>{formatGBP(subtotal)}</strong></div>
       <p>Taxes, international delivery and duties are confirmed during checkout.</p>
       <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked every specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>.</span></label>

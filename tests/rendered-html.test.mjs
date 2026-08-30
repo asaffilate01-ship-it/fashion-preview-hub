@@ -33,10 +33,18 @@ test("renders KALËTHON search and social metadata", async () => {
   assert.doesNotMatch(html, /href="\/customise"/);
   assert.match(html, /Poise Pullover Hoodie/);
   assert.match(html, /Club Zip Hoodie/);
+  assert.match(html, /Casual Contrast Polo/);
+  assert.match(html, /Links Golf Polo/);
+  assert.match(html, /Baseline Tennis Polo/);
+  assert.match(html, /src="\/campaign-polo\.png"/);
+  assert.match(html, /src="\/collections\/golf\.jpg"/);
+  assert.match(html, /src="\/collections\/tennis\.jpg"/);
+  assert.match(html, /src="\/catalog\/club-zip-hoodie-clean\.png"/);
   assert.match(html, /full KALËTHON wordmark/i);
   assert.match(html, /property="og:image" content="https:\/\/kalethon\.com\/og\.jpg"/);
   assert.match(html, /rel="icon" href="https:\/\/kalethon\.com\/favicon\.svg"/);
   assert.match(html, /application\/ld\+json/);
+  assert.match(html, /https:\/\/schema\.org\/PreOrder/);
 });
 
 test("serves Virtual Viewing Room products without the broken image optimiser", async () => {
@@ -64,4 +72,23 @@ test("serves Virtual Viewing Room products without the broken image optimiser", 
   assert.match(html, /src="\/catalog\/court-polo-k\.webp"/);
   assert.match(html, /src="\/catalog\/club-zip-hoodie\.webp"/);
   assert.doesNotMatch(html, /\/_vinext\/image\?/);
+});
+
+test("keeps checkout closed until a secure Stripe key is configured", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("checkout-test", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+
+  const response = await worker.fetch(
+    new Request("http://localhost/api/checkout", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ items: [], termsAccepted: true, marketingConsent: false }),
+    }),
+    {},
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).code, "not_configured");
 });
