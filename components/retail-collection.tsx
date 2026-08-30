@@ -47,7 +47,7 @@ const products: RetailProduct[] = [
   { sku: "club-tracksuit-ink", id: "club-tracksuit", name: "Club Tracksuit", category: "Sets", type: "Jacket and jogger set", material: "Coordinated brushed fleece", image: "/campaign-hoodie-track.png", amount: 22500, colour: "Ink", collarColour: "Ink", cuffColour: "Ink", finish: "Clean", sleeve: "Long sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "Matched cloth, dye lot and K icon" },
 ];
 
-function ProductSignature({ branding, tone = "ink" }: Pick<RetailProduct, "branding" | "signatureTone">) {
+function ProductSignature({ branding, signatureTone: tone = "ink" }: Pick<RetailProduct, "branding" | "signatureTone">) {
   return (
     <div className={`product-signature ${branding === "K mark" ? "product-signature-mark" : "product-signature-word"} signature-${tone}`} aria-label={branding}>
       {branding === "K mark" ? (
