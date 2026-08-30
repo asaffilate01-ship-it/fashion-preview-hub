@@ -211,7 +211,7 @@ type TryOnStage = "idle" | "preparing" | "queued" | "processing" | "complete" | 
 
 function loadImage(source: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const image = new Image();
+    const image = new window.Image();
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error("That image could not be prepared."));
     image.src = source;
