@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 836 941">
+  <defs><filter id="soft"><feGaussianBlur stdDeviation="0.7"/></filter></defs>
+  <path filter="url(#soft)" fill="#fff" d="M313 185c21-14 42-22 66-25 14 4 30 5 45 1 23 3 45 10 65 23 17 11 27 26 31 45l7 55-34 13-13-7-5 102c-42 18-126 18-169 1l1-101-14 7-24-14 8-57c4-19 16-33 36-43Z"/>
+</svg>
