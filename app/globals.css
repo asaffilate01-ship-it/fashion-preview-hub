@@ -379,6 +379,20 @@ a { color: inherit; text-decoration: none; }
 .retail-colourway i { width: 17px; height: 17px; border: 1px solid rgba(16,17,15,.22); border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); }
 .retail-colourway b { margin-left: 4px; color: rgba(16,17,15,.58); font-size: 7px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; }
 .swatch-bone { background: #eee7d8; } .swatch-ink { background: #141513; } .swatch-navy { background: #1e2b43; } .swatch-oxblood { background: #712536; } .swatch-sage { background: #7c8573; } .swatch-stone { background: #aaa092; }
+.retail-image-caption { position: absolute; z-index: 3; left: 15px; right: 15px; bottom: 14px; padding: 7px 9px; background: rgba(250,249,246,.9); color: var(--ink); font-size: 7px; font-weight: 650; letter-spacing: .07em; line-height: 1.35; text-align: center; text-transform: uppercase; backdrop-filter: blur(7px); }
+.retail-image-caption.is-reference { background: rgba(16,17,15,.82); color: white; }
+.retail-colourways { grid-column: 1 / -1; margin-top: 5px; padding-top: 12px; border-top: 1px solid rgba(16,17,15,.1); display: grid; gap: 10px; }
+.retail-colourways > div:first-child { display: flex; align-items: baseline; gap: 9px; }
+.retail-colourways > div:first-child span { color: rgba(16,17,15,.48); font-size: 7px; letter-spacing: .11em; text-transform: uppercase; }
+.retail-colourways > div:first-child b { font-size: 9px; font-weight: 650; }
+.retail-colourways > div:first-child small { margin-left: auto; color: rgba(16,17,15,.42); font-size: 7px; letter-spacing: .08em; text-transform: uppercase; }
+.retail-colourways > div:last-child { display: flex; flex-wrap: wrap; gap: 7px; }
+.retail-colourways button { width: 34px; height: 34px; padding: 3px; position: relative; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid rgba(16,17,15,.18); border-radius: 50%; background: #fff; cursor: pointer; transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+.retail-colourways button:hover { transform: translateY(-1px); border-color: rgba(16,17,15,.5); }
+.retail-colourways button.is-selected { border-color: var(--ink); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--ink); }
+.retail-colourways button i { display: block; width: 100%; height: 100%; }
+.retail-colourways button i:first-child { border-radius: 999px 0 0 999px; }
+.retail-colourways button i:last-child { border-radius: 0 999px 999px 0; }
 .retail-product-actions { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(16,17,15,.18); }
 .retail-product-actions button, .retail-product-actions a { min-height: 50px; padding: 0 16px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 8px; font-weight: 750; letter-spacing: .11em; text-align: center; text-transform: uppercase; cursor: pointer; transition: background .2s, color .2s; }
 .retail-product-actions button { border-right: 1px solid rgba(16,17,15,.18); }

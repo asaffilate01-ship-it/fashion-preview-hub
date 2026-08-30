@@ -9,7 +9,7 @@ import type { StorefrontProduct } from "@/lib/commerce-types";
 
 type RetailCategory = "All" | "Polos" | "Tops" | "Layers" | "Bottoms" | "Sets";
 
-type RetailProduct = {
+type RetailProductBase = {
   sku: string;
   id: string;
   name: string;
@@ -33,9 +33,25 @@ type RetailProduct = {
   tracked?: boolean;
 };
 
+type RetailColourway = {
+  key: string;
+  label: string;
+  colour: StoreColour;
+  collarColour: StoreColour;
+  cuffColour: StoreColour;
+  managedId?: string;
+  image?: string;
+  signatureTone?: "ink" | "bone" | "oxblood";
+  amount?: number;
+  available?: number;
+  tracked?: boolean;
+};
+
+type RetailProduct = RetailProductBase & { colourways: RetailColourway[] };
+
 const categories: RetailCategory[] = ["All", "Polos", "Tops", "Layers", "Bottoms", "Sets"];
 
-const baseProducts: RetailProduct[] = [
+const rawProducts: RetailProductBase[] = [
   { sku: "court-polo-bone", id: "court-polo", name: "Court Polo", category: "Polos", type: "Sport-to-city polo", material: "220 GSM mercerised cotton piqué", image: "/catalog/court-polo-k.webp", amount: 8500, colour: "Bone", collarColour: "Navy", cuffColour: "Navy", finish: "Contrast trim", sleeve: "Short sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "Structured cotton, navy tipping and the exact Kinetic K" },
   { sku: "court-polo-oxblood", id: "court-polo", name: "Court Polo — Oxblood", category: "Polos", type: "Sport-to-city polo", material: "220 GSM mercerised cotton piqué", image: "/catalog/court-polo-oxblood.webp", amount: 8500, colour: "Oxblood", collarColour: "Bone", cuffColour: "Bone", finish: "Contrast trim", sleeve: "Short sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "Oxblood piqué, bone collar and cuff tipping, and the exact Kinetic K" },
   { sku: "casual-contrast-polo", id: "casual-polo", name: "Casual Contrast Polo", category: "Polos", type: "Relaxed lifestyle polo", material: "240 GSM soft cotton piqué", image: "/campaign-polo.png", amount: 8500, colour: "Oxblood", collarColour: "Oxblood", cuffColour: "Oxblood", finish: "Clean", sleeve: "Short sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "A softer drape, open movement and understated K chest mark" },
@@ -52,6 +68,72 @@ const baseProducts: RetailProduct[] = [
   { sku: "court-skirt-oxblood", id: "court-skirt", name: "Court Skort", category: "Bottoms", type: "Tennis skirt and short", material: "Stretch woven construction", image: "/try-on/court-skort-photo.webp", amount: 9200, colour: "Oxblood", collarColour: "Oxblood", cuffColour: "Oxblood", finish: "Clean", sleeve: "Not applicable", branding: "K mark", sizes: ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14", "UK 16", "UK 18", "UK 20", "UK 22", "UK 24"], note: "Opaque built-in short and K icon" },
   { sku: "club-tracksuit-ink", id: "club-tracksuit", name: "Club Tracksuit", category: "Sets", type: "Jacket and jogger set", material: "Coordinated brushed fleece", image: "/campaign-hoodie-track.png", amount: 22500, colour: "Ink", collarColour: "Ink", cuffColour: "Ink", finish: "Clean", sleeve: "Long sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "Matched cloth, dye lot and K icon" },
 ];
+
+function colourway(key: string, label: string, colour: StoreColour, collarColour: StoreColour = colour, cuffColour: StoreColour = collarColour, managedId?: string, image?: string, signatureTone?: RetailColourway["signatureTone"]): RetailColourway {
+  return { key, label, colour, collarColour, cuffColour, managedId, image, signatureTone };
+}
+
+const colourwaySets: Record<string, RetailColourway[]> = {
+  "court-polo-bone": [
+    colourway("bone-navy", "Bone / Navy", "Bone", "Navy", "Navy", "court-polo-bone", "/catalog/court-polo-k.webp"),
+    colourway("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone", "court-polo-oxblood", "/catalog/court-polo-oxblood.webp"),
+    colourway("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"),
+    colourway("sage-navy", "Sage / Navy", "Sage", "Navy", "Navy"),
+    colourway("stone-oxblood", "Stone / Oxblood", "Stone", "Oxblood", "Oxblood"),
+  ],
+  "casual-contrast-polo": [
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "casual-contrast-polo", "/campaign-polo.png"),
+    colourway("bone", "Bone", "Bone"), colourway("navy", "Navy", "Navy"), colourway("sage", "Sage", "Sage"), colourway("stone", "Stone", "Stone"),
+  ],
+  "links-golf-polo": [
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", "links-golf-polo", "/collections/golf.jpg"),
+    colourway("navy-bone", "Navy / Bone", "Navy", "Navy", "Bone"), colourway("bone-sage", "Bone / Sage", "Bone", "Sage", "Sage"), colourway("oxblood-bone", "Oxblood / Bone", "Oxblood", "Oxblood", "Bone"), colourway("stone-navy", "Stone / Navy", "Stone", "Stone", "Navy"),
+  ],
+  "baseline-tennis-polo": [
+    colourway("bone-oxblood", "Bone / Oxblood", "Bone", "Oxblood", "Oxblood", "baseline-tennis-polo", "/collections/tennis.jpg"),
+    colourway("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"), colourway("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone"), colourway("sage-bone", "Sage / Bone", "Sage", "Bone", "Bone"), colourway("stone-navy", "Stone / Navy", "Stone", "Navy", "Navy"),
+  ],
+  "performance-tee-ink": [
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", "performance-tee-ink", "/try-on/form-tee.jpg", "bone"),
+    colourway("bone", "Bone", "Bone", "Bone", "Bone", undefined, undefined, "ink"), colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, undefined, "bone"),
+  ],
+  "poise-hoodie-bone": [
+    colourway("bone", "Bone", "Bone", "Bone", "Bone", "poise-hoodie-bone", "/catalog/poise-pullover-hoodie.webp", "ink"),
+    colourway("sage", "Sage", "Sage", "Sage", "Sage", "poise-hoodie-sage", "/catalog/poise-pullover-hoodie-sage.webp", "bone"),
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("stone", "Stone", "Stone", "Stone", "Stone", undefined, undefined, "ink"),
+  ],
+  "club-hoodie-bone": [
+    colourway("bone", "Bone", "Bone", "Bone", "Bone", "club-hoodie-bone", "/campaign-hoodie-track.png", "ink"),
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, undefined, "bone"), colourway("navy", "Navy", "Navy", "Navy", "Navy", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("stone", "Stone", "Stone", "Stone", "Stone", undefined, undefined, "ink"),
+  ],
+  "club-zip-hoodie": [
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", "club-zip-hoodie", "/catalog/club-zip-hoodie-clean.png", "bone"),
+    colourway("stone", "Stone", "Stone", "Stone", "Stone", "club-zip-hoodie-stone", "/catalog/club-zip-hoodie-stone.webp", "ink"),
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", undefined, undefined, "bone"), colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", undefined, undefined, "bone"), colourway("sage", "Sage", "Sage", "Sage", "Sage", undefined, undefined, "bone"),
+  ],
+  "motion-jogger-stone": [
+    colourway("stone", "Stone", "Stone", "Stone", "Stone", "motion-jogger-stone", "/try-on/motion-jogger.jpg"),
+    colourway("ink", "Ink", "Ink"), colourway("navy", "Navy", "Navy"), colourway("sage", "Sage", "Sage"), colourway("oxblood", "Oxblood", "Oxblood"),
+  ],
+  "court-short-navy": [
+    colourway("navy", "Navy", "Navy", "Navy", "Navy", "court-short-navy", "/try-on/court-short-photo.webp"),
+    colourway("ink", "Ink", "Ink"), colourway("bone", "Bone", "Bone"), colourway("sage", "Sage", "Sage"), colourway("oxblood", "Oxblood", "Oxblood"),
+  ],
+  "court-skirt-oxblood": [
+    colourway("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "court-skirt-oxblood", "/try-on/court-skort-photo.webp"),
+    colourway("navy", "Navy", "Navy"), colourway("bone", "Bone", "Bone"), colourway("sage", "Sage", "Sage"), colourway("ink", "Ink", "Ink"),
+  ],
+  "club-tracksuit-ink": [
+    colourway("ink", "Ink", "Ink", "Ink", "Ink", "club-tracksuit-ink", "/campaign-hoodie-track.png"),
+    colourway("navy", "Navy", "Navy"), colourway("stone", "Stone", "Stone"), colourway("sage", "Sage", "Sage"), colourway("oxblood", "Oxblood", "Oxblood"),
+  ],
+};
+
+const groupedIds = new Set(["court-polo-oxblood", "poise-hoodie-sage", "club-zip-hoodie-stone"]);
+const baseProducts: RetailProduct[] = rawProducts.filter((product) => !groupedIds.has(product.sku)).map((product) => ({
+  ...product,
+  colourways: colourwaySets[product.sku] ?? [colourway(product.colour.toLowerCase(), product.colour, product.colour, product.collarColour, product.cuffColour, product.sku, product.image, product.signatureTone)],
+}));
 
 function ProductSignature({ branding, signatureTone: tone = "ink" }: Pick<RetailProduct, "branding" | "signatureTone">) {
   return (
@@ -73,6 +155,7 @@ export default function RetailCollection() {
   const [category, setCategory] = useState<RetailCategory>("All");
   const [activeProduct, setActiveProduct] = useState<string | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
+  const [selectedColours, setSelectedColours] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
   const visibleProducts = useMemo(() => category === "All" ? products : products.filter((product) => product.category === category), [category, products]);
 
@@ -84,10 +167,14 @@ export default function RetailCollection() {
       if (!active || !Array.isArray(body.products)) return;
       const published = body.products;
       const publishedById = new Map(published.map((product) => [product.id, product]));
-      const known = new Set(baseProducts.map((product) => product.sku));
-      const merged = baseProducts.filter((product) => publishedById.has(product.sku)).map((product) => {
-        const current = publishedById.get(product.sku)!;
-        return { ...product, name: current.name, type: current.productType, note: current.description || product.note, image: current.image, amount: current.price, available: current.available, tracked: current.tracked };
+      const known = new Set(baseProducts.flatMap((product) => [product.sku, ...product.colourways.flatMap((option) => option.managedId ? [option.managedId] : [])]));
+      const merged = baseProducts.filter((product) => product.colourways.some((option) => publishedById.has(option.managedId ?? product.sku))).map((product) => {
+        const current = publishedById.get(product.sku) ?? product.colourways.map((option) => option.managedId ? publishedById.get(option.managedId) : undefined).find(Boolean)!;
+        const colourways = product.colourways.map((option) => {
+          const managed = option.managedId ? publishedById.get(option.managedId) : undefined;
+          return managed ? { ...option, image: option.image ?? managed.image, amount: managed.price, available: managed.available, tracked: managed.tracked } : option;
+        });
+        return { ...product, name: current.name.replace(/ — (Oxblood|Sage|Stone)$/u, ""), type: current.productType, note: current.description || product.note, image: current.image, amount: current.price, available: current.available, tracked: current.tracked, colourways };
       });
       const additions = published.filter((product) => !known.has(product.id)).map<RetailProduct>((product) => ({
         sku: product.id,
@@ -108,30 +195,31 @@ export default function RetailCollection() {
         note: product.description || "Finished KALËTHON design",
         available: product.available,
         tracked: product.tracked,
+        colourways: [colourway("bone", "Bone", "Bone", "Bone", "Bone", product.id, product.image)],
       }));
       setProducts([...merged, ...additions]);
     }).catch(() => undefined);
     return () => { active = false; };
   }, []);
 
-  const addStandardDesign = (product: RetailProduct) => {
+  const addStandardDesign = (product: RetailProduct, selected: RetailColourway) => {
     const size = selectedSizes[product.sku] ?? product.sizes[Math.min(2, product.sizes.length - 1)];
     addItem({
       productId: product.id,
-      sku: product.sku,
-      unitAmount: product.amount,
+      sku: selected.managedId ?? product.sku,
+      unitAmount: selected.amount ?? product.amount,
       name: product.name,
-      image: product.image,
-      bodyColour: product.colour,
-      collarColour: product.collarColour,
-      cuffColour: product.cuffColour,
+      image: selected.image ?? product.image,
+      bodyColour: selected.colour,
+      collarColour: selected.collarColour,
+      cuffColour: selected.cuffColour,
       sleeve: product.sleeve,
       branding: product.branding,
       fit: "Regular",
       finish: product.finish,
       size,
     });
-    setMessage(`${product.name}, ${size}, added to your bag.`);
+    setMessage(`${product.name}, ${selected.label}, ${size}, added to your bag.`);
     setActiveProduct(null);
   };
 
@@ -163,35 +251,43 @@ export default function RetailCollection() {
         {visibleProducts.map((product) => {
           const isOpen = activeProduct === product.sku;
           const selectedSize = selectedSizes[product.sku] ?? product.sizes[Math.min(2, product.sizes.length - 1)];
+          const selectedColourway = product.colourways.find((option) => option.key === selectedColours[product.sku]) ?? product.colourways[0];
+          const selectedAmount = selectedColourway.amount ?? product.amount;
+          const selectedAvailable = selectedColourway.available ?? product.available;
+          const selectedTracked = selectedColourway.tracked ?? product.tracked;
+          const displayedImage = selectedColourway.image ?? product.image;
+          const exactPhotography = Boolean(selectedColourway.image);
           return (
             <article className="retail-product-card" id={`product-${product.sku}`} key={product.sku}>
               <div className="retail-product-image">
-                <Image className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={product.image} alt={`${product.name} — ${product.type}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />
-                {product.signatureOnImage && <ProductSignature branding={product.branding} signatureTone={product.signatureTone} />}
+                <Image key={displayedImage} className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={displayedImage} alt={`${product.name} — ${selectedColourway.label}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />
+                {product.signatureOnImage && <ProductSignature branding={product.branding} signatureTone={selectedColourway.signatureTone ?? product.signatureTone} />}
                 <span>{product.category}</span>
                 <b>Made to order</b>
+                <small className={exactPhotography ? "retail-image-caption" : "retail-image-caption is-reference"}>{exactPhotography ? `${selectedColourway.label} shown` : `${selectedColourway.label} selected · photography is a colour reference`}</small>
               </div>
               <div className="retail-product-copy">
                 <div><p>{product.type}</p><h3>{product.name}</h3></div>
-                <strong>{formatGBP(product.amount)}</strong>
+                <strong>{formatGBP(selectedAmount)}</strong>
                 <span>{product.material}</span>
                 <small>{product.note}</small>
                 <div className="retail-branding"><span>Signature</span><ProductSignature branding={product.branding} signatureTone="ink" /><b>{product.branding === "K mark" ? "Kinetic K icon" : "Full KALËTHON wordmark"}</b></div>
-                <div className="retail-colourway" aria-label={`${product.name} colourway: ${product.colour} body, ${product.collarColour} collar, ${product.cuffColour} trim`}>
-                  <i className={`swatch-${product.colour.toLowerCase()}`} /><i className={`swatch-${product.collarColour.toLowerCase()}`} /><b>{product.colour} / {product.collarColour}{product.cuffColour !== product.collarColour ? ` / ${product.cuffColour}` : ""}</b>
+                <div className="retail-colourways" role="group" aria-label={`Choose a ${product.name} colour`}>
+                  <div><span>Colour</span><b>{selectedColourway.label}</b><small>{product.colourways.length} options</small></div>
+                  <div>{product.colourways.map((option) => <button type="button" className={option.key === selectedColourway.key ? "is-selected" : ""} aria-pressed={option.key === selectedColourway.key} aria-label={option.label} title={option.label} onClick={() => setSelectedColours((current) => ({ ...current, [product.sku]: option.key }))} key={option.key}><i className={`swatch-${option.colour.toLowerCase()}`} /><i className={`swatch-${option.collarColour.toLowerCase()}`} /></button>)}</div>
                 </div>
               </div>
               <div className="retail-product-actions">
-                <button type="button" aria-expanded={isOpen} disabled={product.tracked && Number(product.available) <= 0} onClick={() => setActiveProduct(isOpen ? null : product.sku)}>{product.tracked && Number(product.available) <= 0 ? "Out of stock" : "Choose size"}</button>
-                <Link href="/try-on">Virtual try-on <span aria-hidden="true">↗</span></Link>
+                <button type="button" aria-expanded={isOpen} disabled={selectedTracked && Number(selectedAvailable) <= 0} onClick={() => setActiveProduct(isOpen ? null : product.sku)}>{selectedTracked && Number(selectedAvailable) <= 0 ? "Out of stock" : "Choose size"}</button>
+                <Link href={`/try-on?product=${encodeURIComponent(product.id)}&colour=${encodeURIComponent(selectedColourway.colour)}`}>Virtual try-on <span aria-hidden="true">↗</span></Link>
               </div>
               {isOpen && <div className="retail-quick-add">
                 <div><b>Choose size</b><Link href="/measurements">Size guide</Link></div>
                 <div className="retail-size-scroll" role="group" aria-label={`Choose ${product.name} size`}>
                   {product.sizes.map((size) => <button className={selectedSize === size ? "is-selected" : ""} type="button" aria-pressed={selectedSize === size} onClick={() => setSelectedSizes((current) => ({ ...current, [product.sku]: size }))} key={size}>{size}</button>)}
                 </div>
-                <button className="retail-add-button" type="button" onClick={() => addStandardDesign(product)}>Add {selectedSize} to bag · {formatGBP(product.amount)}</button>
-                <small>Finished design: {product.colour} body, {product.collarColour} collar, {product.cuffColour} trim, {product.finish.toLowerCase()}, regular fit and {product.branding === "K mark" ? "discreet Kinetic K chest mark" : "aligned full KALËTHON wordmark"}.</small>
+                <button className="retail-add-button" type="button" onClick={() => addStandardDesign(product, selectedColourway)}>Add {selectedSize} to bag · {formatGBP(selectedAmount)}</button>
+                <small>Finished design: {selectedColourway.colour} body, {selectedColourway.collarColour} collar, {selectedColourway.cuffColour} trim, {product.finish.toLowerCase()}, regular fit and {product.branding === "K mark" ? "discreet Kinetic K chest mark" : "aligned full KALËTHON wordmark"}.</small>
               </div>}
             </article>
           );
