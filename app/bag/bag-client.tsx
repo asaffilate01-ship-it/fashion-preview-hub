@@ -40,7 +40,7 @@ export default function BagClient() {
     <div className="bag-items">
       <div className="bag-list-heading"><span>{items.length} design{items.length === 1 ? "" : "s"}</span><button type="button" onClick={clear}>Clear bag</button></div>
       {items.map((item) => <article className="bag-item" key={item.id}>
-        <Image src={item.image} alt="" aria-hidden="true" width={300} height={352} />
+        <Image src={item.image} alt="" aria-hidden="true" width={300} height={352} unoptimized />
         <div><p>Made to order</p><h2>{item.name}</h2><dl><div><dt>Colour</dt><dd>{item.bodyColour}</dd></div><div><dt>Style</dt><dd>{item.finish}</dd></div><div><dt>Fit / size</dt><dd>{item.fit} / {item.size}</dd></div><div><dt>Sleeve</dt><dd>{item.sleeve}</dd></div><div><dt>Signature</dt><dd>{item.branding}</dd></div></dl><button type="button" onClick={() => removeItem(item.id)}>Remove</button></div>
         <div className="bag-item-price"><strong>{formatGBP(unitAmountFor(item) * item.quantity)}</strong><label>Quantity<select value={item.quantity} onChange={(event) => setQuantity(item.id, Number(event.target.value))}>{[1,2,3,4,5].map((quantity) => <option value={quantity} key={quantity}>{quantity}</option>)}</select></label></div>
       </article>)}

@@ -38,7 +38,7 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
     <header className="journal-header"><Link href="/" className="journal-brand">KALËTHON</Link><nav><Link href="/#pieces">Shop</Link><Link href="/try-on">Virtual try-on</Link><Link href="/journal">Journal</Link><BagLink /></nav></header>
     <article>
       <div className="article-heading"><p className="eyebrow">{article.category} / {article.readTime}</p><h1>{article.title}</h1><p>{article.dek}</p></div>
-      <figure><Image src={article.image} alt={article.imageAlt} width={1380} height={860}/><figcaption>KALËTHON Journal / {article.category}</figcaption></figure>
+      <figure><Image src={article.image} alt={article.imageAlt} width={1380} height={860} unoptimized/><figcaption>KALËTHON Journal / {article.category}</figcaption></figure>
       <div className="article-body">{article.sections.map((section) => <section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}</div>
       <ShareButtons title={article.title} url={canonical}/>
       <nav className="journal-related" aria-label="Continue reading"><Link href={`/journal/${previousArticle.slug}`}><span>Previous story</span><b>{previousArticle.title}</b></Link><Link href={`/journal/${nextArticle.slug}`}><span>Next story</span><b>{nextArticle.title}</b></Link></nav>

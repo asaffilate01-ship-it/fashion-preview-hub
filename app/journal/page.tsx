@@ -19,7 +19,7 @@ export default function JournalPage() {
     <section className="journal-hero"><p className="eyebrow">The KALËTHON journal</p><h1>Sport, cloth<br/><em>and the city.</em></h1><p>Practical thinking on how performance clothing is made, measured and worn—from court conditions to city streets.</p></section>
     <section className="journal-grid" aria-label="Journal articles">
       {journalArticles.map((article, index) => <article className={index === 0 ? "journal-card is-featured" : "journal-card"} key={article.slug}>
-        <Link href={`/journal/${article.slug}`} className="journal-card-image"><Image src={article.image} alt={article.imageAlt} width={1200} height={750}/></Link>
+        <Link href={`/journal/${article.slug}`} className="journal-card-image"><Image src={article.image} alt={article.imageAlt} width={1200} height={750} unoptimized/></Link>
         <div><span>{article.category} / {article.readTime}</span><h2><Link href={`/journal/${article.slug}`}>{article.title}</Link></h2><p>{article.dek}</p><Link href={`/journal/${article.slug}`}>Read journal ↗</Link></div>
       </article>)}
     </section>

@@ -284,7 +284,7 @@ export default function TryOnClient() {
               }}
               aria-pressed={selectedId === product.id}
             >
-              <Image src={product.image} alt={product.name} width={144} height={152} />
+              <Image src={product.image} alt={product.name} width={144} height={152} unoptimized />
               <span><strong>{product.name}</strong><small>{product.detail}</small></span>
               <b>{product.price}</b>
             </button>
@@ -340,7 +340,7 @@ export default function TryOnClient() {
             </>
           ) : (
             <div className="result-placeholder">
-              <Image className="result-garment-preview" src={selected.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" aria-hidden="true" />
+              <Image className="result-garment-preview" src={selected.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" aria-hidden="true" unoptimized />
               <p>{working ? stageCopy(stage) : "Your private try-on preview will appear here."}</p>
               {working && <span className="progress-line" aria-hidden="true"><i /></span>}
             </div>

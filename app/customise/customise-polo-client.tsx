@@ -806,7 +806,7 @@ export default function CustomisePoloClient() {
         <div className="bespoke-base-picker" role="group" aria-label="Choose a product to customise">
           {productTemplates.map((template) => (
             <button className={productKey === template.key ? "is-selected" : ""} type="button" key={template.key} onClick={() => chooseProduct(template.key)} aria-pressed={productKey === template.key}>
-              <span className="bespoke-picker-image"><Image className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" width={300} height={360} /></span>
+              <span className="bespoke-picker-image"><Image className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" width={300} height={360} unoptimized /></span>
               <span className="bespoke-picker-copy"><b>{template.shortName}</b><small>{template.description}</small><strong>From £{template.price}</strong></span>
             </button>
           ))}
