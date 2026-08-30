@@ -8,29 +8,29 @@ import RetailCollection from "@/components/retail-collection";
 
 const standardColourways = [
   {
-    name: "Casual Contrast Polo",
-    detail: "Bone body / oxblood collar and cuffs",
-    use: "Clubhouse and city",
+    name: "Court Polo",
+    detail: "Bone body / navy trim / Kinetic K",
+    use: "Court and city",
   },
   {
-    name: "Links Golf Polo",
-    detail: "Sage body / bone rib-knit collar",
-    use: "Course and travel",
-  },
-  {
-    name: "Baseline Tennis Polo",
-    detail: "Bone body / navy collar and sleeve bands",
-    use: "Court and warm-up",
-  },
-  {
-    name: "Poise Hoodie",
-    detail: "Oxblood structured loopback cotton",
+    name: "Poise Pullover Hoodie",
+    detail: "Bone loopback / Kinetic K",
     use: "Recovery and everyday",
   },
   {
-    name: "Heritage Tracksuit",
-    detail: "Navy set / restrained bone piping",
+    name: "Club Zip Hoodie",
+    detail: "Navy loopback / full wordmark",
     use: "Training and travel",
+  },
+  {
+    name: "Performance Tee",
+    detail: "Ink jersey / full wordmark",
+    use: "Studio and city",
+  },
+  {
+    name: "Court Short",
+    detail: "Navy woven shell / Kinetic K",
+    use: "Court and training",
   },
 ];
 
@@ -171,7 +171,9 @@ export default function Home() {
 
       <section className="standard-colourways" id="hoodies" aria-labelledby="colourways-title">
         <div className="standard-colourways-image">
-          <Image src="/catalog/standard-colourways-capsule.webp" alt="KALËTHON casual polo, golf polo, tennis polo, hoodie and tracksuit standard colourways" fill sizes="(max-width: 900px) 100vw, 56vw" />
+          <div><Image src="/catalog/court-polo-k.webp" alt="KALËTHON Court Polo with exact Kinetic K" fill sizes="(max-width: 900px) 100vw, 38vw" /></div>
+          <div><Image src="/catalog/poise-pullover-hoodie.webp" alt="KALËTHON pullover hoodie with exact Kinetic K" fill sizes="(max-width: 900px) 50vw, 19vw" /></div>
+          <div><Image src="/catalog/club-zip-hoodie.webp" alt="KALËTHON zip hoodie with full wordmark" fill sizes="(max-width: 900px) 50vw, 19vw" /></div>
         </div>
         <div className="standard-colourways-copy">
           <p className="eyebrow">Finished designs / Ready to choose</p>
@@ -188,6 +190,24 @@ export default function Home() {
             ))}
           </div>
           <a className="button dark" href="#pieces">Shop the standard colourways <Arrow /></a>
+        </div>
+      </section>
+
+      <section className="hoodie-constructions" aria-labelledby="hoodie-constructions-title">
+        <div className="hoodie-constructions-heading">
+          <p className="eyebrow">Core layers / Two constructions</p>
+          <h2 id="hoodie-constructions-title">Pullover or zip-up.<br /><em>The same standard.</em></h2>
+          <p>Both are built in substantial loopback cloth. The pullover carries the exact Kinetic K; the zip hoodie carries the full KALËTHON wordmark.</p>
+        </div>
+        <div className="hoodie-constructions-grid">
+          <Link href="#product-poise-hoodie-bone">
+            <span className="hoodie-construction-image"><Image src="/catalog/poise-pullover-hoodie.webp" alt="Bone KALËTHON pullover hoodie with the exact Kinetic K chest mark" fill sizes="(max-width: 760px) 100vw, 50vw" /></span>
+            <span className="hoodie-construction-copy"><small>01 / K Icon line</small><b>Poise Pullover Hoodie</b><em>420 GSM loopback · £125</em></span>
+          </Link>
+          <Link href="#product-club-zip-hoodie">
+            <span className="hoodie-construction-image"><Image src="/catalog/club-zip-hoodie.webp" alt="Navy KALËTHON full-zip hoodie with the complete wordmark" fill sizes="(max-width: 760px) 100vw, 50vw" /></span>
+            <span className="hoodie-construction-copy"><small>02 / Wordmark line</small><b>Club Zip Hoodie</b><em>450 GSM loopback · £133</em></span>
+          </Link>
         </div>
       </section>
 
@@ -208,11 +228,11 @@ export default function Home() {
           <p className="eyebrow light">Graphic series / 01</p>
           <h2 id="graphic-title">The wordmark,<br /><em>set in motion.</em></h2>
           <p>
-            On selected tees, the full KALËTHON name becomes the artwork—scaled, angled and cut through with the collection palette. Premium essentials keep only the embroidered K.
+            Two signatures define the collection. Core polos, pullovers and performance pieces use the exact Kinetic K; selected tees, zip hoodies, golf shirts and tracksuits carry the full KALËTHON wordmark.
           </p>
           <div className="signature-rules" aria-label="KALËTHON signature system">
-            <div><Mark /><span><strong>Kinetic K</strong>Polos, hoodies, tracksuits and joggers</span></div>
-            <div><b>KALËTHON</b><span><strong>Full wordmark</strong>Statement tees and selected editions</span></div>
+            <div><Mark /><span><strong>Kinetic K</strong>Core polos, pullovers and performance pieces</span></div>
+            <div><b>KALËTHON</b><span><strong>Full wordmark</strong>Tees, zip hoodies and selected editions</span></div>
           </div>
           <a className="button" href="#pieces">Explore graphic tees <Arrow /></a>
         </div>

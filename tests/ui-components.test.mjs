@@ -42,6 +42,7 @@ test("emits the storefront's responsive and accessibility utilities", async () =
   assert.match(css, /customiser-shell/);
   assert.match(css, /sport-product-grid/);
   assert.match(css, /journal-grid/);
+  assert.match(css, /hoodie-constructions-grid/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
 });
 

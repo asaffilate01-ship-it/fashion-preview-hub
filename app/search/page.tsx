@@ -11,7 +11,8 @@ export const metadata: Metadata = { title: "Search", description: "Search KALËT
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
   const query = q.trim().toLowerCase();
-  const garments = Object.entries(customProductCatalog).filter(([, product]) => !query || product.name.toLowerCase().includes(query));
+  const hiddenGarmentIds = new Set(["performance-tank", "track-jacket"]);
+  const garments = Object.entries(customProductCatalog).filter(([id, product]) => !hiddenGarmentIds.has(id) && (!query || product.name.toLowerCase().includes(query)));
   const sports = sportCollections.filter((sport) => !query || `${sport.name} ${sport.description} ${sport.products.map((product) => product.name).join(" ")}`.toLowerCase().includes(query));
   const stories = journalArticles.filter((article) => !query || `${article.title} ${article.dek} ${article.category} ${article.keywords.join(" ")}`.toLowerCase().includes(query));
   const resultCount = garments.length + sports.length + stories.length;

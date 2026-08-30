@@ -7,9 +7,9 @@ const products = [
   {
     id: "court-polo",
     name: "The Court Polo",
-    detail: "Bone / oxblood K",
+    detail: "Bone / exact oxblood K",
     price: "£85",
-    image: "/try-on/court-polo.jpg",
+    image: "/catalog/court-polo-k.webp",
   },
   {
     id: "form-tee",
@@ -20,17 +20,17 @@ const products = [
   },
   {
     id: "poise-hoodie",
-    name: "The Poise Hoodie",
-    detail: "Bone / oxblood K",
+    name: "The Poise Pullover Hoodie",
+    detail: "Bone / exact oxblood K",
     price: "£125",
-    image: "/try-on/poise-hoodie.jpg",
+    image: "/catalog/poise-pullover-hoodie.webp",
   },
   {
-    id: "track-jacket",
-    name: "The Track Jacket",
-    detail: "Ink / bone K",
-    price: "£145",
-    image: "/try-on/track-jacket.jpg",
+    id: "club-zip-hoodie",
+    name: "The Club Zip Hoodie",
+    detail: "Navy / full KALËTHON wordmark",
+    price: "£133",
+    image: "/catalog/club-zip-hoodie.webp",
   },
   {
     id: "motion-jogger",
