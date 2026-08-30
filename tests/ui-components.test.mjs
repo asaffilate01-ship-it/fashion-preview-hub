@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import test, { after } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -86,6 +86,54 @@ test("ships fixed model photography for every people-based colourway", async () 
   assert.match(tryOnSource, /motion-jogger-oxblood\.webp/);
   assert.doesNotMatch(retailSource, /GarmentColourPreview/);
   assert.doesNotMatch(tryOnSource, /GarmentColourPreview/);
+});
+
+test("ships lightweight responsive campaign photography with loading skeletons", async () => {
+  const responsiveSource = await readFile(path.join(root, "components/responsive-product-image.tsx"), "utf8");
+  const customerFacingSources = await Promise.all([
+    "app/page.tsx",
+    "app/try-on/try-on-client.tsx",
+    "components/retail-collection.tsx",
+    "db/commerce.ts",
+    "lib/journal.ts",
+    "lib/store.ts",
+  ].map((file) => readFile(path.join(root, file), "utf8")));
+  const responsiveAssets = [
+    ...[480, 960, 1586].flatMap((width) => [`campaign-polo-${width}.avif`, `campaign-polo-${width}.webp`]),
+    ...[480, 960, 1586].flatMap((width) => [`campaign-hoodie-track-${width}.avif`, `campaign-hoodie-track-${width}.webp`]),
+    ...[480, 960, 1122].flatMap((width) => [`club-zip-hoodie-${width}.avif`, `club-zip-hoodie-${width}.webp`]),
+  ];
+
+  for (const asset of responsiveAssets) {
+    const assetStat = await stat(path.join(root, "public/media", asset));
+    assert.ok(assetStat.size < 150_000, `${asset} should remain below 150 KB`);
+  }
+  assert.match(responsiveSource, /type="image\/avif"/);
+  assert.match(responsiveSource, /type="image\/webp"/);
+  assert.match(responsiveSource, /product-image-skeleton/);
+  assert.match(responsiveSource, /aria-busy/);
+  assert.doesNotMatch(customerFacingSources.join("\n"), /campaign-polo\.png|campaign-hoodie-track\.png|club-zip-hoodie-clean\.png/);
+});
+
+test("publishes a production sitemap without private or hidden routes", async () => {
+  const { default: createSitemap } = await vite.ssrLoadModule("/app/sitemap.ts");
+  const urls = createSitemap().map((entry) => entry.url);
+
+  assert.ok(urls.includes("https://kalethon.com"));
+  assert.ok(urls.includes("https://kalethon.com/try-on"));
+  assert.ok(urls.some((url) => url.startsWith("https://kalethon.com/sport/")));
+  assert.ok(urls.some((url) => url.startsWith("https://kalethon.com/journal/")));
+  assert.ok(urls.every((url) => !/\/(?:customise|admin|api|bag)(?:\/|$)/.test(url)));
+});
+
+test("packages the production D1 commerce schema", async () => {
+  const hosting = JSON.parse(await readFile(path.join(root, ".openai/hosting.json"), "utf8"));
+  const migration = await readFile(path.join(root, "drizzle/0000_stormy_nekra.sql"), "utf8");
+
+  assert.equal(hosting.d1, "DB");
+  for (const table of ["commerce_products", "commerce_inventory", "commerce_orders", "commerce_questions", "commerce_webhook_events"]) {
+    assert.match(migration, new RegExp(`CREATE TABLE .*${table}`));
+  }
 });
 
 test("forwards progress semantics to the primitive", async () => {

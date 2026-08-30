@@ -36,10 +36,12 @@ test("renders KALËTHON search and social metadata", async () => {
   assert.match(html, /Casual Contrast Polo/);
   assert.match(html, /Links Golf Polo/);
   assert.match(html, /Baseline Tennis Polo/);
-  assert.match(html, /src="\/campaign-polo\.png"/);
+  assert.match(html, /src="\/media\/campaign-polo-960\.webp"/);
+  assert.match(html, /srcSet="\/media\/campaign-polo-480\.avif 480w/);
   assert.match(html, /src="\/collections\/golf\.jpg"/);
   assert.match(html, /src="\/collections\/tennis\.jpg"/);
-  assert.match(html, /src="\/catalog\/club-zip-hoodie-clean\.png"/);
+  assert.match(html, /src="\/media\/club-zip-hoodie-960\.webp"/);
+  assert.match(html, /product-image-skeleton/);
   assert.match(html, /full KALËTHON wordmark/i);
   assert.match(html, /property="og:image" content="https:\/\/kalethon\.com\/og\.jpg"/);
   assert.match(html, /rel="icon" href="https:\/\/kalethon\.com\/favicon\.svg"/);
@@ -70,7 +72,9 @@ test("serves Virtual Viewing Room products without the broken image optimiser", 
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /src="\/catalog\/court-polo-k\.webp"/);
-  assert.match(html, /src="\/catalog\/club-zip-hoodie-clean\.png"/);
+  assert.match(html, /src="\/media\/club-zip-hoodie-960\.webp"/);
+  assert.match(html, /srcSet="\/media\/club-zip-hoodie-480\.avif 480w/);
+  assert.match(html, /product-image-skeleton/);
   assert.match(html, /Choose a garment and colour/);
   assert.match(html, /Selected colour/);
   assert.match(html, /5(?:<!-- -->)? finished options/);

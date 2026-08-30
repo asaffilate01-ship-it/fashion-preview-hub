@@ -159,7 +159,7 @@ const productTemplates = [
     name: "Club Tracksuit",
     shortName: "Tracksuit",
     description: "Jacket and jogger set",
-    image: "/campaign-hoodie-track.png",
+    image: "/media/campaign-hoodie-track-960.webp",
     price: 225,
     sleeves: ["Long sleeve"],
     collar: true,

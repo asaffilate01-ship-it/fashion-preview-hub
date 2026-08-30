@@ -3,19 +3,19 @@ import type { CommerceInventoryRow, CommerceOrder, CommerceOverview, CommercePro
 const seedProducts = [
   ["court-polo-bone", "KAL-POLO-BONE", "court-polo-bone", "Court Polo", "Polos", "Sport-to-city polo", "/catalog/court-polo-k.webp", 8500, 3600],
   ["court-polo-oxblood", "KAL-POLO-OXB", "court-polo-oxblood", "Court Polo — Oxblood", "Polos", "Sport-to-city polo", "/catalog/court-polo-oxblood.webp", 8500, 3600],
-  ["casual-contrast-polo", "KAL-CASUAL-OXB", "casual-contrast-polo", "Casual Contrast Polo", "Polos", "Relaxed lifestyle polo", "/campaign-polo.png", 8500, 3500],
+  ["casual-contrast-polo", "KAL-CASUAL-OXB", "casual-contrast-polo", "Casual Contrast Polo", "Polos", "Relaxed lifestyle polo", "/media/campaign-polo-960.webp", 8500, 3500],
   ["links-golf-polo", "KAL-GOLF-SAGE", "links-golf-polo", "Links Golf Polo", "Polos", "Technical golf shirt", "/collections/golf.jpg", 8500, 3700],
   ["baseline-tennis-polo", "KAL-TENNIS-BONE", "baseline-tennis-polo", "Baseline Tennis Polo", "Polos", "Lightweight tennis shirt", "/collections/tennis.jpg", 8500, 3600],
   ["performance-tee-ink", "KAL-TEE-INK", "performance-tee-ink", "Performance Tee", "Tops", "Technical T-shirt", "/try-on/form-tee.jpg", 7600, 2900],
   ["poise-hoodie-bone", "KAL-HOOD-BONE", "poise-hoodie-bone", "Poise Pullover Hoodie", "Layers", "Pullover hoodie", "/catalog/poise-pullover-hoodie.webp", 12500, 5200],
   ["poise-hoodie-sage", "KAL-HOOD-SAGE", "poise-hoodie-sage", "Poise Pullover Hoodie — Sage", "Layers", "Pullover hoodie", "/catalog/poise-pullover-hoodie-sage.webp", 12500, 5200],
-  ["club-hoodie-bone", "KAL-CLUB-HOOD", "club-hoodie-bone", "Club Pullover Hoodie", "Layers", "Heavyweight pullover", "/campaign-hoodie-track.png", 12500, 5400],
-  ["club-zip-hoodie", "KAL-ZIP-NAVY", "club-zip-hoodie", "Club Zip Hoodie", "Layers", "Heavyweight full-zip hoodie", "/catalog/club-zip-hoodie-clean.png", 13300, 5800],
+  ["club-hoodie-bone", "KAL-CLUB-HOOD", "club-hoodie-bone", "Club Pullover Hoodie", "Layers", "Heavyweight pullover", "/media/campaign-hoodie-track-960.webp", 12500, 5400],
+  ["club-zip-hoodie", "KAL-ZIP-NAVY", "club-zip-hoodie", "Club Zip Hoodie", "Layers", "Heavyweight full-zip hoodie", "/media/club-zip-hoodie-960.webp", 13300, 5800],
   ["club-zip-hoodie-stone", "KAL-ZIP-STONE", "club-zip-hoodie-stone", "Club Zip Hoodie — Stone", "Layers", "Heavyweight full-zip hoodie", "/catalog/club-zip-hoodie-stone.webp", 13300, 5800],
   ["motion-jogger-stone", "KAL-JOG-STONE", "motion-jogger-stone", "Motion Jogger", "Bottoms", "Full-length jogger", "/try-on/motion-jogger.jpg", 11000, 4400],
   ["court-short-navy", "KAL-SHORT-NAVY", "court-short-navy", "Court Short", "Bottoms", "Lined technical short", "/try-on/court-short-photo.webp", 7800, 3100],
   ["court-skirt-oxblood", "KAL-SKORT-OXB", "court-skirt-oxblood", "Court Skort", "Bottoms", "Tennis skirt and short", "/try-on/court-skort-photo.webp", 9200, 3800],
-  ["club-tracksuit-ink", "KAL-SET-INK", "club-tracksuit-ink", "Club Tracksuit", "Sets", "Jacket and jogger set", "/campaign-hoodie-track.png", 22500, 9800],
+  ["club-tracksuit-ink", "KAL-SET-INK", "club-tracksuit-ink", "Club Tracksuit", "Sets", "Jacket and jogger set", "/media/campaign-hoodie-track-960.webp", 22500, 9800],
 ] as const;
 
 async function db() {

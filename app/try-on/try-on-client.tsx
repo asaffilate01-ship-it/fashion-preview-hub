@@ -1,8 +1,8 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import ResponsiveProductImage from "@/components/responsive-product-image";
 import { createGarmentColourDataUrl } from "@/lib/garment-preview";
 import type { StoreColour } from "@/lib/store";
 
@@ -49,9 +49,9 @@ const products: TryOnProduct[] = [
     name: "The Casual Contrast Polo",
     detail: "Soft cotton piqué / relaxed drape",
     price: "£85",
-    image: "/campaign-polo.png",
+    image: "/media/campaign-polo-960.webp",
     colourways: [
-      colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/campaign-polo.png", true),
+      colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/media/campaign-polo-960.webp", true),
       colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/colourways/casual-polo-bone.webp", true),
       colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/casual-polo-navy.webp", true),
       colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/casual-polo-sage.webp", true),
@@ -107,8 +107,8 @@ const products: TryOnProduct[] = [
     name: "The Club Zip Hoodie",
     detail: "Brushed loopback / two-way zip",
     price: "£133",
-    image: "/catalog/club-zip-hoodie-clean.png",
-    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/club-zip-hoodie-clean.png"), colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/club-zip-hoodie-stone.webp"), colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/club-zip-hoodie-ink.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/club-zip-hoodie-oxblood.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/club-zip-hoodie-sage.webp")],
+    image: "/media/club-zip-hoodie-960.webp",
+    colourways: [colour("navy", "Navy", "Navy", "Navy", "Navy", "/media/club-zip-hoodie-960.webp"), colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/club-zip-hoodie-stone.webp"), colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/club-zip-hoodie-ink.webp"), colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/club-zip-hoodie-oxblood.webp"), colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/club-zip-hoodie-sage.webp")],
   },
   {
     id: "motion-jogger",
@@ -139,7 +139,7 @@ const products: TryOnProduct[] = [
     name: "The Club Tracksuit",
     detail: "Coordinated brushed fleece set",
     price: "£225",
-    image: "/campaign-hoodie-track.png",
+    image: "/media/campaign-hoodie-track-960.webp",
     colourways: [
       colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/club-tracksuit-ink.webp", true),
       colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/club-tracksuit-navy.webp", true),
@@ -391,7 +391,7 @@ export default function TryOnClient() {
               }}
               aria-pressed={selectedId === product.id}
             >
-              <Image src={product.image} alt={product.name} width={144} height={152} unoptimized />
+              <ResponsiveProductImage src={product.image} alt={product.name} sizes="(max-width: 640px) 76px, (max-width: 960px) 20vw, 72px" />
               <span><strong>{product.name}</strong><small>{product.detail}</small></span>
               <b>{product.price}</b>
             </button>
@@ -453,7 +453,7 @@ export default function TryOnClient() {
             </>
           ) : (
             <div className="result-placeholder">
-              <Image className="result-garment-preview" src={selectedColour.image ?? selected.image} alt={`${selected.name} in ${selectedColour.label}`} fill sizes="(max-width: 640px) 100vw, 33vw" unoptimized />
+              <ResponsiveProductImage imgClassName="result-garment-preview" src={selectedColour.image ?? selected.image} alt={`${selected.name} in ${selectedColour.label}`} sizes="(max-width: 640px) 100vw, 33vw" />
               <p>{working ? stageCopy(stage) : "Your private try-on preview will appear here."}</p>
               {working && <span className="progress-line" aria-hidden="true"><i /></span>}
             </div>

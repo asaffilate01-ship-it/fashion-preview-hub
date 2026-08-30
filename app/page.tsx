@@ -5,6 +5,7 @@ import SiteNavigation from "@/components/site-navigation";
 import SocialLinks from "@/components/social-links";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 import RetailCollection from "@/components/retail-collection";
+import ResponsiveProductImage from "@/components/responsive-product-image";
 
 const standardColourways = [
   {
@@ -168,7 +169,7 @@ export default function Home() {
         <div className="standard-colourways-image">
           <div><Image src="/catalog/court-polo-k.webp" alt="KALËTHON Court Polo with exact Kinetic K" fill sizes="(max-width: 900px) 100vw, 38vw" unoptimized /></div>
           <div><Image src="/catalog/poise-pullover-hoodie.webp" alt="KALËTHON pullover hoodie with exact Kinetic K" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /></div>
-          <div className="has-exact-wordmark"><Image src="/catalog/club-zip-hoodie-clean.png" alt="Navy KALËTHON zip hoodie with aligned full wordmark" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /><WordmarkOverlay /></div>
+          <div className="has-exact-wordmark"><ResponsiveProductImage src="/media/club-zip-hoodie-960.webp" alt="Navy KALËTHON zip hoodie with aligned full wordmark" sizes="(max-width: 900px) 50vw, 19vw" /><WordmarkOverlay /></div>
         </div>
         <div className="standard-colourways-copy">
           <p className="eyebrow">Finished designs / Ready to choose</p>
@@ -200,7 +201,7 @@ export default function Home() {
             <span className="hoodie-construction-copy"><small>01 / K Icon line</small><b>Poise Pullover Hoodie</b><em>420 GSM loopback · £125</em></span>
           </Link>
           <Link href="#product-club-zip-hoodie">
-            <span className="hoodie-construction-image has-exact-wordmark"><Image src="/catalog/club-zip-hoodie-clean.png" alt="Navy KALËTHON full-zip hoodie with the complete aligned wordmark" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized /><WordmarkOverlay /></span>
+            <span className="hoodie-construction-image has-exact-wordmark"><ResponsiveProductImage src="/media/club-zip-hoodie-960.webp" alt="Navy KALËTHON full-zip hoodie with the complete aligned wordmark" sizes="(max-width: 760px) 100vw, 50vw" /><WordmarkOverlay /></span>
             <span className="hoodie-construction-copy"><small>02 / Wordmark line</small><b>Club Zip Hoodie</b><em>450 GSM loopback · £133</em></span>
           </Link>
         </div>
@@ -260,19 +261,19 @@ export default function Home() {
         itemListElement: [
           ["Court Polo", "court-polo-bone", "/catalog/court-polo-k.webp", "85.00"],
           ["Court Polo — Oxblood", "court-polo-oxblood", "/catalog/court-polo-oxblood.webp", "85.00"],
-          ["Casual Contrast Polo", "casual-contrast-polo", "/campaign-polo.png", "85.00"],
+          ["Casual Contrast Polo", "casual-contrast-polo", "/media/campaign-polo-960.webp", "85.00"],
           ["Links Golf Polo", "links-golf-polo", "/collections/golf.jpg", "85.00"],
           ["Baseline Tennis Polo", "baseline-tennis-polo", "/collections/tennis.jpg", "85.00"],
           ["Performance Tee", "performance-tee-ink", "/try-on/form-tee.jpg", "76.00"],
           ["Poise Pullover Hoodie", "poise-hoodie-bone", "/catalog/poise-pullover-hoodie.webp", "125.00"],
           ["Poise Pullover Hoodie — Sage", "poise-hoodie-sage", "/catalog/poise-pullover-hoodie-sage.webp", "125.00"],
-          ["Club Pullover Hoodie", "club-hoodie-bone", "/campaign-hoodie-track.png", "125.00"],
-          ["Club Zip Hoodie", "club-zip-hoodie", "/catalog/club-zip-hoodie-clean.png", "133.00"],
+          ["Club Pullover Hoodie", "club-hoodie-bone", "/media/campaign-hoodie-track-960.webp", "125.00"],
+          ["Club Zip Hoodie", "club-zip-hoodie", "/media/club-zip-hoodie-960.webp", "133.00"],
           ["Club Zip Hoodie — Stone", "club-zip-hoodie-stone", "/catalog/club-zip-hoodie-stone.webp", "133.00"],
           ["Motion Jogger", "motion-jogger-stone", "/try-on/motion-jogger.jpg", "110.00"],
           ["Court Short", "court-short-navy", "/try-on/court-short-photo.webp", "78.00"],
           ["Court Skort", "court-skirt-oxblood", "/try-on/court-skort-photo.webp", "92.00"],
-          ["Club Tracksuit", "club-tracksuit-ink", "/campaign-hoodie-track.png", "225.00"],
+          ["Club Tracksuit", "club-tracksuit-ink", "/media/campaign-hoodie-track-960.webp", "225.00"],
         ].map(([name, id, image, price], index) => ({
           "@type": "ListItem",
           position: index + 1,

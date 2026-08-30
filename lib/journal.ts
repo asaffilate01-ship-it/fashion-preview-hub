@@ -82,7 +82,7 @@ export const journalArticles: JournalArticle[] = [
     title: "Dubai sportswear for heat, shade and air conditioning",
     dek: "Breathable outside, composed inside, and modest throughout the day.",
     description: "How to select modest, breathable premium sportswear for Dubai's heat and heavily air-conditioned interiors.",
-    image: "/campaign-polo.png",
+    image: "/media/campaign-polo-960.webp",
     imageAlt: "Premium KALËTHON polos and trousers in warm architectural light",
     readTime: "5 min read",
     keywords: ["Dubai sportswear", "UAE modest sportswear", "hot weather polo shirt", "breathable premium clothing UAE"],
