@@ -119,7 +119,7 @@ export default function RetailCollection() {
           return (
             <article className="retail-product-card" id={`product-${product.sku}`} key={product.sku}>
               <div className="retail-product-image">
-                <Image className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={product.image} alt={`${product.name} — ${product.type}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" />
+                <Image className={product.crop ? `capsule-crop crop-${product.crop}` : undefined} src={product.image} alt={`${product.name} — ${product.type}`} fill sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw" unoptimized />
                 {product.signatureOnImage && <ProductSignature branding={product.branding} signatureTone={product.signatureTone} />}
                 <span>{product.category}</span>
                 <b>Made to order</b>

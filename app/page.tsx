@@ -171,9 +171,9 @@ export default function Home() {
 
       <section className="standard-colourways" id="hoodies" aria-labelledby="colourways-title">
         <div className="standard-colourways-image">
-          <div><Image src="/catalog/court-polo-k.webp" alt="KALËTHON Court Polo with exact Kinetic K" fill sizes="(max-width: 900px) 100vw, 38vw" /></div>
-          <div><Image src="/catalog/poise-pullover-hoodie.webp" alt="KALËTHON pullover hoodie with exact Kinetic K" fill sizes="(max-width: 900px) 50vw, 19vw" /></div>
-          <div><Image src="/catalog/club-zip-hoodie.webp" alt="KALËTHON zip hoodie with full wordmark" fill sizes="(max-width: 900px) 50vw, 19vw" /></div>
+          <div><Image src="/catalog/court-polo-k.webp" alt="KALËTHON Court Polo with exact Kinetic K" fill sizes="(max-width: 900px) 100vw, 38vw" unoptimized /></div>
+          <div><Image src="/catalog/poise-pullover-hoodie.webp" alt="KALËTHON pullover hoodie with exact Kinetic K" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /></div>
+          <div><Image src="/catalog/club-zip-hoodie.webp" alt="KALËTHON zip hoodie with full wordmark" fill sizes="(max-width: 900px) 50vw, 19vw" unoptimized /></div>
         </div>
         <div className="standard-colourways-copy">
           <p className="eyebrow">Finished designs / Ready to choose</p>
@@ -201,11 +201,11 @@ export default function Home() {
         </div>
         <div className="hoodie-constructions-grid">
           <Link href="#product-poise-hoodie-bone">
-            <span className="hoodie-construction-image"><Image src="/catalog/poise-pullover-hoodie.webp" alt="Bone KALËTHON pullover hoodie with the exact Kinetic K chest mark" fill sizes="(max-width: 760px) 100vw, 50vw" /></span>
+            <span className="hoodie-construction-image"><Image src="/catalog/poise-pullover-hoodie.webp" alt="Bone KALËTHON pullover hoodie with the exact Kinetic K chest mark" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized /></span>
             <span className="hoodie-construction-copy"><small>01 / K Icon line</small><b>Poise Pullover Hoodie</b><em>420 GSM loopback · £125</em></span>
           </Link>
           <Link href="#product-club-zip-hoodie">
-            <span className="hoodie-construction-image"><Image src="/catalog/club-zip-hoodie.webp" alt="Navy KALËTHON full-zip hoodie with the complete wordmark" fill sizes="(max-width: 760px) 100vw, 50vw" /></span>
+            <span className="hoodie-construction-image"><Image src="/catalog/club-zip-hoodie.webp" alt="Navy KALËTHON full-zip hoodie with the complete wordmark" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized /></span>
             <span className="hoodie-construction-copy"><small>02 / Wordmark line</small><b>Club Zip Hoodie</b><em>450 GSM loopback · £133</em></span>
           </Link>
         </div>
