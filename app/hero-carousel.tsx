@@ -14,8 +14,8 @@ const slides = [
   {
     image: "/campaign/hero-six-models-v2.jpg",
     video: "/campaign/kalethon-hero-walk-6s.mp4",
-    alt: "Five diverse Kalëthon models walking toward camera in premium polo, tracksuit, T-shirt and below-knee shorts looks",
-    eyebrow: "Kalëthon campaign / 2026",
+    alt: "Five diverse KALËTHON models walking toward camera in premium polo, tracksuit, T-shirt and below-knee shorts looks",
+    eyebrow: "KALËTHON campaign / 2026",
     title: <>Poise<br />in motion.</>,
     copy: "The full expression of modern sport. One standard of quiet confidence.",
     note: <>The full collection.<br />Walking as one.</>,
@@ -25,7 +25,7 @@ const slides = [
   {
     image: "/campaign/hero-tennis-golf-v2.jpg",
     video: undefined,
-    alt: "Kalëthon tennis and golf models walking beside a clay court in premium polos and full-length tailored trousers",
+    alt: "KALËTHON tennis and golf models walking beside a clay court in premium polos and full-length tailored trousers",
     eyebrow: "Court to clubhouse / 2026",
     title: <>Play,<br />refined.</>,
     copy: "Technical ease for the first serve, the final round and everything after.",
@@ -36,7 +36,7 @@ const slides = [
   {
     image: "/campaign/hero-casual-motion-v2.jpg",
     video: undefined,
-    alt: "Three Kalëthon models walking in hoodies, a tracksuit, a graphic T-shirt and full-length trousers",
+    alt: "Three KALËTHON models walking in hoodies, a tracksuit, a graphic T-shirt and full-length trousers",
     eyebrow: "The off-court edit / 2026",
     title: <>Relaxed.<br />Resolved.</>,
     copy: "Substantial hoodies, considered tracksuits and expressive graphic tees.",
@@ -104,7 +104,7 @@ export default function HeroCarousel() {
     <section
       className="hero"
       id="top"
-      aria-label="Kalëthon campaign carousel"
+      aria-label="KALËTHON campaign carousel"
       data-paused={paused ? "true" : "false"}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}

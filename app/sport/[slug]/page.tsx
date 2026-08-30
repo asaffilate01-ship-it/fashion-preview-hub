@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: collection.description,
     keywords: collection.keywords,
     alternates: { canonical: `/sport/${collection.slug}` },
-    openGraph: { title: `${collection.name} Clothing | Kalëthon`, description: collection.description, url: `/sport/${collection.slug}`, images: [{ url: collection.image }] },
+    openGraph: { title: `${collection.name} Clothing | KALËTHON`, description: collection.description, url: `/sport/${collection.slug}`, images: [{ url: collection.image }] },
   };
 }
 
@@ -38,10 +38,10 @@ export default async function SportPage({ params }: { params: Promise<{ slug: st
     </section>
     <nav className="sport-switcher" aria-label="Other sports">{sportCollections.map((sport) => <Link className={sport.slug === collection.slug ? "is-active" : ""} href={`/sport/${sport.slug}`} key={sport.slug}>{sport.name}</Link>)}</nav>
     <section className="sport-products" id="sport-products">
-      <div className="sport-products-heading"><p className="eyebrow">Kalëthon / {collection.name}</p><h2>Built for the sport.<br/><em>Composed for life.</em></h2></div>
+      <div className="sport-products-heading"><p className="eyebrow">KALËTHON / {collection.name}</p><h2>Built for the sport.<br/><em>Composed for life.</em></h2></div>
       <div className="sport-product-grid">{collection.products.map((product, index) => <article key={product.name}><span>0{index + 1} / {product.category}</span><div><h3>{product.name}</h3><p>{product.detail}</p></div><strong>{product.price}</strong><Link href="/customise">Customise <b>↗</b></Link></article>)}</div>
     </section>
-    <section className="sport-next"><p>Other sports that fit Kalëthon</p><h2>Racket sport, golf, running and training are the core. Future edits can add <em>cycling, rowing, yoga and travel athletics</em> once their specialist fits and materials are properly developed.</h2></section>
+    <section className="sport-next"><p>Other sports that fit KALËTHON</p><h2>Racket sport, golf, running and training are the core. Future edits can add <em>cycling, rowing, yoga and travel athletics</em> once their specialist fits and materials are properly developed.</h2></section>
     <footer className="journal-footer"><Link href="/">KALËTHON</Link><p>Poise in motion.</p><SocialLinks /></footer>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
   </main>;

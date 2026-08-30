@@ -4,7 +4,7 @@ import BagClient from "./bag-client";
 
 export const metadata: Metadata = {
   title: "Your Bag",
-  description: "Review your Kalëthon custom garments and continue to secure checkout.",
+  description: "Review your KALËTHON custom garments and continue to secure checkout.",
   alternates: { canonical: "/bag" },
   robots: { index: false, follow: true },
 };

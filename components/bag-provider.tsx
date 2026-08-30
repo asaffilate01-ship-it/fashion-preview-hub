@@ -32,7 +32,12 @@ export default function BagProvider({ children }: { children: React.ReactNode })
       try {
         const stored = window.localStorage.getItem(STORAGE_KEY);
         const parsed = stored ? JSON.parse(stored) : [];
-        if (Array.isArray(parsed)) setItems(parsed.filter(isBagItem).slice(0, 20));
+        if (Array.isArray(parsed)) {
+          setItems(parsed.filter(isBagItem).slice(0, 20).map((item) => ({
+            ...item,
+            branding: item.branding === "K mark" ? "K mark" : "KALËTHON wordmark",
+          })));
+        }
       } catch {
         window.localStorage.removeItem(STORAGE_KEY);
       } finally {

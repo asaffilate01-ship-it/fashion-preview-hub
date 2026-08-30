@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 const products = [
   {
@@ -93,7 +94,7 @@ function stageCopy(stage: TryOnStage) {
   if (stage === "preparing") return "Preparing your private preview…";
   if (stage === "queued") return "Your look is in the studio queue…";
   if (stage === "processing") return "Draping the selected piece…";
-  if (stage === "complete") return "Your Kalëthon look is ready.";
+  if (stage === "complete") return "Your KALËTHON look is ready.";
   return "Usually ready in around 10–30 seconds.";
 }
 
@@ -261,7 +262,7 @@ export default function TryOnClient() {
 
   return (
     <div className="tryon-studio">
-      <div className="tryon-products" aria-label="Choose a Kalëthon piece">
+      <div className="tryon-products" aria-label="Choose a KALËTHON piece">
         <div className="tryon-step-heading"><span>01</span><h3>Select a piece</h3></div>
         <div className="tryon-product-grid">
           {products.map((product) => (
@@ -276,7 +277,7 @@ export default function TryOnClient() {
               }}
               aria-pressed={selectedId === product.id}
             >
-              <img src={product.image} alt={product.name} />
+              <Image src={product.image} alt={product.name} width={144} height={152} />
               <span><strong>{product.name}</strong><small>{product.detail}</small></span>
               <b>{product.price}</b>
             </button>
@@ -293,7 +294,10 @@ export default function TryOnClient() {
 
         <div className="capture-frame">
           {personImage ? (
-            <img src={personImage} alt="Your selected portrait" className="portrait-preview" />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element -- local portrait data URL must not be sent through image optimisation */}
+              <img src={personImage} alt="Your selected portrait" className="portrait-preview" />
+            </>
           ) : mode === "camera" ? (
             <>
               <video ref={videoRef} className={`camera-preview ${cameraReady ? "is-ready" : ""}`} playsInline muted />
@@ -323,7 +327,10 @@ export default function TryOnClient() {
         <div className="tryon-step-heading"><span>03</span><h3>Enter the fitting room</h3></div>
         <div className={`result-frame ${working ? "is-working" : ""}`}>
           {resultImage ? (
-            <img src={resultImage} alt={`AI preview wearing ${selected.name}`} />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element -- FASHN returns a temporary result URL */}
+              <img src={resultImage} alt={`AI preview wearing ${selected.name}`} />
+            </>
           ) : (
             <div className="result-placeholder">
               <span className="result-mark" aria-hidden="true">K</span>
@@ -338,7 +345,7 @@ export default function TryOnClient() {
 
         <label className="consent-row">
           <input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} />
-          <span>I agree that my image is sent securely to FASHN to create this preview. Kalëthon does not store it.</span>
+          <span>I agree that my image is sent securely to FASHN to create this preview. KALËTHON does not store it.</span>
         </label>
 
         {resultImage ? (

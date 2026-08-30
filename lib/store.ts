@@ -1,5 +1,5 @@
 export const storeColours = ["Bone", "Ink", "Navy", "Oxblood", "Sage", "Stone"] as const;
-export const storeBranding = ["K mark", "Kalëthon wordmark"] as const;
+export const storeBranding = ["K mark", "KALËTHON wordmark"] as const;
 export const storeFits = ["Athletic", "Regular", "Relaxed"] as const;
 export const storeFinishes = ["Clean", "Contrast trim", "Sport piping"] as const;
 export const storeSleeves = ["Not applicable", "Sleeveless", "Short sleeve", "Long sleeve"] as const;
@@ -42,7 +42,7 @@ export type BagItem = {
 export function unitAmountFor(item: Pick<BagItem, "productId" | "sleeve" | "branding">) {
   const product = customProductCatalog[item.productId];
   const sleeveUpgrade = item.sleeve === "Long sleeve" && ["court-polo", "performance-tee"].includes(item.productId) ? 1000 : 0;
-  const brandingUpgrade = item.branding === "Kalëthon wordmark" ? 800 : 0;
+  const brandingUpgrade = item.branding === "KALËTHON wordmark" ? 800 : 0;
   return product.amount + sleeveUpgrade + brandingUpgrade;
 }
 

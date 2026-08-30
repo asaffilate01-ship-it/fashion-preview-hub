@@ -78,7 +78,7 @@ export async function POST(request: Request) {
       form.set(`line_items[${index}][quantity]`, String(item.quantity));
       form.set(`line_items[${index}][price_data][currency]`, "gbp");
       form.set(`line_items[${index}][price_data][unit_amount]`, String(unitAmountFor(item)));
-      form.set(`line_items[${index}][price_data][product_data][name]`, `Kalëthon ${product.name}`);
+      form.set(`line_items[${index}][price_data][product_data][name]`, `KALËTHON ${product.name}`);
       form.set(`line_items[${index}][price_data][product_data][description]`, description);
       form.set(`line_items[${index}][price_data][product_data][metadata][specification]`, description);
       form.set(`line_items[${index}][price_data][product_data][metadata][product_id]`, item.productId);

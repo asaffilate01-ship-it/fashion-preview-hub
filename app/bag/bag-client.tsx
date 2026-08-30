@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useBag } from "@/components/bag-provider";
 import { formatGBP, unitAmountFor } from "@/lib/store";
 
@@ -39,7 +40,7 @@ export default function BagClient() {
     <div className="bag-items">
       <div className="bag-list-heading"><span>{items.length} design{items.length === 1 ? "" : "s"}</span><button type="button" onClick={clear}>Clear bag</button></div>
       {items.map((item) => <article className="bag-item" key={item.id}>
-        <img src={item.image} alt="" aria-hidden="true" />
+        <Image src={item.image} alt="" aria-hidden="true" width={300} height={352} />
         <div><p>Made to order</p><h2>{item.name}</h2><dl><div><dt>Colour</dt><dd>{item.bodyColour}</dd></div><div><dt>Style</dt><dd>{item.finish}</dd></div><div><dt>Fit / size</dt><dd>{item.fit} / {item.size}</dd></div><div><dt>Sleeve</dt><dd>{item.sleeve}</dd></div><div><dt>Signature</dt><dd>{item.branding}</dd></div></dl><button type="button" onClick={() => removeItem(item.id)}>Remove</button></div>
         <div className="bag-item-price"><strong>{formatGBP(unitAmountFor(item) * item.quantity)}</strong><label>Quantity<select value={item.quantity} onChange={(event) => setQuantity(item.id, Number(event.target.value))}>{[1,2,3,4,5].map((quantity) => <option value={quantity} key={quantity}>{quantity}</option>)}</select></label></div>
       </article>)}
@@ -48,7 +49,7 @@ export default function BagClient() {
       <p className="eyebrow light">Order summary</p><div><span>Custom garments</span><b>{formatGBP(subtotal)}</b></div><div><span>UK delivery</span><b>{subtotal >= 15000 ? "Complimentary" : "Calculated at checkout"}</b></div><div className="bag-total"><span>Total</span><strong>{formatGBP(subtotal)}</strong></div>
       <p>Taxes, international delivery and duties are confirmed during checkout.</p>
       <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked every specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>.</span></label>
-      <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>Send me occasional Kalëthon news. Optional.</span></label>
+      <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>Send me occasional KALËTHON news. Optional.</span></label>
       <button type="button" disabled={!termsAccepted || busy} onClick={checkout}>{busy ? "Opening secure checkout…" : "Continue to secure checkout"}</button>
       {message && <p className="bag-error" role="alert">{message}</p>}
       <small>Secure payment is completed with Stripe. Your final design specification is attached to the order.</small>

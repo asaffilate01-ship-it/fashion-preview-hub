@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,7 @@ const colours = [
   { name: "Stone", hex: "#aca397", dark: false },
 ] as const;
 
-const brandingOptions = ["K mark", "Kalëthon wordmark"] as const;
+const brandingOptions = ["K mark", "KALËTHON wordmark"] as const;
 const sizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"] as const;
 const womenBottomSizes = ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14", "UK 16", "UK 18", "UK 20", "UK 22", "UK 24"] as const;
 const menBottomSizes = ["28S", "28R", "30S", "30R", "30L", "32S", "32R", "32L", "34S", "34R", "34L", "36S", "36R", "36L", "38S", "38R", "38L", "40R", "40L", "42R", "44R"] as const;
@@ -246,7 +247,7 @@ function stageCopy(stage: TryOnStage) {
   if (stage === "preparing") return "Preparing your custom garment…";
   if (stage === "queued") return "Your look is in the studio queue…";
   if (stage === "processing") return "Draping your exact garment design…";
-  if (stage === "complete") return "Your custom Kalëthon look is ready.";
+  if (stage === "complete") return "Your custom KALËTHON look is ready.";
   return "Your portrait is processed only to create this preview.";
 }
 
@@ -287,7 +288,7 @@ export default function CustomisePoloClient() {
 
   const product = productTemplates.find((template) => template.key === productKey) ?? productTemplates[0];
   const availableSizes = product.sizeMode === "women-bottom" ? womenBottomSizes : product.sizeMode === "men-bottom" ? menBottomSizes : sizes;
-  const price = product.price + (sleeve === "Long sleeve" && product.sleeves.length > 1 ? 10 : 0) + (branding === "Kalëthon wordmark" ? 8 : 0);
+  const price = product.price + (sleeve === "Long sleeve" && product.sleeves.length > 1 ? 10 : 0) + (branding === "KALËTHON wordmark" ? 8 : 0);
   const logoColour = colour(bodyColour).dark ? "#f1eadf" : "#10110f";
   const working = ["preparing", "queued", "processing"].includes(tryOnStage);
   const fitScale = fit === "Athletic" ? 0.94 : fit === "Relaxed" ? 1.06 : 1;
@@ -397,28 +398,10 @@ export default function CustomisePoloClient() {
           context.drawImage(tintedGarment(bodyColour), 0, 0);
         } else {
           drawGarment(context);
-          const regions: Partial<Record<ProductKey, number[][]>> = {
-            "poise-hoodie": [[.15,.17],[.85,.17],[.87,.83],[.13,.83]],
-            "track-jacket": [[.24,.18],[.76,.18],[.75,.80],[.25,.80]],
-            "motion-jogger": [[.17,.13],[.83,.13],[.77,.84],[.23,.84]],
-            "club-tracksuit": [[.24,.18],[.76,.18],[.75,.80],[.25,.80]],
-            "court-short": [[.19,.21],[.81,.21],[.79,.80],[.21,.80]],
-            "court-skirt": [[.19,.21],[.81,.21],[.82,.76],[.18,.76]],
-          };
-          const points = regions[product.key] ?? [[.14,.12],[.86,.12],[.86,.86],[.14,.86]];
-          context.save();
-          context.beginPath();
-          points.forEach(([x, y], index) => index === 0 ? context.moveTo(drawX + (x * drawWidth), drawY + (y * drawHeight)) : context.lineTo(drawX + (x * drawWidth), drawY + (y * drawHeight)));
-          context.closePath();
-          context.clip();
-          context.globalCompositeOperation = "color";
-          context.globalAlpha = .88;
-          context.fillStyle = colour(bodyColour).hex;
-          context.fillRect(drawX, drawY, drawWidth, drawHeight);
-          context.globalCompositeOperation = "multiply";
-          context.globalAlpha = colour(bodyColour).dark ? .32 : .12;
-          context.fillRect(drawX, drawY, drawWidth, drawHeight);
-          context.restore();
+          const bodyMaskKey = product.key === "club-tracksuit" ? "track-jacket" : product.key;
+          const bodyMask = await loadImage(`/customise/${bodyMaskKey}-body-mask.svg`);
+          if (!active) return;
+          drawMaskedLayer(tintedGarment(bodyColour), bodyMask);
         }
         if (isPolo) {
           const maskPrefix = sleeve === "Long sleeve" ? "polo-long" : "polo-short";
@@ -493,37 +476,84 @@ export default function CustomisePoloClient() {
             shoulderPipes.forEach((points) => strokeConstruction(points, piping, 3));
             strokeConstruction([[548, 300], [548, 494]], piping, 2.2);
           }
+        } else {
+          const detailKey = product.key === "club-tracksuit" ? "track-jacket" : product.key;
+          const collarMaskSource = detailKey === "track-jacket" ? "/customise/track-jacket-collar-mask.svg" : null;
+          const cuffMaskSource = detailKey === "performance-tee"
+            ? `/customise/performance-tee-${sleeve === "Long sleeve" ? "long" : "short"}-cuff-mask.svg`
+            : detailKey === "poise-hoodie"
+              ? "/customise/poise-hoodie-cuff-mask.svg"
+              : detailKey === "track-jacket"
+                ? "/customise/track-jacket-cuff-mask.svg"
+                : detailKey === "motion-jogger"
+                  ? "/customise/motion-jogger-cuff-mask.svg"
+                  : null;
+          const [detailCollarMask, detailCuffMask] = await Promise.all([
+            collarMaskSource ? loadImage(collarMaskSource) : Promise.resolve(null),
+            cuffMaskSource ? loadImage(cuffMaskSource) : Promise.resolve(null),
+          ]);
+          if (!active) return;
+          if (product.collar && detailCollarMask) drawMaskedLayer(tintedGarment(collarColour), detailCollarMask);
+          if (product.cuffs && detailCuffMask) drawMaskedLayer(tintedGarment(cuffColour), detailCuffMask);
         }
 
         const accent = colour(cuffColour).hex;
+        const detailSeam = colour(cuffColour).dark ? "rgba(255,255,255,.30)" : "rgba(16,17,15,.28)";
+        const collarSeam = colour(collarColour).dark ? "rgba(255,255,255,.30)" : "rgba(16,17,15,.28)";
+        const strokeRelative = (points: Array<[number, number]>, stroke: string, width: number, dash: number[] = []) => {
+          context.beginPath();
+          points.forEach(([x, y], index) => index === 0 ? context.moveTo(drawX + (drawWidth * x), drawY + (drawHeight * y)) : context.lineTo(drawX + (drawWidth * x), drawY + (drawHeight * y)));
+          context.strokeStyle = stroke;
+          context.lineWidth = width;
+          context.setLineDash(dash);
+          context.stroke();
+          context.setLineDash([]);
+        };
         context.save();
         context.strokeStyle = accent;
         context.fillStyle = accent;
         context.lineCap = "round";
         context.lineJoin = "round";
-        context.lineWidth = finish === "Sport piping" ? 5 : 10;
         if (product.key === "performance-tee") {
           if (sleeve === "Short sleeve") {
-            context.beginPath(); context.moveTo(drawX + drawWidth * .02, drawY + drawHeight * .39); context.lineTo(drawX + drawWidth * .19, drawY + drawHeight * .46); context.stroke();
-            context.beginPath(); context.moveTo(drawX + drawWidth * .98, drawY + drawHeight * .39); context.lineTo(drawX + drawWidth * .81, drawY + drawHeight * .46); context.stroke();
+            strokeRelative([[.018,.37],[.215,.445]], detailSeam, 1.8);
+            strokeRelative([[.982,.37],[.785,.445]], detailSeam, 1.8);
           } else {
-            context.fillRect(drawX + drawWidth * .04, drawY + drawHeight * .77, drawWidth * .13, 18);
-            context.fillRect(drawX + drawWidth * .83, drawY + drawHeight * .77, drawWidth * .13, 18);
+            strokeRelative([[.038,.82],[.145,.82]], detailSeam, 1.8);
+            strokeRelative([[.855,.82],[.962,.82]], detailSeam, 1.8);
           }
         }
-        if (!isPolo && product.cuffs) {
-          const y = product.sizeMode === "men-bottom" ? .80 : .76;
-          context.fillRect(drawX + drawWidth * .18, drawY + drawHeight * y, drawWidth * .13, 12);
-          context.fillRect(drawX + drawWidth * .69, drawY + drawHeight * y, drawWidth * .13, 12);
+        if (product.key === "poise-hoodie") {
+          strokeRelative([[.19,.774],[.255,.779]], detailSeam, 1.8);
+          strokeRelative([[.745,.779],[.81,.774]], detailSeam, 1.8);
+        }
+        if (product.key === "track-jacket" || product.key === "club-tracksuit") {
+          strokeRelative([[.41,.373],[.41,.27],[.59,.27],[.59,.373]], collarSeam, 1.8);
+          strokeRelative([[.268,.765],[.33,.771]], detailSeam, 1.8);
+          strokeRelative([[.67,.771],[.732,.765]], detailSeam, 1.8);
+        }
+        if (product.key === "motion-jogger") {
+          strokeRelative([[.303,.754],[.43,.758]], detailSeam, 1.8);
+          strokeRelative([[.57,.758],[.697,.754]], detailSeam, 1.8);
         }
         if (!isPolo && finish === "Contrast trim") {
-          context.lineWidth = 9;
-          context.beginPath(); context.moveTo(drawX + drawWidth * .25, drawY + drawHeight * .78); context.lineTo(drawX + drawWidth * .75, drawY + drawHeight * .78); context.stroke();
+          const contrast = colour(bodyColour).dark ? "rgba(242,238,231,.84)" : "rgba(16,17,15,.72)";
+          const contrastPath: Array<[number, number]> = product.key === "court-short"
+            ? [[.22,.75],[.39,.80],[.5,.79],[.61,.80],[.78,.75]]
+            : product.key === "court-skirt"
+              ? [[.2,.74],[.5,.77],[.8,.74]]
+              : product.key === "motion-jogger"
+                ? [[.3,.754],[.43,.758],[.57,.758],[.7,.754]]
+                : [[.25,.78],[.5,.79],[.75,.78]];
+          strokeRelative(contrastPath, contrast, 3);
         }
         if (!isPolo && finish === "Sport piping") {
-          context.lineWidth = 5;
-          context.beginPath(); context.moveTo(drawX + drawWidth * .22, drawY + drawHeight * .22); context.lineTo(drawX + drawWidth * .13, drawY + drawHeight * .66); context.stroke();
-          context.beginPath(); context.moveTo(drawX + drawWidth * .78, drawY + drawHeight * .22); context.lineTo(drawX + drawWidth * .87, drawY + drawHeight * .66); context.stroke();
+          const pipingPaths: Array<Array<[number, number]>> = product.key === "motion-jogger"
+            ? [[[.3,.24],[.285,.72]], [[.7,.24],[.715,.72]]]
+            : product.key === "court-short" || product.key === "court-skirt"
+              ? [[[.22,.26],[.18,.7]], [[.78,.26],[.82,.7]]]
+              : [[[.24,.23],[.15,.66]], [[.76,.23],[.85,.66]]];
+          pipingPaths.forEach((points) => strokeRelative(points, accent, 3.2));
         }
         context.restore();
 
@@ -776,7 +806,7 @@ export default function CustomisePoloClient() {
         <div className="bespoke-base-picker" role="group" aria-label="Choose a product to customise">
           {productTemplates.map((template) => (
             <button className={productKey === template.key ? "is-selected" : ""} type="button" key={template.key} onClick={() => chooseProduct(template.key)} aria-pressed={productKey === template.key}>
-              <span className="bespoke-picker-image"><img className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" /></span>
+              <span className="bespoke-picker-image"><Image className={template.key === "performance-tee" || template.key === "performance-tank" ? "has-dark-matte" : ""} src={template.image} alt="" aria-hidden="true" width={300} height={360} /></span>
               <span className="bespoke-picker-copy"><b>{template.shortName}</b><small>{template.description}</small><strong>From £{template.price}</strong></span>
             </button>
           ))}
@@ -847,7 +877,7 @@ export default function CustomisePoloClient() {
               <fieldset className="custom-choice-group">
                 <legend>Logo style</legend>
                 <div className="custom-choice-row custom-signature-row" role="group" aria-label="Logo style">
-                  {brandingOptions.map((option) => <button className={branding === option ? "is-selected" : ""} type="button" aria-pressed={branding === option} onClick={() => setBranding(option)} key={option}><b>{option === "K mark" ? "Small K mark" : "Kalëthon name"}</b><small>{option === "K mark" ? "Discreet chest embroidery" : "Full wordmark finish"}</small></button>)}
+                  {brandingOptions.map((option) => <button className={branding === option ? "is-selected" : ""} type="button" aria-pressed={branding === option} onClick={() => setBranding(option)} key={option}><b>{option === "K mark" ? "Small K mark" : "KALËTHON name"}</b><small>{option === "K mark" ? "Discreet chest embroidery" : "Full wordmark finish"}</small></button>)}
                 </div>
               </fieldset>
             </div>
@@ -893,7 +923,7 @@ export default function CustomisePoloClient() {
           <button className="custom-add-bag" type="button" onClick={addDesignToBag}>Add design to bag · £{price}</button>
           <div className="custom-order-consent">
             <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked my specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>. <b>Required</b></span></label>
-            <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>I would like occasional Kalëthon news by email. Optional; unsubscribe at any time.</span></label>
+            <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>I would like occasional KALËTHON news by email. Optional; unsubscribe at any time.</span></label>
           </div>
           <button className="custom-checkout" type="button" disabled={checkoutBusy || !termsAccepted} onClick={checkout}>{checkoutBusy ? "Opening secure checkout…" : `Buy this design now · £${price}`}</button>
           {message && <p className="custom-message" role="alert">{message}</p>}
@@ -916,7 +946,11 @@ export default function CustomisePoloClient() {
               </div>
               <div className="custom-portrait-frame">
                 {portrait ? (
-                  <><img src={portrait} alt="Your selected portrait" /><button className="custom-retake" type="button" onClick={() => { setPortrait(null); setResult(null); setTryOnStage("idle"); }}>Retake</button></>
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- local portrait data URL must not be sent through image optimisation */}
+                    <img src={portrait} alt="Your selected portrait" />
+                    <button className="custom-retake" type="button" onClick={() => { setPortrait(null); setResult(null); setTryOnStage("idle"); }}>Retake</button>
+                  </>
                 ) : mode === "upload" ? (
                   <label><b>Select a full-length portrait</b><small>JPG, PNG or WebP · up to 10 MB</small><input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile} /></label>
                 ) : (
@@ -929,7 +963,10 @@ export default function CustomisePoloClient() {
               </div>
             </div>
             <div className={`custom-try-result ${working ? "is-working" : ""}`}>
-              {result ? <img src={result} alt={`Virtual try-on result for your custom ${product.name}`} /> : <div><b>K</b><p>{stageCopy(tryOnStage)}</p></div>}
+              {result ? <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- FASHN returns a temporary result URL */}
+                <img src={result} alt={`Virtual try-on result for your custom ${product.name}`} />
+              </> : <div><b>K</b><p>{stageCopy(tryOnStage)}</p></div>}
             </div>
           </div>
           <label className="custom-consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} />I consent to this portrait being processed by FASHN solely to create my virtual try-on result.</label>
@@ -969,7 +1006,7 @@ export default function CustomisePoloClient() {
               </table>
             ) : (
               <table className="custom-size-table">
-                <thead><tr><th>Kalëthon</th><th>Chest cm</th><th>Chest in</th><th>EU</th><th>UK</th><th>US / Canada</th><th>AU / NZ</th><th>UAE</th><th>Pakistan</th></tr></thead>
+                <thead><tr><th>KALËTHON</th><th>Chest cm</th><th>Chest in</th><th>EU</th><th>UK</th><th>US / Canada</th><th>AU / NZ</th><th>UAE</th><th>Pakistan</th></tr></thead>
                 <tbody>{sizeChart.map((row) => <tr key={row[0]}>{row.map((value, index) => index === 0 ? <th scope="row" key={index}>{value}</th> : <td key={index}>{value}</td>)}</tr>)}</tbody>
               </table>
             )}

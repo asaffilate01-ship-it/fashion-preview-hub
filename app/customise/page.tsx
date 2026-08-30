@@ -5,7 +5,7 @@ import BagLink from "@/components/bag-link";
 
 export const metadata: Metadata = {
   title: "Custom Sportswear Studio",
-  description: "Design a made-to-order Kalëthon garment with live colour, sleeve, logo, fit and international size choices.",
+  description: "Design a made-to-order KALËTHON garment with live colour, sleeve, logo, fit and international size choices.",
   alternates: { canonical: "/customise" },
 };
 

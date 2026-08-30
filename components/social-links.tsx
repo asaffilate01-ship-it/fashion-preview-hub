@@ -8,5 +8,5 @@ function SocialIcon({ name }: { name: string }) {
 }
 
 export default function SocialLinks() {
-  return <div className="social-links" aria-label="Kalëthon social profiles">{socialProfiles.map((profile) => profile.href ? <a href={profile.href} key={profile.key} target="_blank" rel="noreferrer" aria-label={`Kalëthon on ${profile.name}`}><SocialIcon name={profile.name} /></a> : <span key={profile.key} aria-label={`${profile.name} profile coming soon`} title={`${profile.name} handle to be connected`}><SocialIcon name={profile.name} /></span>)}</div>;
+  return <div className="social-links" aria-label="KALËTHON social profiles">{socialProfiles.map((profile) => profile.href ? <a href={profile.href} key={profile.key} target="_blank" rel="noreferrer" aria-label={`KALËTHON on ${profile.name}`}><SocialIcon name={profile.name} /></a> : <span key={profile.key} aria-label={`${profile.name} profile coming soon`} title={`${profile.name} handle to be connected`}><SocialIcon name={profile.name} /></span>)}</div>;
 }

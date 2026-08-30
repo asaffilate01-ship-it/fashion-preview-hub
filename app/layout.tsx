@@ -6,17 +6,17 @@ import BagProvider from "@/components/bag-provider";
 export const metadata: Metadata = {
   metadataBase: new URL("https://kalethon.com"),
   title: {
-    default: "Kalëthon | Premium British Sportswear & Custom Clothing",
-    template: "%s | Kalëthon",
+    default: "KALËTHON | Premium British Sportswear & Custom Clothing",
+    template: "%s | KALËTHON",
   },
   description: "Premium British sport-to-city clothing with made-to-order customisation, international sizing and private virtual try-on.",
   keywords: [
-    "Kalethon", "Kalëthon", "premium British sportswear", "custom sportswear UK", "custom polo shirt", "personalised polo shirt",
+    "KALETHON", "KALËTHON", "premium British sportswear", "custom sportswear UK", "custom polo shirt", "personalised polo shirt",
     "tennis clothing", "golf clothing", "padel clothing", "pickleball clothing", "performance clothing", "sports lifestyle clothing",
     "premium hoodies", "custom tracksuits", "performance joggers", "sleeveless performance tank", "modest sportswear women",
     "men's sportswear UK", "women's sportswear UK", "international clothing size guide", "virtual try on clothing", "London sportswear brand",
   ],
-  applicationName: "Kalëthon",
+  applicationName: "KALËTHON",
   category: "Sportswear and fashion",
   alternates: { canonical: "/" },
   icons: {
@@ -30,15 +30,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://kalethon.com",
-    siteName: "Kalëthon",
-    title: "Kalëthon | Premium British Sportswear & Custom Clothing",
+    siteName: "KALËTHON",
+    title: "KALËTHON | Premium British Sportswear & Custom Clothing",
     description: "Premium sport-to-city clothing, garment customisation, international sizing and private virtual try-on.",
     locale: "en_GB",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Kalëthon — Poise in motion" }],
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "KALËTHON — Poise in motion" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kalëthon | Premium British Sportswear & Custom Clothing",
+    title: "KALËTHON | Premium British Sportswear & Custom Clothing",
     description: "Premium sport-to-city clothing, garment customisation and private virtual try-on.",
     images: ["/og.jpg"],
   },
@@ -51,8 +51,8 @@ const structuredData = {
     {
       "@type": "Organization",
       "@id": "https://kalethon.com/#organization",
-      name: "Kalëthon",
-      alternateName: "Kalethon",
+      name: "KALËTHON",
+      alternateName: "KALETHON",
       url: "https://kalethon.com",
       logo: "https://kalethon.com/kalethon-mark.svg",
       description: "Premium British sportswear and custom sport-to-city clothing.",
@@ -64,7 +64,7 @@ const structuredData = {
       "@type": "WebSite",
       "@id": "https://kalethon.com/#website",
       url: "https://kalethon.com",
-      name: "Kalëthon",
+      name: "KALËTHON",
       publisher: { "@id": "https://kalethon.com/#organization" },
       potentialAction: {
         "@type": "SearchAction",

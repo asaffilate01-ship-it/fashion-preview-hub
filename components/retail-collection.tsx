@@ -67,10 +67,10 @@ export default function RetailCollection() {
       <div className="retail-heading">
         <div>
           <p className="eyebrow">New arrivals / Made to order</p>
-          <h2 id="pieces-title">The essential<br /><em>Kalëthon edit.</em></h2>
+          <h2 id="pieces-title">The essential<br /><em>KALËTHON edit.</em></h2>
         </div>
         <div className="retail-heading-copy">
-          <p>Filter the collection, choose your size and add the standard Kalëthon design—or open the studio to change every detail.</p>
+          <p>Filter the collection, choose your size and add the standard KALËTHON design—or open the studio to change every detail.</p>
           <Link href="/measurements">International size and fit guide <span aria-hidden="true">↗</span></Link>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function RetailCollection() {
       </div>
 
       <p className="retail-message" role="status" aria-live="polite">{message}</p>
-      <div className="retail-assurance" aria-label="Kalëthon shopping assurances">
+      <div className="retail-assurance" aria-label="KALËTHON shopping assurances">
         <span><b>01</b>International sizing</span>
         <span><b>02</b>Material specifications</span>
         <span><b>03</b>Private virtual try-on</span>

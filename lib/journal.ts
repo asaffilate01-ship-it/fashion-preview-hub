@@ -19,7 +19,7 @@ export const journalArticles: JournalArticle[] = [
     dek: "A practical wardrobe for the first serve, the final set and everything after.",
     description: "How to choose premium tennis clothing that performs on court and still looks composed in the city.",
     image: "/collections/tennis.jpg",
-    imageAlt: "Kalëthon tennis clothing in a refined court setting",
+    imageAlt: "KALËTHON tennis clothing in a refined court setting",
     readTime: "5 min read",
     keywords: ["tennis clothing UK", "premium tennis polo", "tennis outfit", "court to city sportswear"],
     sections: [
@@ -35,7 +35,7 @@ export const journalArticles: JournalArticle[] = [
     dek: "Fabric weight is useful—but it never tells the whole story.",
     description: "A clear guide to GSM, fabric construction, recovery, pilling and colourfastness for premium sportswear.",
     image: "/campaign-graphic-tees.png",
-    imageAlt: "Premium Kalëthon jersey garments showing substantial fabric texture",
+    imageAlt: "Premium KALËTHON jersey garments showing substantial fabric texture",
     readTime: "6 min read",
     keywords: ["sportswear GSM guide", "hoodie fabric weight", "polo shirt GSM", "premium clothing quality"],
     sections: [
@@ -51,13 +51,13 @@ export const journalArticles: JournalArticle[] = [
     dek: "Fast turns, short reactions and clothing that never gets in the way.",
     description: "What to wear for padel: performance tops, modest shorts, joggers and layers designed for fast movement.",
     image: "/collections/padel.jpg",
-    imageAlt: "Kalëthon padel clothing beside a glass court",
+    imageAlt: "KALËTHON padel clothing beside a glass court",
     readTime: "4 min read",
     keywords: ["padel clothing", "padel outfit UK", "men's padel clothing", "women's modest padel wear"],
     sections: [
       { heading: "Design for rotation", paragraphs: ["Padel demands rapid changes of direction and repeated trunk rotation. Tops need clean armholes and enough upper-back ease; bottoms need stable waist construction and four-way stretch."] },
       { heading: "Choose coverage deliberately", paragraphs: ["Full-length joggers and trousers can perform well when the cloth is light and the knee is articulated. For shorts and skorts, opaque integrated liners improve comfort and confidence without relying on excessively short cuts."] },
-      { heading: "One outfit beyond the court", paragraphs: ["A quiet performance top, matte track jacket and clean jogger can move directly into travel or casual settings. This is the logic behind Kalëthon's glass-court edit."] },
+      { heading: "One outfit beyond the court", paragraphs: ["A quiet performance top, matte track jacket and clean jogger can move directly into travel or casual settings. This is the logic behind KALËTHON's glass-court edit."] },
     ],
   },
   {
@@ -67,7 +67,7 @@ export const journalArticles: JournalArticle[] = [
     dek: "A city wardrobe built around adaptable weight, quiet colour and useful layers.",
     description: "A London sportswear style guide covering premium polos, technical jackets, hoodies and trousers for changing weather.",
     image: "/look-men.png",
-    imageAlt: "Kalëthon polo and jogger look in an urban court setting",
+    imageAlt: "KALËTHON polo and jogger look in an urban court setting",
     readTime: "5 min read",
     keywords: ["London sportswear brand", "British sportswear", "London tennis clothing", "premium athleisure London"],
     sections: [
@@ -83,7 +83,7 @@ export const journalArticles: JournalArticle[] = [
     dek: "Breathable outside, composed inside, and modest throughout the day.",
     description: "How to select modest, breathable premium sportswear for Dubai's heat and heavily air-conditioned interiors.",
     image: "/campaign-polo.png",
-    imageAlt: "Premium Kalëthon polos and trousers in warm architectural light",
+    imageAlt: "Premium KALËTHON polos and trousers in warm architectural light",
     readTime: "5 min read",
     keywords: ["Dubai sportswear", "UAE modest sportswear", "hot weather polo shirt", "breathable premium clothing UAE"],
     sections: [
@@ -99,7 +99,7 @@ export const journalArticles: JournalArticle[] = [
     dek: "Structured essentials for long days, changing neighbourhoods and constant movement.",
     description: "A New York sportswear layering guide with premium tees, hoodies, track jackets and trousers.",
     image: "/collections/casual.jpg",
-    imageAlt: "Kalëthon casual sportswear with structured city-ready layers",
+    imageAlt: "KALËTHON casual sportswear with structured city-ready layers",
     readTime: "4 min read",
     keywords: ["New York sportswear", "premium street sportswear", "sport to street clothing", "city athleisure"],
     sections: [

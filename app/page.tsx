@@ -108,7 +108,7 @@ const collections = [
 
 function Mark({ className = "" }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 64 64" role="img" aria-label="Kalëthon Kinetic K mark">
+    <svg className={className} viewBox="0 0 64 64" role="img" aria-label="KALËTHON Kinetic K mark">
       <path d="M8 8h11v48H8z" fill="currentColor" />
       <path d="m22 30 24-22h13L33 32z" fill="currentColor" />
       <path d="m22 34 12-4 25 26H45z" fill="currentColor" />
@@ -126,7 +126,7 @@ export default function Home() {
       <div className="announcement">Complimentary UK delivery on orders over £150</div>
 
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="Kalëthon home">
+        <a className="brand" href="#top" aria-label="KALËTHON home">
           <Mark className="brand-mark" />
           <span>KALËTHON</span>
         </a>
@@ -155,7 +155,7 @@ export default function Home() {
       <HeroCarousel />
 
       <section className="intro" id="collection">
-        <p className="eyebrow">Kalëthon / London</p>
+        <p className="eyebrow">KALËTHON / London</p>
         <h2>Relaxed in feel.<br /><em>Resolved in form.</em></h2>
         <p className="intro-copy">
           Elevated essentials that hold their shape, move naturally and wear with quiet confidence—from the court to the city.
@@ -165,7 +165,7 @@ export default function Home() {
       <section className="collections" id="collections" aria-labelledby="collections-title">
         <div className="collections-heading">
           <div>
-            <p className="eyebrow">Kalëthon sport / 2026</p>
+            <p className="eyebrow">KALËTHON sport / 2026</p>
             <h2 id="collections-title">Made for every<br /><em>kind of movement.</em></h2>
           </div>
           <p>Six easy-to-shop sports collections—from tennis and golf to running and training—with the clothing for each activity clearly grouped together.</p>
@@ -194,7 +194,7 @@ export default function Home() {
       <section className="customiser" id="design-yours" aria-labelledby="customiser-title">
         <div className="customiser-heading">
           <div>
-            <p className="eyebrow">Design your Kalëthon garment</p>
+            <p className="eyebrow">Design your KALËTHON garment</p>
             <h2 id="customiser-title">Choose your garment.<br /><em>Make it yours.</em></h2>
           </div>
           <p>Customise polos, performance tees, a full-length tank, hoodies, jackets, joggers, tracksuits, shorts and a court skort. Product-appropriate short, long and sleeveless options appear automatically, with international sizing inside the studio.</p>
@@ -248,22 +248,22 @@ export default function Home() {
             <h2 id="tryon-title">Your look.<br /><em>In motion.</em></h2>
           </div>
           <div className="tryon-intro-copy">
-            <p>Select a Kalëthon piece, add a portrait or capture a live camera frame, then enter the private AI fitting room.</p>
-            <span><b>Private by design.</b> Your portrait is processed only to create the preview and is not stored by Kalëthon.</span>
+            <p>Select a KALËTHON piece, add a portrait or capture a live camera frame, then enter the private AI fitting room.</p>
+            <span><b>Private by design.</b> Your portrait is processed only to create the preview and is not stored by KALËTHON.</span>
           </div>
         </div>
         <TryOnClient />
       </section>
 
       <section className="graphic-story" id="graphic-tees" aria-labelledby="graphic-title">
-        <div className="graphic-image" role="img" aria-label="Kalëthon graphic wordmark and Kinetic K T-shirts in Milan" />
+        <div className="graphic-image" role="img" aria-label="KALËTHON graphic wordmark and Kinetic K T-shirts in Milan" />
         <div className="graphic-copy">
           <p className="eyebrow light">Graphic series / 01</p>
           <h2 id="graphic-title">The wordmark,<br /><em>set in motion.</em></h2>
           <p>
             On selected tees, the full KALËTHON name becomes the artwork—scaled, angled and cut through with the collection palette. Premium essentials keep only the embroidered K.
           </p>
-          <div className="signature-rules" aria-label="Kalëthon signature system">
+          <div className="signature-rules" aria-label="KALËTHON signature system">
             <div><Mark /><span><strong>Kinetic K</strong>Polos, hoodies, tracksuits and joggers</span></div>
             <div><b>KALËTHON</b><span><strong>Full wordmark</strong>Statement tees and selected editions</span></div>
           </div>
@@ -271,9 +271,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="editorial" aria-label="Kalëthon collection stories">
+      <section className="editorial" aria-label="KALËTHON collection stories">
         <article className="editorial-card editorial-men">
-          <div className="editorial-image image-men" role="img" aria-label="Kalëthon embroidered hoodie and tracksuit look in London" />
+          <div className="editorial-image image-men" role="img" aria-label="KALËTHON embroidered hoodie and tracksuit look in London" />
           <div className="editorial-caption">
             <p className="eyebrow light">Look 04 / London</p>
             <h2>Layers,<br />without limits.</h2>
@@ -281,7 +281,7 @@ export default function Home() {
           </div>
         </article>
         <article className="editorial-card editorial-women">
-          <div className="editorial-image image-women" role="img" aria-label="Kalëthon embroidered tracksuits in the Alps" />
+          <div className="editorial-image image-women" role="img" aria-label="KALËTHON embroidered tracksuits in the Alps" />
           <div className="editorial-caption">
             <p className="eyebrow light">Look 09 / The Alps</p>
             <h2>Composed<br />at altitude.</h2>
@@ -293,7 +293,7 @@ export default function Home() {
       <section className="standard" id="story">
         <div className="standard-mark"><Mark /></div>
         <div className="standard-copy">
-          <p className="eyebrow">The Kalëthon standard</p>
+          <p className="eyebrow">The KALËTHON standard</p>
           <h2>Made for the space<br />between sport and life.</h2>
         </div>
         <div className="principles">
@@ -306,7 +306,7 @@ export default function Home() {
       <section className="closing">
         <p className="eyebrow light">KALËTHON / POISE IN MOTION</p>
         <h2>Built to move.<br />Designed to remain.</h2>
-        <a className="button button-light" href="#pieces">Explore Kalëthon <Arrow /></a>
+        <a className="button button-light" href="#pieces">Explore KALËTHON <Arrow /></a>
       </section>
 
       <footer>
@@ -316,11 +316,11 @@ export default function Home() {
         </div>
         <div className="footer-links">
           <div><p>Shop</p><a href="#design-yours">Bespoke studio</a><a href="#collections">Sport collections</a><a href="#hoodies">Hoodies</a>{collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}</div>
-          <div><p>Kalëthon</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a><Link href="/journal">Journal</Link></div>
+          <div><p>KALËTHON</p><a href="#story">Our standard</a><a href="#story">Materials</a><a href="#story">Care</a><Link href="/journal">Journal</Link></div>
           <div><p>Client service</p><a href="mailto:hello@kalethon.com">hello@kalethon.com</a><Link href="/legal/delivery">Delivery</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
           <div><p>Legal & privacy</p><Link href="/legal/terms-and-conditions">Terms</Link><Link href="/legal/privacy-policy">Privacy</Link><Link href="/legal/cookie-policy">Cookies</Link><Link href="/legal/accessibility">Accessibility</Link><CookieSettingsButton /></div>
         </div>
-        <div className="footer-bottom"><span>© 2026 Kalëthon</span><span>London, United Kingdom</span></div>
+        <div className="footer-bottom"><span>© 2026 KALËTHON</span><span>London, United Kingdom</span></div>
       </footer>
     </main>
   );
