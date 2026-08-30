@@ -10,6 +10,7 @@ import {
   type BagItem,
   type CustomProductId,
 } from "@/lib/store";
+import { getCommerceProductForCheckout } from "@/db/commerce";
 
 const sizes = /^(XS|S|M|L|XL|2XL|3XL|UK (6|8|10|12|14|16|18|20|22|24)|(28|30|32|34|36|38|40|42|44)[SRL])$/;
 const colours = new Set<string>(storeColours);
@@ -48,12 +49,31 @@ function validItem(value: unknown): value is BagItem {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<BagItem>;
   return Boolean(
-    item.productId && customProductCatalog[item.productId as CustomProductId] &&
+    typeof item.productId === "string" && item.productId.length > 0 && item.productId.length <= 100 &&
+    (item.sku === undefined || (typeof item.sku === "string" && item.sku.length <= 100)) &&
     colours.has(String(item.bodyColour)) && colours.has(String(item.collarColour)) && colours.has(String(item.cuffColour)) &&
     sleeves.has(String(item.sleeve)) && brandingOptions.has(String(item.branding)) && fits.has(String(item.fit)) && finishes.has(String(item.finish)) &&
     typeof item.size === "string" && sizes.test(item.size) &&
     Number.isInteger(item.quantity) && Number(item.quantity) >= 1 && Number(item.quantity) <= 5
   );
+}
+
+type ResolvedProduct = { name: string; image: string; amount: number; sku: string };
+
+async function resolveProduct(item: BagItem): Promise<ResolvedProduct | null> {
+  if (item.sku) {
+    try {
+      const managed = await getCommerceProductForCheckout(item.sku);
+      if (managed) {
+        if (Boolean(managed.tracked) && Number(managed.available) < item.quantity) return null;
+        return { name: managed.name, image: managed.image, amount: Number(managed.price), sku: managed.sku };
+      }
+    } catch {
+      // The static catalogue remains available before the commerce database is provisioned.
+    }
+  }
+  const fallback = customProductCatalog[item.productId as CustomProductId];
+  return fallback ? { name: fallback.name, image: fallback.image, amount: unitAmountFor({ ...item, unitAmount: undefined }), sku: item.sku ?? item.productId } : null;
 }
 
 function singleItem(body: Record<string, unknown>): BagItem {
@@ -77,6 +97,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "The bag or garment specification was not valid." }, { status: 400 });
     }
     const items = submittedItems as BagItem[];
+    const resolvedProducts = await Promise.all(items.map(resolveProduct));
+    if (resolvedProducts.some((product) => !product)) return NextResponse.json({ message: "One of these pieces is unavailable or does not have enough stock." }, { status: 409 });
     const origin = storefrontOrigin(request);
     const form = new URLSearchParams();
     form.set("mode", "payment");
@@ -90,16 +112,17 @@ export async function POST(request: Request) {
     form.set("consent_collection[terms_of_service]", "required");
     ["GB", "US", "CA", "AE", "DE", "FR", "IE", "IT", "ES", "NL", "AU", "NZ", "PK"].forEach((country, index) => form.set(`shipping_address_collection[allowed_countries][${index}]`, country));
     items.forEach((item, index) => {
-      const product = customProductCatalog[item.productId];
+      const product = resolvedProducts[index]!;
       const description = `${item.bodyColour} / ${item.finish} / ${item.sleeve} / ${item.fit} fit / ${item.branding} / ${item.size}`;
       form.set(`line_items[${index}][quantity]`, String(item.quantity));
       form.set(`line_items[${index}][price_data][currency]`, "gbp");
-      form.set(`line_items[${index}][price_data][unit_amount]`, String(unitAmountFor(item)));
+      form.set(`line_items[${index}][price_data][unit_amount]`, String(product.amount));
       form.set(`line_items[${index}][price_data][product_data][name]`, `KALËTHON ${product.name}`);
       form.set(`line_items[${index}][price_data][product_data][description]`, description);
       form.set(`line_items[${index}][price_data][product_data][images][0]`, `${origin}${product.image}`);
       form.set(`line_items[${index}][price_data][product_data][metadata][specification]`, description);
       form.set(`line_items[${index}][price_data][product_data][metadata][product_id]`, item.productId);
+      form.set(`line_items[${index}][price_data][product_data][metadata][sku]`, product.sku);
     });
     form.set("metadata[item_count]", String(items.reduce((total, item) => total + item.quantity, 0)));
     form.set("metadata[site_terms_accepted]", "true");

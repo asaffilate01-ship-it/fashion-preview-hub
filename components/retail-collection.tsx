@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBag } from "@/components/bag-provider";
-import { formatGBP, type CustomProductId, type StoreBranding, type StoreColour, type StoreFinish, type StoreSleeve } from "@/lib/store";
+import { formatGBP, type StoreBranding, type StoreColour, type StoreFinish, type StoreSleeve } from "@/lib/store";
+import type { StorefrontProduct } from "@/lib/commerce-types";
 
 type RetailCategory = "All" | "Polos" | "Tops" | "Layers" | "Bottoms" | "Sets";
 
 type RetailProduct = {
   sku: string;
-  id: CustomProductId;
+  id: string;
   name: string;
   category: Exclude<RetailCategory, "All">;
   type: string;
@@ -28,11 +29,13 @@ type RetailProduct = {
   signatureTone?: "ink" | "bone" | "oxblood";
   sizes: string[];
   note: string;
+  available?: number;
+  tracked?: boolean;
 };
 
 const categories: RetailCategory[] = ["All", "Polos", "Tops", "Layers", "Bottoms", "Sets"];
 
-const products: RetailProduct[] = [
+const baseProducts: RetailProduct[] = [
   { sku: "court-polo-bone", id: "court-polo", name: "Court Polo", category: "Polos", type: "Sport-to-city polo", material: "220 GSM mercerised cotton piqué", image: "/catalog/court-polo-k.webp", amount: 8500, colour: "Bone", collarColour: "Navy", cuffColour: "Navy", finish: "Contrast trim", sleeve: "Short sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "Structured cotton, navy tipping and the exact Kinetic K" },
   { sku: "court-polo-oxblood", id: "court-polo", name: "Court Polo — Oxblood", category: "Polos", type: "Sport-to-city polo", material: "220 GSM mercerised cotton piqué", image: "/catalog/court-polo-oxblood.webp", amount: 8500, colour: "Oxblood", collarColour: "Bone", cuffColour: "Bone", finish: "Contrast trim", sleeve: "Short sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "Oxblood piqué, bone collar and cuff tipping, and the exact Kinetic K" },
   { sku: "casual-contrast-polo", id: "casual-polo", name: "Casual Contrast Polo", category: "Polos", type: "Relaxed lifestyle polo", material: "240 GSM soft cotton piqué", image: "/campaign-polo.png", amount: 8500, colour: "Oxblood", collarColour: "Oxblood", cuffColour: "Oxblood", finish: "Clean", sleeve: "Short sleeve", branding: "K mark", sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"], note: "A softer drape, open movement and understated K chest mark" },
@@ -66,16 +69,57 @@ function ProductSignature({ branding, signatureTone: tone = "ink" }: Pick<Retail
 
 export default function RetailCollection() {
   const { addItem } = useBag();
+  const [products, setProducts] = useState<RetailProduct[]>(baseProducts);
   const [category, setCategory] = useState<RetailCategory>("All");
   const [activeProduct, setActiveProduct] = useState<string | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
-  const visibleProducts = useMemo(() => category === "All" ? products : products.filter((product) => product.category === category), [category]);
+  const visibleProducts = useMemo(() => category === "All" ? products : products.filter((product) => product.category === category), [category, products]);
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/catalog", { cache: "no-store" }).then(async (response) => {
+      if (!response.ok) return;
+      const body = await response.json() as { products?: StorefrontProduct[] };
+      if (!active || !Array.isArray(body.products)) return;
+      const published = body.products;
+      const publishedById = new Map(published.map((product) => [product.id, product]));
+      const known = new Set(baseProducts.map((product) => product.sku));
+      const merged = baseProducts.filter((product) => publishedById.has(product.sku)).map((product) => {
+        const current = publishedById.get(product.sku)!;
+        return { ...product, name: current.name, type: current.productType, note: current.description || product.note, image: current.image, amount: current.price, available: current.available, tracked: current.tracked };
+      });
+      const additions = published.filter((product) => !known.has(product.id)).map<RetailProduct>((product) => ({
+        sku: product.id,
+        id: product.id,
+        name: product.name,
+        category: categories.includes(product.category as RetailCategory) && product.category !== "All" ? product.category as RetailProduct["category"] : "Tops",
+        type: product.productType,
+        material: product.description || "KALËTHON performance construction",
+        image: product.image,
+        amount: product.price,
+        colour: "Bone",
+        collarColour: "Bone",
+        cuffColour: "Bone",
+        finish: "Clean",
+        sleeve: product.category === "Bottoms" ? "Not applicable" : "Short sleeve",
+        branding: "K mark",
+        sizes: product.category === "Bottoms" ? ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14", "UK 16", "UK 18"] : ["XS", "S", "M", "L", "XL", "2XL", "3XL"],
+        note: product.description || "Finished KALËTHON design",
+        available: product.available,
+        tracked: product.tracked,
+      }));
+      setProducts([...merged, ...additions]);
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   const addStandardDesign = (product: RetailProduct) => {
     const size = selectedSizes[product.sku] ?? product.sizes[Math.min(2, product.sizes.length - 1)];
     addItem({
       productId: product.id,
+      sku: product.sku,
+      unitAmount: product.amount,
       name: product.name,
       image: product.image,
       bodyColour: product.colour,
@@ -138,7 +182,7 @@ export default function RetailCollection() {
                 </div>
               </div>
               <div className="retail-product-actions">
-                <button type="button" aria-expanded={isOpen} onClick={() => setActiveProduct(isOpen ? null : product.sku)}>Choose size</button>
+                <button type="button" aria-expanded={isOpen} disabled={product.tracked && Number(product.available) <= 0} onClick={() => setActiveProduct(isOpen ? null : product.sku)}>{product.tracked && Number(product.available) <= 0 ? "Out of stock" : "Choose size"}</button>
                 <Link href="/try-on">Virtual try-on <span aria-hidden="true">↗</span></Link>
               </div>
               {isOpen && <div className="retail-quick-add">
