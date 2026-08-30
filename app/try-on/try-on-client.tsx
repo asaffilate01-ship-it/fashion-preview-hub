@@ -14,6 +14,7 @@ type TryOnColourway = {
   collar: StoreColour;
   cuff: StoreColour;
   image?: string;
+  modelPhotography?: boolean;
 };
 
 type TryOnProduct = {
@@ -25,8 +26,8 @@ type TryOnProduct = {
   colourways: TryOnColourway[];
 };
 
-function colour(key: string, label: string, body: StoreColour, collar: StoreColour = body, cuff: StoreColour = collar, image?: string): TryOnColourway {
-  return { key, label, body, collar, cuff, image };
+function colour(key: string, label: string, body: StoreColour, collar: StoreColour = body, cuff: StoreColour = collar, image?: string, modelPhotography = false): TryOnColourway {
+  return { key, label, body, collar, cuff, image, modelPhotography };
 }
 
 const products: TryOnProduct[] = [
@@ -50,7 +51,13 @@ const products: TryOnProduct[] = [
     detail: "Soft cotton piqué / relaxed drape",
     price: "£85",
     image: "/campaign-polo.png",
-    colourways: [colour("oxblood", "Oxblood", "Oxblood"), colour("bone", "Bone", "Bone"), colour("navy", "Navy", "Navy"), colour("sage", "Sage", "Sage"), colour("stone", "Stone", "Stone")],
+    colourways: [
+      colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/campaign-polo.png", true),
+      colour("bone", "Bone", "Bone", "Bone", "Bone", "/catalog/colourways/casual-polo-bone.webp", true),
+      colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/casual-polo-navy.webp", true),
+      colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/casual-polo-sage.webp", true),
+      colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/colourways/casual-polo-stone.webp", true),
+    ],
   },
   {
     id: "golf-polo",
@@ -58,7 +65,13 @@ const products: TryOnProduct[] = [
     detail: "Stretch performance piqué / golf cut",
     price: "£85",
     image: "/collections/golf.jpg",
-    colourways: [colour("sage", "Sage", "Sage"), colour("navy-bone", "Navy / Bone", "Navy", "Navy", "Bone"), colour("bone-sage", "Bone / Sage", "Bone", "Sage", "Sage"), colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Oxblood", "Bone"), colour("stone-navy", "Stone / Navy", "Stone", "Stone", "Navy")],
+    colourways: [
+      colour("sage", "Sage", "Sage", "Sage", "Sage", "/collections/golf.jpg", true),
+      colour("navy-bone", "Navy / Bone", "Navy", "Navy", "Bone", "/catalog/colourways/golf-navy-bone.webp", true),
+      colour("bone-sage", "Bone / Sage", "Bone", "Sage", "Sage", "/catalog/colourways/golf-bone-sage.webp", true),
+      colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Oxblood", "Bone", "/catalog/colourways/golf-oxblood-bone.webp", true),
+      colour("stone-navy", "Stone / Navy", "Stone", "Stone", "Navy", "/catalog/colourways/golf-stone-navy.webp", true),
+    ],
   },
   {
     id: "tennis-polo",
@@ -66,7 +79,13 @@ const products: TryOnProduct[] = [
     detail: "Recycled stretch jersey / court cut",
     price: "£85",
     image: "/collections/tennis.jpg",
-    colourways: [colour("bone-oxblood", "Bone / Oxblood", "Bone", "Oxblood", "Oxblood"), colour("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone"), colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone"), colour("sage-bone", "Sage / Bone", "Sage", "Bone", "Bone"), colour("stone-navy", "Stone / Navy", "Stone", "Navy", "Navy")],
+    colourways: [
+      colour("bone-oxblood", "Bone / Oxblood", "Bone", "Oxblood", "Oxblood", "/collections/tennis.jpg", true),
+      colour("navy-bone", "Navy / Bone", "Navy", "Bone", "Bone", "/catalog/colourways/tennis-navy-bone.webp", true),
+      colour("oxblood-bone", "Oxblood / Bone", "Oxblood", "Bone", "Bone", "/catalog/colourways/tennis-oxblood-bone.webp", true),
+      colour("sage-bone", "Sage / Bone", "Sage", "Bone", "Bone", "/catalog/colourways/tennis-sage-bone.webp", true),
+      colour("stone-navy", "Stone / Navy", "Stone", "Navy", "Navy", "/catalog/colourways/tennis-stone-navy.webp", true),
+    ],
   },
   {
     id: "performance-tee",
@@ -122,7 +141,13 @@ const products: TryOnProduct[] = [
     detail: "Coordinated brushed fleece set",
     price: "£225",
     image: "/campaign-hoodie-track.png",
-    colourways: [colour("ink", "Ink", "Ink"), colour("navy", "Navy", "Navy"), colour("stone", "Stone", "Stone"), colour("sage", "Sage", "Sage"), colour("oxblood", "Oxblood", "Oxblood")],
+    colourways: [
+      colour("ink", "Ink", "Ink", "Ink", "Ink", "/catalog/colourways/club-tracksuit-ink.webp", true),
+      colour("navy", "Navy", "Navy", "Navy", "Navy", "/catalog/colourways/club-tracksuit-navy.webp", true),
+      colour("stone", "Stone", "Stone", "Stone", "Stone", "/catalog/colourways/club-tracksuit-stone.webp", true),
+      colour("sage", "Sage", "Sage", "Sage", "Sage", "/catalog/colourways/club-tracksuit-sage.webp", true),
+      colour("oxblood", "Oxblood", "Oxblood", "Oxblood", "Oxblood", "/catalog/colourways/club-tracksuit-oxblood.webp", true),
+    ],
   },
 ];
 
@@ -290,7 +315,7 @@ export default function TryOnClient() {
 
     try {
       let productData: string;
-      if (selectedColour.image) {
+      if (selectedColour.image && !selectedColour.modelPhotography) {
         const productResponse = await fetch(selectedColour.image);
         if (!productResponse.ok) throw new Error("The selected piece could not be prepared.");
         productData = await dataUrlFromBlob(await productResponse.blob());

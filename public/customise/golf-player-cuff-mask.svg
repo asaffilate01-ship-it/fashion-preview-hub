@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 836 941">
-  <defs><filter id="soft"><feGaussianBlur stdDeviation="0.45"/></filter></defs>
-  <path filter="url(#soft)" fill="#fff" d="M272 279c11 4 23 8 36 11l-2 12c-14-3-26-7-38-12Z"/>
-  <path filter="url(#soft)" fill="#fff" d="M491 289c11-2 23-6 35-11l2 12c-12 5-24 9-36 11Z"/>
-</svg>
