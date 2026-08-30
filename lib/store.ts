@@ -5,10 +5,11 @@ export const storeFinishes = ["Clean", "Contrast trim", "Sport piping"] as const
 export const storeSleeves = ["Not applicable", "Sleeveless", "Short sleeve", "Long sleeve"] as const;
 
 export const customProductCatalog = {
-  "court-polo": { name: "Court Polo", amount: 8500, image: "/try-on/court-polo.jpg" },
+  "court-polo": { name: "Court Polo", amount: 8500, image: "/catalog/court-polo-k.webp" },
   "performance-tee": { name: "Performance Tee", amount: 6800, image: "/try-on/form-tee.jpg" },
   "performance-tank": { name: "Performance Tank", amount: 6400, image: "/customise/performance-tank.png" },
-  "poise-hoodie": { name: "Poise Hoodie", amount: 12500, image: "/try-on/poise-hoodie.jpg" },
+  "poise-hoodie": { name: "Poise Pullover Hoodie", amount: 12500, image: "/catalog/poise-pullover-hoodie.webp" },
+  "club-zip-hoodie": { name: "Club Zip Hoodie", amount: 12500, image: "/catalog/club-zip-hoodie.webp" },
   "track-jacket": { name: "Track Jacket", amount: 14500, image: "/try-on/track-jacket.jpg" },
   "motion-jogger": { name: "Motion Jogger", amount: 11000, image: "/try-on/motion-jogger.jpg" },
   "club-tracksuit": { name: "Club Tracksuit", amount: 22500, image: "/campaign-hoodie-track.png" },

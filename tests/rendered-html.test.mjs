@@ -31,6 +31,9 @@ test("renders KALËTHON search and social metadata", async () => {
   assert.doesNotMatch(html, /Kalëthon/);
   assert.match(html, /Premium British sport-to-city clothing/);
   assert.doesNotMatch(html, /href="\/customise"/);
+  assert.match(html, /Poise Pullover Hoodie/);
+  assert.match(html, /Club Zip Hoodie/);
+  assert.match(html, /full KALËTHON wordmark/i);
   assert.match(html, /property="og:image" content="https:\/\/kalethon\.com\/og\.jpg"/);
   assert.match(html, /rel="icon" href="https:\/\/kalethon\.com\/favicon\.svg"/);
   assert.match(html, /application\/ld\+json/);

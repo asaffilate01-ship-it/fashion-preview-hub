@@ -195,6 +195,19 @@ a { color: inherit; text-decoration: none; }
 .retail-product-image > span, .retail-product-image > b { position: absolute; top: 14px; z-index: 1; padding: 7px 9px; border: 1px solid rgba(16,17,15,.16); background: rgba(250,248,244,.91); color: var(--ink); font-size: 7px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; backdrop-filter: blur(6px); }
 .retail-product-image > span { left: 14px; }
 .retail-product-image > b { right: 14px; }
+.product-signature { color: var(--ink); line-height: 1; }
+.retail-product-image > .product-signature { position: absolute; z-index: 2; top: 34%; right: 21%; filter: drop-shadow(0 1px 1px rgba(16,17,15,.12)); pointer-events: none; }
+.retail-product-image > .product-signature-mark { width: clamp(27px, 2.25vw, 37px); }
+.retail-product-image > .product-signature-mark svg { width: 100%; height: auto; display: block; }
+.retail-product-image > .product-signature-word { right: 13%; width: 27%; font-size: clamp(9px, .9vw, 14px); font-weight: 750; letter-spacing: .16em; text-align: center; }
+.product-signature.signature-bone { color: #f4eee4; }
+.product-signature.signature-oxblood { color: #692f38; }
+.retail-branding { min-height: 28px; margin-top: 12px; padding-top: 10px; display: flex; align-items: center; gap: 9px; border-top: 1px solid rgba(16,17,15,.1); }
+.retail-branding > span { color: rgba(16,17,15,.48); font-size: 7px; letter-spacing: .11em; text-transform: uppercase; }
+.retail-branding > .product-signature-mark { width: 18px; height: 18px; }
+.retail-branding > .product-signature-mark svg { width: 100%; height: 100%; display: block; }
+.retail-branding > .product-signature-word { font-size: 8px; font-weight: 750; letter-spacing: .14em; }
+.retail-branding > b { margin-left: auto; color: rgba(16,17,15,.68); font-size: 8px; font-weight: 600; }
 .retail-product-copy { padding: 19px 19px 17px; display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; }
 .retail-product-copy p { margin: 0 0 5px; color: rgba(16,17,15,.48); font-size: 8px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
 .retail-product-copy h3 { margin: 0; font-size: 18px; font-weight: 650; letter-spacing: -.02em; }
@@ -228,7 +241,9 @@ a { color: inherit; text-decoration: none; }
 .retail-assurance b { color: var(--oxblood); font-size: 8px; }
 
 .standard-colourways { min-height: 760px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(440px, .85fr); border-bottom: 1px solid var(--line); background: #eee7dd; }
-.standard-colourways-image { min-height: 760px; position: relative; overflow: hidden; background: #d8c6ad; }
+.standard-colourways-image { min-height: 760px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1px; overflow: hidden; background: rgba(16,17,15,.18); }
+.standard-colourways-image > div { min-width: 0; min-height: 0; position: relative; overflow: hidden; background: #e7ded2; }
+.standard-colourways-image > div:first-child { grid-row: 1 / -1; }
 .standard-colourways-image img { object-fit: cover; }
 .standard-colourways-copy { padding: clamp(70px, 7vw, 110px); display: flex; flex-direction: column; justify-content: center; }
 .standard-colourways-copy h2 { margin: 0; font-size: clamp(52px, 5.8vw, 86px); line-height: .9; letter-spacing: -.055em; font-weight: 500; }
@@ -241,6 +256,22 @@ a { color: inherit; text-decoration: none; }
 .standard-colourways-list small { color: rgba(16,17,15,.58); font-size: 9px; }
 .standard-colourways-list em { color: rgba(16,17,15,.46); font-family: Georgia, "Times New Roman", serif; font-size: 10px; white-space: nowrap; }
 .standard-colourways-copy .button { align-self: flex-start; }
+
+.hoodie-constructions { padding: clamp(72px, 8vw, 120px) 3vw; border-bottom: 1px solid var(--line); background: #f6f1ea; }
+.hoodie-constructions-heading { max-width: 1450px; margin: 0 auto 54px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(320px, .7fr); align-items: end; gap: 6vw; }
+.hoodie-constructions-heading .eyebrow { grid-column: 1 / -1; }
+.hoodie-constructions-heading h2 { margin: 0; font-size: clamp(52px, 6vw, 88px); line-height: .9; letter-spacing: -.055em; font-weight: 500; }
+.hoodie-constructions-heading h2 em { font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
+.hoodie-constructions-heading > p:last-child { max-width: 470px; margin: 0 0 7px; color: rgba(16,17,15,.66); font-family: Georgia, "Times New Roman", serif; font-size: 16px; font-style: italic; line-height: 1.65; }
+.hoodie-constructions-grid { max-width: 1450px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border: 1px solid rgba(16,17,15,.2); background: rgba(16,17,15,.2); }
+.hoodie-constructions-grid > a { min-width: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #e9e1d6; color: var(--ink); }
+.hoodie-construction-image { min-height: 620px; position: relative; display: block; overflow: hidden; background: #e8dfd3; }
+.hoodie-construction-image img { object-fit: cover; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+.hoodie-constructions-grid > a:hover img { transform: scale(1.025); }
+.hoodie-construction-copy { min-height: 92px; padding: 18px 20px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8px 20px; border-top: 1px solid rgba(16,17,15,.18); }
+.hoodie-construction-copy small { grid-column: 1 / -1; color: var(--oxblood); font-size: 7px; font-style: normal; letter-spacing: .12em; text-transform: uppercase; }
+.hoodie-construction-copy b { font-size: 18px; }
+.hoodie-construction-copy em { color: rgba(16,17,15,.55); font-family: Georgia, "Times New Roman", serif; font-size: 11px; font-weight: 400; }
 
 .tryon-entry { min-height: 680px; display: grid; grid-template-columns: 1.05fr .95fr; background: var(--ink); color: white; }
 .tryon-entry-image { min-height: 680px; background: #272925 url('/campaign/hero-casual-motion-v2.jpg') center / cover no-repeat; }
@@ -985,6 +1016,8 @@ footer { padding: 70px 4vw 24px; background: var(--ink); color: #fff; }
   .tryon-intro { grid-template-columns: 1fr .7fr; }
   .standard-colourways, .tryon-entry { grid-template-columns: 1fr; }
   .standard-colourways-image, .tryon-entry-image { min-height: 620px; }
+  .hoodie-constructions-heading { grid-template-columns: 1fr .7fr; }
+  .hoodie-construction-image { min-height: 500px; }
   .tryon-studio { grid-template-columns: 1fr 1fr; }
   .tryon-products { grid-column: span 2; }
   .tryon-product-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; }
@@ -1125,6 +1158,12 @@ footer { padding: 70px 4vw 24px; background: var(--ink); color: #fff; }
   .standard-colourways-list div { padding: 13px 0; grid-template-columns: 25px 1fr; gap: 6px 10px; }
   .standard-colourways-list small, .standard-colourways-list em { grid-column: 2; }
   .standard-colourways-list em { white-space: normal; }
+  .hoodie-constructions { padding: 72px 14px; }
+  .hoodie-constructions-heading { margin-bottom: 38px; grid-template-columns: 1fr; gap: 26px; }
+  .hoodie-constructions-heading h2 { font-size: 48px; }
+  .hoodie-constructions-heading .eyebrow { grid-column: auto; }
+  .hoodie-constructions-grid { grid-template-columns: 1fr; }
+  .hoodie-construction-image { min-height: 460px; }
   .tryon { padding: 88px 14px 90px; }
   .tryon-intro { margin-bottom: 48px; grid-template-columns: 1fr; gap: 34px; }
   .tryon-intro h2 { font-size: 50px; }
