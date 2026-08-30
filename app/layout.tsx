@@ -15,7 +15,12 @@ export const metadata: Metadata = {
     "tennis clothing", "golf clothing", "padel clothing", "pickleball clothing", "performance clothing", "sports lifestyle clothing",
     "premium hoodies", "premium tracksuits", "performance joggers", "golf polo shirt", "tennis polo shirt", "modest sportswear women",
     "men's sportswear UK", "women's sportswear UK", "international clothing size guide", "virtual try on clothing", "London sportswear brand",
+    "luxury athleisure", "premium sportswear New York", "premium sportswear Boston", "premium sportswear Miami",
+    "premium sportswear Washington DC", "premium sportswear Chicago", "premium sportswear Los Angeles", "premium sportswear Seattle",
+    "British sportswear Europe", "padel clothing Spain", "tennis clothing France", "sportswear Germany",
+    "premium sportswear Dubai", "padel clothing Dubai", "sportswear UAE", "worldwide sportswear delivery",
   ],
+
   applicationName: "KALËTHON",
   authors: [{ name: "KALËTHON", url: "https://kalethon.com" }],
   creator: "KALËTHON",
