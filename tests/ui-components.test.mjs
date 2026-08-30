@@ -43,7 +43,20 @@ test("emits the storefront's responsive and accessibility utilities", async () =
   assert.match(css, /sport-product-grid/);
   assert.match(css, /journal-grid/);
   assert.match(css, /hoodie-constructions-grid/);
+  assert.match(css, /retail-toolbar\{[^}]*position:sticky/);
+  assert.match(css, /retail-colourways button\{[^}]*width:44px/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
+});
+
+test("maps photographed garments to distinct realistic colour layers", async () => {
+  const { garmentColourValues, garmentToneStrength, livePreviewAssets } = await vite.ssrLoadModule("/lib/garment-preview.ts");
+
+  assert.equal(livePreviewAssets["golf-polo"].base, "/collections/golf.jpg");
+  assert.equal(livePreviewAssets["tennis-polo"].base, "/collections/tennis.jpg");
+  assert.match(livePreviewAssets["golf-polo"].bodyMask, /golf-player-body-mask\.svg/);
+  assert.match(livePreviewAssets["tennis-polo"].cuffMask, /tennis-player-cuff-mask\.svg/);
+  assert.notEqual(garmentColourValues.Bone, garmentColourValues.Navy);
+  assert.ok(garmentToneStrength.Navy.depth > garmentToneStrength.Bone.depth);
 });
 
 test("forwards progress semantics to the primitive", async () => {

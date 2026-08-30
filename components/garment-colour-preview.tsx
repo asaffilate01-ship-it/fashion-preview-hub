@@ -14,9 +14,9 @@ type PreviewProps = {
   className?: string;
 };
 
-function maskStyle(mask: string, colour: StoreColour, layer: "neutral" | "pigment"): CSSProperties {
+function maskStyle(mask: string, colour: StoreColour, layer: "neutral" | "pigment" | "depth"): CSSProperties {
   return {
-    backgroundColor: layer === "neutral" ? "#fff" : garmentColourValues[colour],
+    backgroundColor: layer === "neutral" ? "#fff" : layer === "depth" ? "#151612" : garmentColourValues[colour],
     WebkitMaskImage: `url(${mask})`,
     maskImage: `url(${mask})`,
     opacity: garmentToneStrength[colour][layer],
@@ -27,6 +27,7 @@ function ColourPart({ mask, colour, part }: { mask: string; colour: StoreColour;
   return <>
     <i className={`garment-tone-layer garment-neutral-layer ${part}`} style={maskStyle(mask, colour, "neutral")} />
     <i className={`garment-tone-layer garment-pigment-layer ${part}`} style={maskStyle(mask, colour, "pigment")} />
+    <i className={`garment-tone-layer garment-depth-layer ${part}`} style={maskStyle(mask, colour, "depth")} />
   </>;
 }
 

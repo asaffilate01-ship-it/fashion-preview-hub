@@ -19,8 +19,8 @@ export const garmentColourValues: Record<StoreColour, string> = {
 export const livePreviewAssets: Record<string, GarmentPreviewAsset> = {
   "court-polo": { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" },
   "casual-polo": { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" },
-  "golf-polo": { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" },
-  "tennis-polo": { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" },
+  "golf-polo": { base: "/collections/golf.jpg", bodyMask: "/customise/golf-player-body-mask.svg", collarMask: "/customise/golf-player-collar-mask.svg", cuffMask: "/customise/golf-player-cuff-mask.svg" },
+  "tennis-polo": { base: "/collections/tennis.jpg", bodyMask: "/customise/tennis-player-body-mask.svg", collarMask: "/customise/tennis-player-collar-mask.svg", cuffMask: "/customise/tennis-player-cuff-mask.svg" },
   "performance-tee": { base: "/customise/performance-tee-short.png", bodyMask: "/customise/performance-tee-short.png", cuffMask: "/customise/performance-tee-short-cuff-mask.svg" },
   "poise-hoodie": { base: "/try-on/poise-hoodie.jpg", bodyMask: "/customise/poise-hoodie-body-mask.svg", cuffMask: "/customise/poise-hoodie-cuff-mask.svg" },
   "club-zip-hoodie": { base: "/try-on/track-jacket.jpg", bodyMask: "/customise/track-jacket-body-mask.svg", collarMask: "/customise/track-jacket-collar-mask.svg", cuffMask: "/customise/track-jacket-cuff-mask.svg" },
@@ -30,13 +30,21 @@ export const livePreviewAssets: Record<string, GarmentPreviewAsset> = {
   "club-tracksuit": { base: "/try-on/track-jacket.jpg", bodyMask: "/customise/track-jacket-body-mask.svg", collarMask: "/customise/track-jacket-collar-mask.svg", cuffMask: "/customise/track-jacket-cuff-mask.svg" },
 };
 
-export const garmentToneStrength: Record<StoreColour, { neutral: number; pigment: number }> = {
-  Bone: { neutral: 0.74, pigment: 0.3 },
-  Stone: { neutral: 0.54, pigment: 0.48 },
-  Sage: { neutral: 0.38, pigment: 0.68 },
-  Oxblood: { neutral: 0.24, pigment: 0.82 },
-  Navy: { neutral: 0.18, pigment: 0.88 },
-  Ink: { neutral: 0.08, pigment: 0.94 },
+export const garmentToneStrength: Record<StoreColour, { neutral: number; pigment: number; depth: number }> = {
+  Bone: { neutral: 0.66, pigment: 0.76, depth: 0.03 },
+  Stone: { neutral: 0.42, pigment: 0.82, depth: 0.09 },
+  Sage: { neutral: 0.24, pigment: 0.88, depth: 0.14 },
+  Oxblood: { neutral: 0.13, pigment: 0.92, depth: 0.23 },
+  Navy: { neutral: 0.09, pigment: 0.94, depth: 0.32 },
+  Ink: { neutral: 0.03, pigment: 0.42, depth: 0.62 },
+};
+
+const genericPoloAsset: GarmentPreviewAsset = { base: "/customise/polo-short.webp", bodyMask: "/customise/polo-short.webp", collarMask: "/customise/polo-short-collar-mask.svg", cuffMask: "/customise/polo-short-cuff-mask.svg" };
+
+const tryOnPreviewAssets: Record<string, GarmentPreviewAsset> = {
+  ...livePreviewAssets,
+  "golf-polo": genericPoloAsset,
+  "tennis-polo": genericPoloAsset,
 };
 
 function loadCanvasImage(source: string): Promise<HTMLImageElement> {
@@ -71,14 +79,17 @@ async function paintMaskedColour(context: CanvasRenderingContext2D, width: numbe
   context.globalCompositeOperation = "screen";
   context.globalAlpha = strength.neutral;
   context.drawImage(neutral, 0, 0);
-  context.globalCompositeOperation = "multiply";
+  context.globalCompositeOperation = "color";
   context.globalAlpha = strength.pigment;
   context.drawImage(pigment, 0, 0);
+  context.globalCompositeOperation = "multiply";
+  context.globalAlpha = strength.depth;
+  context.drawImage(maskedColourLayer(width, height, mask, "#151612"), 0, 0);
   context.restore();
 }
 
 export async function createGarmentColourDataUrl(productId: string, bodyColour: StoreColour, collarColour: StoreColour, cuffColour: StoreColour) {
-  const asset = livePreviewAssets[productId];
+  const asset = tryOnPreviewAssets[productId];
   if (!asset) throw new Error("A live colour preview is not available for this piece.");
   const base = await loadCanvasImage(asset.base);
   const canvas = document.createElement("canvas");
