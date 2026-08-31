@@ -11,6 +11,7 @@ import {
   type CustomProductId,
 } from "@/lib/store";
 import { getCommerceProductForCheckout } from "@/db/commerce";
+import { rateLimitResponse } from "@/lib/rate-limit";
 
 const sizes = /^(XS|S|M|L|XL|2XL|3XL|UK (6|8|10|12|14|16|18|20|22|24)|(28|30|32|34|36|38|40|42|44)[SRL])$/;
 const colours = new Set<string>(storeColours);
@@ -88,6 +89,9 @@ function singleItem(body: Record<string, unknown>): BagItem {
 }
 
 export async function POST(request: Request) {
+  const limited = rateLimitResponse(request, "checkout", 12, 60, "Too many checkout attempts. Please wait a moment and try again.");
+  if (limited) return limited;
+
   const stripe = stripeConnection();
   if (!stripe) return NextResponse.json({ code: "not_configured", message: "Secure checkout is temporarily unavailable while the live payment connection is completed." }, { status: 503 });
   try {

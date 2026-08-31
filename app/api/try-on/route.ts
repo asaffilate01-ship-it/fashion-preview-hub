@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rateLimitResponse } from "@/lib/rate-limit";
 
 const PRODUCT_IDS = new Set(["court-polo", "custom-polo", "form-tee", "performance-tank", "poise-hoodie", "club-zip-hoodie", "track-jacket", "motion-jogger", "club-tracksuit", "court-short", "court-skirt"]);
 const DATA_URI = /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=\r\n]+$/i;
@@ -11,6 +12,9 @@ function safeMessage(status: number) {
 }
 
 export async function POST(request: Request) {
+  const limited = rateLimitResponse(request, "try-on", 6, 60, "The virtual studio is busy with your recent requests. Please wait a moment and try again.");
+  if (limited) return limited;
+
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > MAX_BODY_BYTES) {
     return NextResponse.json({ message: "The selected image is too large." }, { status: 413 });
