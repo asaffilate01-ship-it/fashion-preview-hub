@@ -1,3 +1,4 @@
+import { ensureCommerceSchema } from "./bootstrap";
 import type { CommerceInventoryRow, CommerceOrder, CommerceOverview, CommerceProduct, CommerceQuestion, StorefrontProduct } from "@/lib/commerce-types";
 
 const seedProducts = [
@@ -20,7 +21,8 @@ const seedProducts = [
 
 async function db() {
   const { env } = await import("cloudflare:workers");
-  if (!env.DB) throw new Error("Commerce database is not configured.");
+  if (!env.DB) throw new Error("COMMERCE_DB_BINDING_MISSING");
+  await ensureCommerceSchema(env.DB);
   return env.DB;
 }
 
