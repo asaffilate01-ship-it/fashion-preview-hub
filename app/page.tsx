@@ -318,7 +318,7 @@ export default function Home() {
           <div><p>Client service</p><Link href="/contact">Contact and questions</Link><a href="mailto:hello@kalethon.com">hello@kalethon.com</a><Link href="/legal/delivery">Delivery</Link><Link href="/delivery-to">Where we deliver</Link><Link href="/legal/returns-and-refunds">Returns & refunds</Link><Link href="/measurements">Measurements & size guide</Link><SocialLinks /></div>
           <div><p>Legal & privacy</p><Link href="/legal/terms-and-conditions">Terms</Link><Link href="/legal/privacy-policy">Privacy</Link><Link href="/legal/cookie-policy">Cookies</Link><Link href="/legal/accessibility">Accessibility</Link><CookieSettingsButton /></div>
         </div>
-        <div className="footer-bottom"><span>© 2026 KALËTHON</span><span>London, United Kingdom</span></div>
+        <div className="footer-bottom"><span>© 2026 KALETHON</span><span>Powered by MERQANO</span><span>London, United Kingdom</span></div>
       </footer>
     </main>
   );
