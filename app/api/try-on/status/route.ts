@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
+import { rateLimitResponse } from "@/lib/rate-limit";
 
 const PREDICTION_ID = /^[a-z0-9-]{20,100}$/i;
 
 export async function GET(request: Request) {
+  const limited = rateLimitResponse(request, "try-on-status", 120, 60, "Too many status checks. Please wait a moment.");
+  if (limited) return limited;
+
   const apiKey = process.env.FASHN_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
