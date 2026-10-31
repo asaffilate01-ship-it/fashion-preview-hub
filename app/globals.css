@@ -288,11 +288,16 @@ a { color: inherit; text-decoration: none; }
 .hero-note span:first-child { opacity: .55; }
 .hero-controls { position: absolute; left: 5vw; top: 34px; z-index: 4; display: flex; align-items: center; gap: 22px; }
 .hero-dots { display: flex; gap: 7px; }
-.hero-dots button { width: 34px; height: 2px; padding: 0; border: 0; position: relative; overflow: hidden; background: rgba(255,255,255,.34); cursor: pointer; transition: width .3s ease, background .3s ease; }
+.hero-dots button { width: 34px; min-height: 44px; padding: 0; border: 0; position: relative; background: transparent; cursor: pointer; transition: width .3s ease; }
+.hero-dots button::before { content: ""; position: absolute; inset: calc(50% - 1px) 0 auto; height: 2px; background: rgba(255,255,255,.45); }
 .hero-dots button.is-active { width: 58px; }
-.hero-dots button.is-active::after { content: ""; position: absolute; inset: 0; background: white; transform-origin: left center; animation: hero-slide-progress 6s linear both; }
+.hero-dots button.is-active::after { content: ""; position: absolute; inset: calc(50% - 1px) 0 auto; height: 2px; background: white; transform-origin: left center; animation: hero-slide-progress 6s linear both; }
 .hero[data-paused="true"] .hero-dots button.is-active::after { animation-play-state: paused; }
-.hero-index { color: rgba(255,255,255,.68); font-size: 8px; letter-spacing: .13em; }
+.hero-index { color: rgba(255,255,255,.85); font-size: 10px; letter-spacing: .1em; }
+.hero-autoplay-toggle { min-height: 44px; min-width: 55px; padding: 0 9px; border: 1px solid rgba(255,255,255,.72); border-radius: 0; background: rgba(16,17,15,.36); color: #fff; font-size: 10px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.hero-autoplay-toggle:hover { background: #fff; color: var(--ink); }
+.hero-autoplay-toggle:focus-visible, .hero-dots button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .hero-dots button.is-active::after { animation: none; } }
 .hero-arrow { width: 38px !important; height: 38px !important; top: auto !important; bottom: 28px !important; z-index: 5; border: 1px solid rgba(255,255,255,.55) !important; border-radius: 0 !important; background: rgba(16,17,15,.24) !important; color: white !important; transform: none !important; backdrop-filter: blur(8px); }
 .hero-arrow:hover { background: white !important; color: var(--ink) !important; }
 .hero-arrow-prev { left: auto !important; right: 78px !important; }
