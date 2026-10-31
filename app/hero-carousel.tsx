@@ -55,7 +55,9 @@ function Arrow() {
 export default function HeroCarousel() {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
-  const [paused, setPaused] = React.useState(false);
+  const [interactionPaused, setInteractionPaused] = React.useState(false);
+  const [userPaused, setUserPaused] = React.useState(false);
+  const paused = interactionPaused || userPaused;
   const videoRefs = React.useRef<Array<HTMLVideoElement | null>>([]);
 
   React.useEffect(() => {
@@ -106,15 +108,19 @@ export default function HeroCarousel() {
       id="top"
       aria-label="KALËTHON campaign carousel"
       data-paused={paused ? "true" : "false"}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
+      onMouseEnter={() => setInteractionPaused(true)}
+      onMouseLeave={() => setInteractionPaused(false)}
+      onFocusCapture={() => setInteractionPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setInteractionPaused(false);
+        }
+      }}
     >
       <Carousel className="hero-carousel" opts={{ loop: true, duration: 32 }} setApi={setApi}>
         <CarouselContent className="hero-carousel-content">
           {slides.map((slide, index) => (
-            <CarouselItem className="hero-carousel-item" key={slide.image} aria-hidden={current !== index}>
+            <CarouselItem className="hero-carousel-item" key={slide.image} aria-hidden={current !== index} inert={current !== index}>
               <article className={`hero-slide hero-slide-${index + 1}`}>
                 <div
                   className="hero-slide-media"
@@ -166,6 +172,15 @@ export default function HeroCarousel() {
             ))}
           </div>
           <span className="hero-index">0{current + 1} / 0{slides.length}</span>
+          <button
+            className="hero-autoplay-toggle"
+            type="button"
+            aria-pressed={userPaused}
+            aria-label={userPaused ? "Resume automatic campaign slides" : "Pause automatic campaign slides"}
+            onClick={() => setUserPaused((value) => !value)}
+          >
+            {userPaused ? "Play" : "Pause"}
+          </button>
         </div>
 
         <CarouselPrevious className="hero-arrow hero-arrow-prev" />

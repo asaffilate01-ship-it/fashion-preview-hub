@@ -1,4 +1,8 @@
-# vinext-starter
+# KALËTHON storefront
+
+Premium sport-to-city clothing storefront built with React/Next.js, Vinext/Cloudflare and D1/Drizzle. Start with [`DESIGN.md`](DESIGN.md) for brand rules, [`AGENTS.md`](AGENTS.md) for AI-assisted changes and [`docs/GO-LIVE-CHECKLIST.md`](docs/GO-LIVE-CHECKLIST.md) for production readiness.
+
+## Vinext starter and hosting details
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and

@@ -1,5 +1,7 @@
 # KALËTHON go-live handover
 
+> Historical checklist: for the latest source-level checklist, use [`docs/GO-LIVE-CHECKLIST.md`](docs/GO-LIVE-CHECKLIST.md). A feature being implemented in code does not prove production is configured.
+
 ## Production source
 
 - GitHub `main` is the source of truth.
@@ -11,7 +13,7 @@
 1. Add `STRIPE_SECRET_KEY` through Lovable's secure **Add API Key** form (or configure the Lovable Stripe connector keys) and confirm `/api/checkout` no longer returns `not_configured`. Never paste a key into chat or commit it.
 2. Register `https://kalethon.com/api/stripe/webhook` in Stripe for `checkout.session.completed` and `checkout.session.async_payment_succeeded`, then add its `STRIPE_WEBHOOK_SECRET`.
 3. Verify `kalethon.com` in Resend and add `RESEND_API_KEY`, `ORDER_EMAIL_FROM=orders@kalethon.com` and `ORDER_EMAIL_TO=hello@kalethon.com`. The webhook sends idempotent owner and customer order emails.
-4. Add durable order records, fulfilment status and refund handling before taking real payments. Stripe and email remain the payment/order audit sources until that store is added.
+4. Verify the deployed D1 `DB` binding, commerce migration, paid-order persistence, stock movements, fulfilment and refund workflows. Order/inventory models now exist in source, but deployment and successful end-to-end processing must be confirmed before taking real payments.
 5. Configure real shipping prices, supported destinations, tax treatment and made-to-order lead times.
 6. Replace the legal-page placeholders with the verified trading entity, geographic address, company/VAT details, returns address and consumer cancellation form.
 7. Confirm FASHN processor retention terms and run one non-customer end-to-end generation test.
