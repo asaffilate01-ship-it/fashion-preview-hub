@@ -59,16 +59,17 @@ function validItem(value: unknown): value is BagItem {
   );
 }
 
-type ResolvedProduct = { id: string; name: string; image: string; amount: number; sku: string; tracked: boolean; available: number };
+type ResolvedProduct = { id: string; inventoryId: string | null; name: string; image: string; amount: number; sku: string; tracked: boolean; available: number };
 
 /** Never silently switch from the commerce database to an untracked static price. */
 async function resolveProduct(item: BagItem): Promise<ResolvedProduct | null> {
   const reference = requestedCatalogueReference(item.productId, item.sku);
-  const managed = await getCommerceProductForCheckout(reference);
+  const managed = await getCommerceProductForCheckout(reference, item.size, item.bodyColour);
   if (!managed || !matchesPublishedProduct(item.productId, managed.id)) return null;
   if (!Number.isSafeInteger(Number(managed.price)) || Number(managed.price) <= 0) return null;
   return {
     id: managed.id,
+    inventoryId: managed.inventoryId,
     name: managed.name,
     image: managed.image,
     amount: Number(managed.price),
@@ -117,7 +118,7 @@ export async function POST(request: Request) {
     }
     const verifiedProducts = resolvedProducts as ResolvedProduct[];
     if (exceedsAvailableStock(items.map((item, index) => ({
-      productKey: verifiedProducts[index].id,
+      productKey: verifiedProducts[index].inventoryId ?? verifiedProducts[index].id,
       quantity: item.quantity,
       tracked: verifiedProducts[index].tracked,
       available: verifiedProducts[index].available,
@@ -148,6 +149,9 @@ export async function POST(request: Request) {
       form.set(`line_items[${index}][price_data][product_data][metadata][specification]`, description);
       form.set(`line_items[${index}][price_data][product_data][metadata][product_id]`, item.productId);
       form.set(`line_items[${index}][price_data][product_data][metadata][sku]`, product.sku);
+      form.set(`line_items[${index}][price_data][product_data][metadata][size]`, item.size);
+      form.set(`line_items[${index}][price_data][product_data][metadata][body_colour]`, item.bodyColour);
+      if (product.inventoryId) form.set(`line_items[${index}][price_data][product_data][metadata][inventory_id]`, product.inventoryId);
     });
     form.set("metadata[item_count]", String(items.reduce((total, item) => total + item.quantity, 0)));
     form.set("metadata[site_terms_accepted]", "true");
