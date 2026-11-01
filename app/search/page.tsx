@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import SiteNavigation from "@/components/site-navigation";
-import { customProductCatalog } from "@/lib/store";
+import { searchGarments } from "@/lib/catalog-search";
 import { journalArticles } from "@/lib/journal";
 import { sportCollections } from "@/lib/sports";
 
@@ -10,18 +10,22 @@ export const metadata: Metadata = { title: "Search", description: "Search KALËT
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
-  const query = q.trim().toLowerCase();
-  const hiddenGarmentIds = new Set(["performance-tank", "track-jacket"]);
-  const garments = Object.entries(customProductCatalog).filter(([id, product]) => !hiddenGarmentIds.has(id) && (!query || product.name.toLowerCase().includes(query)));
+  const query = q.trim().slice(0, 120).toLowerCase();
+  const garments = searchGarments(query);
   const sports = sportCollections.filter((sport) => !query || `${sport.name} ${sport.description} ${sport.products.map((product) => product.name).join(" ")}`.toLowerCase().includes(query));
   const stories = journalArticles.filter((article) => !query || `${article.title} ${article.dek} ${article.category} ${article.keywords.join(" ")}`.toLowerCase().includes(query));
   const resultCount = garments.length + sports.length + stories.length;
   return <main className="search-page">
     <SiteNavigation />
-    <section className="search-heading"><p className="eyebrow">Find your KALËTHON</p><h1>Search garments,<br/><em>sports and stories.</em></h1><form action="/search"><label htmlFor="site-search">What are you looking for?</label><div><input id="site-search" name="q" defaultValue={q} placeholder="Try polo, tennis, sizing…" autoFocus/><button type="submit">Search</button></div></form></section>
-    <section className="search-results" aria-live="polite"><p>{query ? `${resultCount} results for “${q}”` : "Browse everything"}</p>
-      {resultCount === 0 && <div className="search-empty"><h2>No exact match yet.</h2><p>Try a garment, sport, city or fabric term—or browse the finished collection.</p><Link href="/#pieces">Shop all garments ↗</Link></div>}
-      {garments.length > 0 && <div className="search-group"><h2>Garments</h2><div>{garments.map(([id, product]) => <Link href="/#pieces" key={id}><Image src={product.image} alt="" width={164} height={160} unoptimized/><span><b>{product.name}</b><small>Finished colourways in international sizes</small></span><strong>From £{product.amount / 100}</strong></Link>)}</div></div>}
+    <section className="search-heading"><p className="eyebrow">Find your KALËTHON</p><h1>Search garments,<br/><em>sports and stories.</em></h1><form action="/search"><label htmlFor="site-search">What are you looking for?</label><div><input id="site-search" type="search" name="q" defaultValue={query} placeholder="Try zip-up hoodie, tennis, sizing…" maxLength={120} enterKeyHint="search" autoComplete="off" /><button type="submit">Search</button></div></form></section>
+    <section className="search-results" aria-live="polite"><p>{query ? `${resultCount} results for “${query}”` : "Browse everything"}</p>
+      {!query && <nav className="search-suggestions" aria-label="Popular KALËTHON searches">
+        {["Zip-up hoodies", "Pullover hoodies", "Tennis", "Golf", "Tracksuit", "Size guide"].map((term) => (
+          <Link key={term} href={term === "Size guide" ? "/measurements" : `/search?q=${encodeURIComponent(term)}`}>{term}</Link>
+        ))}
+      </nav>}
+      {resultCount === 0 && <div className="search-empty"><h2>No exact match yet.</h2><p>Try a garment, sport, city or fabric term—or browse the finished collection.</p><Link href="/#pieces">Shop all garments ↗</Link><Link href="/measurements">View sizing guide ↗</Link></div>}
+      {garments.length > 0 && <div className="search-group"><h2>Garments</h2><div>{garments.map((product) => <Link href={product.href} key={product.sku}><Image src={product.image} alt="" width={164} height={160} unoptimized/><span><b>{product.name}</b><small>{product.collection} · Finished colourways and sizes</small></span><strong>View garment ↗</strong></Link>)}</div></div>}
       {sports.length > 0 && <div className="search-group"><h2>Sports</h2><div>{sports.map((sport) => <Link href={`/sport/${sport.slug}`} key={sport.slug}><Image src={sport.image} alt="" width={164} height={160} unoptimized/><span><b>{sport.name} clothing</b><small>{sport.eyebrow}</small></span><strong>Explore ↗</strong></Link>)}</div></div>}
       {stories.length > 0 && <div className="search-group"><h2>Journal</h2><div>{stories.map((article) => <Link href={`/journal/${article.slug}`} key={article.slug}><Image src={article.image} alt="" width={164} height={160} unoptimized/><span><b>{article.title}</b><small>{article.category} · {article.readTime}</small></span><strong>Read ↗</strong></Link>)}</div></div>}
     </section>

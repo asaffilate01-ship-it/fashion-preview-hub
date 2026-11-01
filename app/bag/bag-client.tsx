@@ -18,7 +18,17 @@ export default function BagClient() {
   const [pendingSessionId, setPendingSessionId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const [confirmedPayment, setConfirmedPayment] = useState(false);
+  const [ordersOpen, setOrdersOpen] = useState<boolean | null>(null);
   const subtotal = items.reduce((total, item) => total + (unitAmountFor(item) * item.quantity), 0);
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/store-status", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() as Promise<{ ordersOpen?: boolean }> : { ordersOpen: false })
+      .then((data) => { if (active) setOrdersOpen(data.ordersOpen === true); })
+      .catch(() => { if (active) setOrdersOpen(false); });
+    return () => { active = false; };
+  }, []);
 
   const verifyPayment = useCallback(async (sessionId: string) => {
     setCheckingPayment(true);
@@ -64,7 +74,7 @@ export default function BagClient() {
   }, [verifyPayment]);
 
   const checkout = async () => {
-    if (!termsAccepted || items.length === 0 || busy || pendingSessionId) return;
+    if (!termsAccepted || items.length === 0 || busy || pendingSessionId || ordersOpen !== true) return;
     setBusy(true);
     setMessage("");
     try {
@@ -97,11 +107,12 @@ export default function BagClient() {
     <aside className="bag-summary">
       {checkoutNotice && <p className="bag-success" role="status">{checkoutNotice}</p>}
       {pendingSessionId && <button className="checkout-recheck" type="button" disabled={checkingPayment} onClick={() => void verifyPayment(pendingSessionId)}>{checkingPayment ? "Checking payment…" : "Check payment status"}</button>}
+      {ordersOpen === false && <p className="bag-alert" role="status">Online ordering is paused. Your selection remains in this browser; you can <Link href="/contact">contact us about availability</Link>.</p>}
       <p className="eyebrow light">Order summary</p><div><span>Garments</span><b>{formatGBP(subtotal)}</b></div><div><span>UK delivery</span><b>{subtotal >= 15000 ? "Complimentary" : "Calculated at checkout"}</b></div><div className="bag-total"><span>Total</span><strong>{formatGBP(subtotal)}</strong></div>
       <p>Taxes, international delivery and duties are confirmed during checkout.</p>
       <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked every specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>.</span></label>
       <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>Send me occasional KALËTHON news. Optional.</span></label>
-      <button type="button" disabled={!termsAccepted || busy || Boolean(pendingSessionId)} onClick={checkout}>{busy ? "Opening secure checkout…" : pendingSessionId ? "Payment verification pending" : "Continue to secure checkout"}</button>
+      <button type="button" disabled={!termsAccepted || busy || Boolean(pendingSessionId) || ordersOpen !== true} onClick={checkout}>{busy ? "Opening secure checkout…" : pendingSessionId ? "Payment verification pending" : ordersOpen === false ? "Online ordering paused" : ordersOpen === null ? "Checking checkout availability…" : "Continue to secure checkout"}</button>
       {message && <p className="bag-error" role="alert">{message}</p>}
       <small>Secure payment is completed with Stripe. Your selected colourway and size are attached to the order.</small>
     </aside>
