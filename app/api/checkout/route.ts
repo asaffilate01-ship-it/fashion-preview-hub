@@ -97,6 +97,15 @@ export async function POST(request: Request) {
   if (process.env.CHECKOUT_ENABLED !== "true") {
     return NextResponse.json({ code: "checkout_disabled", message: "Orders are not yet open. Please contact KALËTHON for availability." }, { status: 503 });
   }
+  // Never create a paid Stripe session unless its order-capture and email
+  // dependencies have also been configured. A checkout URL is not fulfilment.
+  if (!/^(sk|rk)_(test|live)_/.test(process.env.STRIPE_SECRET_KEY ?? "") ||
+      !process.env.STRIPE_WEBHOOK_SECRET ||
+      !process.env.RESEND_API_KEY ||
+      !process.env.ORDER_EMAIL_FROM ||
+      !process.env.ORDER_EMAIL_TO) {
+    return NextResponse.json({ code: "checkout_configuration_incomplete", message: "Secure ordering is not configured yet. Please contact KALËTHON." }, { status: 503 });
+  }
   const stripe = stripeConnection();
   if (!stripe) return NextResponse.json({ code: "not_configured", message: "Secure checkout is temporarily unavailable while the live payment connection is completed." }, { status: 503 });
   try {
