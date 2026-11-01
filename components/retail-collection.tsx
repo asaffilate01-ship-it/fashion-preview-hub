@@ -292,7 +292,7 @@ export default function RetailCollection() {
           const selectedAvailable = selectedColourway.available ?? product.available;
           const selectedTracked = selectedColourway.tracked ?? product.tracked;
           return (
-            <article className="retail-product-card" id={`product-${product.sku}`} key={product.sku}>
+            <article className="retail-product-card" id={`product-${product.sku}`} tabIndex={-1} key={product.sku}>
               <div className="retail-product-image">
                 <ProductColourImage product={product} selected={selectedColourway} />
                 {product.signatureOnImage && <ProductSignature branding={product.branding} signatureTone={selectedColourway.signatureTone ?? product.signatureTone} />}
