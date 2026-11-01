@@ -1569,3 +1569,26 @@ footer { padding: 70px 4vw 24px; background: var(--ink); color: #fff; }
   .search-group img { width: 68px; height: 68px; }
   .search-group strong { grid-column: 2; }
 }
+
+/* Payment confirmation: a return URL does not prove a paid order. */
+.checkout-recheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  width: 100%;
+  margin: 12px 0 18px;
+  padding: 10px 14px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: 600 12px/1.4 Arial, sans-serif;
+  letter-spacing: .04em;
+  cursor: pointer;
+}
+.checkout-recheck:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 3px;
+}
+.checkout-recheck:disabled { opacity: .6; cursor: wait; }
