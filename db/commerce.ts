@@ -197,9 +197,9 @@ export async function recordPaidStripeOrder(eventId: string, eventType: string, 
     const unitAmount = Number(item.price?.unit_amount ?? Math.round(total / Math.max(1, quantity)));
     const metadata = item.price?.product?.metadata ?? {};
     const sku = metadata.sku ?? "";
-    const product = sku ? await database.prepare("SELECT id FROM commerce_products WHERE sku = ?").bind(sku).first<{ id: string }>() : null;
+    const product = sku ? await database.prepare("SELECT id, track_inventory AS tracked FROM commerce_products WHERE sku = ?").bind(sku).first<{ id: string; tracked: number }>() : null;
     statements.push(database.prepare("INSERT INTO commerce_order_items (id, order_id, product_id, sku, name, quantity, unit_amount, total_amount, specification) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(crypto.randomUUID(), orderId, product?.id ?? null, sku, item.price?.product?.name ?? item.description ?? "KALËTHON garment", quantity, unitAmount, total, metadata.specification ?? ""));
-    if (product?.id) {
+    if (product?.id && Boolean(product.tracked)) {
       // A paid size/colour line must never decrement every inventory row.
       const inventory = metadata.inventory_id
         ? await database.prepare("SELECT id FROM commerce_inventory WHERE id = ? AND product_id = ?").bind(metadata.inventory_id, product.id).first<{ id: string }>()
