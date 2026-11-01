@@ -81,7 +81,7 @@ test("serves Virtual Viewing Room products without the broken image optimiser", 
   assert.doesNotMatch(html, /\/_vinext\/image\?/);
 });
 
-test("keeps checkout closed until a secure Stripe key is configured", async () => {
+test("keeps checkout closed until explicit launch approval", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("checkout-test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
@@ -97,5 +97,5 @@ test("keeps checkout closed until a secure Stripe key is configured", async () =
   );
 
   assert.equal(response.status, 503);
-  assert.equal((await response.json()).code, "not_configured");
+  assert.equal((await response.json()).code, "checkout_disabled");
 });
