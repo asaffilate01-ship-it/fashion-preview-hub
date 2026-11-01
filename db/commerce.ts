@@ -37,7 +37,7 @@ export async function seedCommerceCatalogue() {
   const now = new Date().toISOString();
   const statements = seedProducts.flatMap(([id, sku, slug, name, category, productType, image, price, cost], index) => [
     database.prepare("INSERT OR IGNORE INTO commerce_products (id, sku, slug, name, category, product_type, description, image, price, cost, active, featured, track_inventory, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, 1, ?, ?)").bind(id, sku, slug, name, category, productType, `${productType} from the finished KALËTHON edit.`, image, price, cost, index < 6 ? 1 : 0, now, now),
-    database.prepare("INSERT OR IGNORE INTO commerce_inventory (id, product_id, sku, option_name, size, colour, stock_on_hand, stock_reserved, reorder_point, updated_at) VALUES (?, ?, ?, 'Core run', 'All sizes', 'Standard', 12, 0, 4, ?)").bind(`inv-${id}`, id, sku, now),
+    database.prepare("INSERT OR IGNORE INTO commerce_inventory (id, product_id, sku, option_name, size, colour, stock_on_hand, stock_reserved, reorder_point, updated_at) VALUES (?, ?, ?, 'Core run', 'All sizes', 'Standard', 0, 0, 4, ?)").bind(`inv-${id}`, id, sku, now),
   ]);
   await database.batch(statements);
 }
@@ -84,10 +84,24 @@ export async function getPublishedCatalogue(): Promise<StorefrontProduct[]> {
   return rows(result).map((product) => ({ ...product, featured: Boolean(product.featured), tracked: Boolean(product.tracked), available: Number(product.available) }));
 }
 
-export async function getCommerceProductForCheckout(reference: string) {
+/**
+ * Select a single inventory pool appropriate to the requested size/colour.
+ * This avoids silently adding stock for different garment sizes together.
+ * A universal 'All sizes'/'Standard' pool remains valid for made-to-order runs.
+ */
+export async function getCommerceProductForCheckout(reference: string, size: string, colour: string) {
   await seedCommerceCatalogue();
   const database = await db();
-  return database.prepare("SELECT p.id, p.sku, p.name, p.image, p.price, p.track_inventory AS tracked, COALESCE(SUM(i.stock_on_hand - i.stock_reserved), 0) AS available FROM commerce_products p LEFT JOIN commerce_inventory i ON i.product_id = p.id WHERE p.active = 1 AND (p.id = ? OR p.sku = ? OR p.slug = ?) GROUP BY p.id LIMIT 1").bind(reference, reference, reference).first<{ id: string; sku: string; name: string; image: string; price: number; tracked: number; available: number }>();
+  const query = `SELECT p.id, p.sku, p.name, p.image, p.price, p.track_inventory AS tracked,
+    (SELECT i.id FROM commerce_inventory i WHERE i.product_id = p.id
+      AND (i.size = ? OR i.size = 'All sizes') AND (i.colour = ? OR i.colour = 'Standard')
+      ORDER BY (i.size = ?) DESC, (i.colour = ?) DESC, i.updated_at DESC LIMIT 1) AS inventoryId,
+    COALESCE((SELECT i.stock_on_hand - i.stock_reserved FROM commerce_inventory i WHERE i.product_id = p.id
+      AND (i.size = ? OR i.size = 'All sizes') AND (i.colour = ? OR i.colour = 'Standard')
+      ORDER BY (i.size = ?) DESC, (i.colour = ?) DESC, i.updated_at DESC LIMIT 1), 0) AS available
+    FROM commerce_products p WHERE p.active = 1 AND (p.id = ? OR p.sku = ? OR p.slug = ?) LIMIT 1`;
+  return database.prepare(query).bind(size, colour, size, colour, size, colour, size, colour, reference, reference, reference)
+    .first<{ id: string; sku: string; name: string; image: string; price: number; tracked: number; inventoryId: string | null; available: number }>();
 }
 
 export async function saveCommerceProduct(input: Partial<CommerceProduct>) {
@@ -160,6 +174,15 @@ export async function recordPaidStripeOrder(eventId: string, eventType: string, 
   const database = await db();
   const seen = await database.prepare("SELECT id FROM commerce_webhook_events WHERE id = ?").bind(eventId).first<{ id: string }>();
   if (seen) return;
+  // Stripe can emit both completed and async-payment events for the same
+  // session; the paid session, not event ID, is the unique order identity.
+  const existingOrder = await database.prepare("SELECT id FROM commerce_orders WHERE stripe_session_id = ?")
+    .bind(session.id).first<{ id: string }>();
+  if (existingOrder) {
+    await database.prepare("INSERT OR IGNORE INTO commerce_webhook_events (id, event_type, processed_at) VALUES (?, ?, ?)")
+      .bind(eventId, eventType, new Date().toISOString()).run();
+    return;
+  }
   const now = new Date().toISOString();
   const orderId = crypto.randomUUID();
   const orderNumber = `KAL-${now.slice(2, 10).replace(/-/g, "")}-${session.id.slice(-6).toUpperCase()}`;
@@ -176,7 +199,16 @@ export async function recordPaidStripeOrder(eventId: string, eventType: string, 
     const sku = metadata.sku ?? "";
     const product = sku ? await database.prepare("SELECT id FROM commerce_products WHERE sku = ?").bind(sku).first<{ id: string }>() : null;
     statements.push(database.prepare("INSERT INTO commerce_order_items (id, order_id, product_id, sku, name, quantity, unit_amount, total_amount, specification) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(crypto.randomUUID(), orderId, product?.id ?? null, sku, item.price?.product?.name ?? item.description ?? "KALËTHON garment", quantity, unitAmount, total, metadata.specification ?? ""));
-    if (product?.id) statements.push(database.prepare("UPDATE commerce_inventory SET stock_on_hand = MAX(0, stock_on_hand - ?), updated_at = ? WHERE product_id = ?").bind(quantity, now, product.id));
+    if (product?.id) {
+      // A paid size/colour line must never decrement every inventory row.
+      const inventory = metadata.inventory_id
+        ? await database.prepare("SELECT id FROM commerce_inventory WHERE id = ? AND product_id = ?").bind(metadata.inventory_id, product.id).first<{ id: string }>()
+        : await database.prepare("SELECT id FROM commerce_inventory WHERE product_id = ? ORDER BY updated_at DESC LIMIT 1").bind(product.id).first<{ id: string }>();
+      if (inventory?.id) {
+        statements.push(database.prepare("UPDATE commerce_inventory SET stock_on_hand = MAX(0, stock_on_hand - ?), updated_at = ? WHERE id = ?").bind(quantity, now, inventory.id));
+        statements.push(database.prepare("INSERT INTO commerce_inventory_movements (id, inventory_id, movement_type, quantity, reference, note, created_at) VALUES (?, ?, 'sale', ?, ?, ?, ?)").bind(crypto.randomUUID(), inventory.id, -quantity, session.id, "Verified Stripe payment", now));
+      }
+    }
   }
   await database.batch(statements);
 }
