@@ -1592,3 +1592,33 @@ footer { padding: 70px 4vw 24px; background: var(--ink); color: #fff; }
   outline-offset: 3px;
 }
 .checkout-recheck:disabled { opacity: .6; cursor: wait; }
+
+/* Product discovery: direct links land on the intended finished garment. */
+.retail-product-card { scroll-margin-top: 110px; }
+.retail-product-card:target { outline: 2px solid var(--oxblood); outline-offset: -2px; }
+.retail-product-card:target:focus-visible { outline-width: 3px; outline-offset: 3px; }
+.search-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0 28px;
+}
+.search-suggestions a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 10px 16px;
+  border: 1px solid rgba(16, 17, 15, .22);
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink);
+  font: 600 12px/1.3 Arial, sans-serif;
+  text-decoration: none;
+}
+.search-suggestions a:hover { border-color: var(--oxblood); }
+.search-suggestions a:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 2px; }
+@media (max-width: 600px) {
+  .retail-product-card { scroll-margin-top: 84px; }
+  .search-suggestions { gap: 8px; }
+  .search-suggestions a { padding: 10px 12px; }
+}
