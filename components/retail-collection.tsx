@@ -192,7 +192,17 @@ export default function RetailCollection() {
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [selectedColours, setSelectedColours] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
+  const [ordersOpen, setOrdersOpen] = useState<boolean | null>(null);
   const visibleProducts = useMemo(() => category === "All" ? products : products.filter((product) => product.category === category), [category, products]);
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/store-status", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() as Promise<{ ordersOpen?: boolean }> : { ordersOpen: false })
+      .then((data) => { if (active) setOrdersOpen(data.ordersOpen === true); })
+      .catch(() => { if (active) setOrdersOpen(false); });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -272,6 +282,10 @@ export default function RetailCollection() {
         </div>
       </div>
 
+      {ordersOpen === false && <p className="shop-availability-notice" role="status">
+        The collection is open to explore, but online checkout is temporarily paused. <Link href="/contact">Ask us about availability</Link>.
+      </p>}
+
       <div className="retail-toolbar">
         <div className="retail-filters" role="group" aria-label="Filter the collection">
           {categories.map((option) => (
@@ -320,7 +334,7 @@ export default function RetailCollection() {
                 <div className="retail-size-scroll" role="group" aria-label={`Choose ${product.name} size`}>
                   {product.sizes.map((size) => <button className={selectedSize === size ? "is-selected" : ""} type="button" aria-pressed={selectedSize === size} onClick={() => setSelectedSizes((current) => ({ ...current, [product.sku]: size }))} key={size}>{size}</button>)}
                 </div>
-                <button className="retail-add-button" type="button" onClick={() => addStandardDesign(product, selectedColourway)}>Add {selectedSize} to bag · {formatGBP(selectedAmount)}</button>
+                <button className="retail-add-button" type="button" onClick={() => addStandardDesign(product, selectedColourway)}>{ordersOpen === false ? "Save" : "Add"} {selectedSize} to bag · {formatGBP(selectedAmount)}</button>
                 <small>Finished design: {selectedColourway.colour} body, {selectedColourway.collarColour} collar, {selectedColourway.cuffColour} trim, {product.finish.toLowerCase()}, regular fit and {product.branding === "K mark" ? "discreet Kinetic K chest mark" : "aligned full KALËTHON wordmark"}.</small>
               </div>}
             </article>
