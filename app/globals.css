@@ -1622,3 +1622,15 @@ footer { padding: 70px 4vw 24px; background: var(--ink); color: #fff; }
   .search-suggestions { gap: 8px; }
   .search-suggestions a { padding: 10px 12px; }
 }
+
+/* Disclose checkout availability before the buyer reaches Stripe. */
+.shop-availability-notice, .bag-alert {
+  margin: 18px 0 24px;
+  padding: 16px 20px;
+  border-left: 3px solid var(--oxblood);
+  background: #f5eee7;
+  color: var(--ink);
+  font: 400 14px/1.6 Arial, sans-serif;
+}
+.shop-availability-notice a, .bag-alert a { color: var(--oxblood); font-weight: 700; text-underline-offset: 3px; }
+.shop-availability-notice a:focus-visible, .bag-alert a:focus-visible { outline: 2px solid var(--oxblood); outline-offset: 3px; }
