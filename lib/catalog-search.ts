@@ -56,7 +56,7 @@ export function searchGarments(input: string): GarmentSearchResult[] {
   const results = discoverableGarments.flatMap((entry) => {
     const product = customProductCatalog[entry.productId];
     const name = normalizeSearchText(product.name);
-    const haystack = normalizeSearchText(`${product.name} ${entry.collection} ${entry.keywords}`);
+    const haystack = normalizeSearchText(`KALËTHON ${product.name} ${entry.collection} ${entry.keywords}`);
     if (terms.length && !terms.every((term) => haystack.includes(term))) return [];
     const score = terms.length === 0 ? 0
       : (name.includes(normalized) ? 100 : 0)
