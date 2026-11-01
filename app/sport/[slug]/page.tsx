@@ -4,6 +4,11 @@ import { notFound } from "next/navigation";
 import SocialLinks from "@/components/social-links";
 import { getSportCollection, sportCollections } from "@/lib/sports";
 import SiteNavigation from "@/components/site-navigation";
+import { normalizeSearchText, searchGarments } from "@/lib/catalog-search";
+
+function findShopGarment(name: string) {
+  return searchGarments(name).find((item) => normalizeSearchText(item.name) === normalizeSearchText(name));
+}
 
 export function generateStaticParams() {
   return sportCollections.map(({ slug }) => ({ slug }));
@@ -34,21 +39,11 @@ export default async function SportPage({ params }: { params: Promise<{ slug: st
       itemListElement: collection.products.map((product, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        item: {
-          "@type": "Product",
-          name: product.name,
-          description: product.detail,
-          category: product.category,
-          image: `https://kalethon.com${collection.image}`,
-          brand: { "@type": "Brand", name: "KALËTHON" },
-          offers: {
-            "@type": "Offer",
-            priceCurrency: "GBP",
-            price: product.price.replace("£", ""),
-            availability: "https://schema.org/PreOrder",
-            url: `https://kalethon.com/#pieces`,
-          },
-        },
+        name: product.name,
+        description: product.detail,
+        url: findShopGarment(product.name)
+          ? `https://kalethon.com${findShopGarment(product.name)!.href}`
+          : "https://kalethon.com/#pieces",
       })),
     },
   };
@@ -60,7 +55,15 @@ export default async function SportPage({ params }: { params: Promise<{ slug: st
     <nav className="sport-switcher" aria-label="Other sports">{sportCollections.map((sport) => <Link className={sport.slug === collection.slug ? "is-active" : ""} href={`/sport/${sport.slug}`} key={sport.slug}>{sport.name}</Link>)}</nav>
     <section className="sport-products" id="sport-products">
       <div className="sport-products-heading"><p className="eyebrow">KALËTHON / {collection.name}</p><h2>Built for the sport.<br/><em>Composed for life.</em></h2></div>
-      <div className="sport-product-grid">{collection.products.map((product, index) => <article key={product.name}><span>0{index + 1} / {product.category}</span><div><h3>{product.name}</h3><p>{product.detail}</p></div><strong>{product.price}</strong><Link href="/#pieces">Shop colourways <b>↗</b></Link></article>)}</div>
+      <div className="sport-product-grid">{collection.products.map((product, index) => {
+        const available = findShopGarment(product.name);
+        return <article key={product.name}>
+          <span>0{index + 1} / {product.category}</span>
+          <div><h3>{product.name}</h3><p>{product.detail}</p></div>
+          <strong>{available ? "See current price" : "Collection preview"}</strong>
+          <Link href={available?.href ?? "/#pieces"}>{available ? "Shop this garment" : "Explore available pieces"} <b aria-hidden="true">↗</b></Link>
+        </article>;
+      })}</div>
     </section>
     <section className="sport-next"><p>Other sports that fit KALËTHON</p><h2>Racket sport, golf, running and training are the core. Future edits can add <em>cycling, rowing, yoga and travel athletics</em> once their specialist fits and materials are properly developed.</h2></section>
     <footer className="journal-footer"><Link href="/">KALËTHON</Link><p>Poise in motion.</p><SocialLinks /></footer>
