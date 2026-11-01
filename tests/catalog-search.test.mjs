@@ -47,3 +47,13 @@ test("sport collections only link real listings directly, without unverified off
   assert.match(sportSource, /Collection preview/);
   assert.doesNotMatch(sportSource, /schema\.org\/PreOrder/);
 });
+
+test("ordering availability is displayed and paid checkout is disabled when closed", async () => {
+  const status = await readFile(new URL("../app/api/store-status/route.ts", import.meta.url), "utf8");
+  const bag = await readFile(new URL("../app/bag/bag-client.tsx", import.meta.url), "utf8");
+  const storefront = await readFile(new URL("../components/retail-collection.tsx", import.meta.url), "utf8");
+  assert.match(status, /getPublishedCatalogue/);
+  assert.match(status, /ordersOpen: false/);
+  assert.match(bag, /ordersOpen !== true/);
+  assert.match(storefront, /shop-availability-notice/);
+});
