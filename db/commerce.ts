@@ -212,3 +212,12 @@ export async function recordPaidStripeOrder(eventId: string, eventType: string, 
   }
   await database.batch(statements);
 }
+
+/** Returns only whether a signed Stripe webhook recorded this paid session. */
+export async function hasRecordedPaidOrder(sessionId: string) {
+  const database = await db();
+  const recorded = await database.prepare(
+    "SELECT payment_status AS paymentStatus FROM commerce_orders WHERE stripe_session_id = ? LIMIT 1",
+  ).bind(sessionId).first<{ paymentStatus: string }>();
+  return recorded?.paymentStatus === "paid";
+}
