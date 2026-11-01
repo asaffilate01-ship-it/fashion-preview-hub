@@ -2,10 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 test("secure checkout never contacts Stripe when order database is missing", async () => {
-  const oldEnabled = process.env.CHECKOUT_ENABLED;
-  const oldStripe = process.env.STRIPE_SECRET_KEY;
-  process.env.CHECKOUT_ENABLED = "true";
-  process.env.STRIPE_SECRET_KEY = "sk_test_fictional_for_no_network_unit_test";
+  const keys = ["CHECKOUT_ENABLED", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "RESEND_API_KEY", "ORDER_EMAIL_FROM", "ORDER_EMAIL_TO"];
+  const before = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  Object.assign(process.env, {
+    CHECKOUT_ENABLED: "true",
+    STRIPE_SECRET_KEY: "sk_test_fictional_for_no_network_unit_test",
+    STRIPE_WEBHOOK_SECRET: "whsec_fictional",
+    RESEND_API_KEY: "re_fictional",
+    ORDER_EMAIL_FROM: "orders@example.invalid",
+    ORDER_EMAIL_TO: "team@example.invalid",
+  });
 
   try {
     const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -30,9 +36,9 @@ test("secure checkout never contacts Stripe when order database is missing", asy
     assert.equal(response.status, 503);
     assert.equal((await response.json()).code, "commerce_unavailable");
   } finally {
-    if (oldEnabled === undefined) delete process.env.CHECKOUT_ENABLED;
-    else process.env.CHECKOUT_ENABLED = oldEnabled;
-    if (oldStripe === undefined) delete process.env.STRIPE_SECRET_KEY;
-    else process.env.STRIPE_SECRET_KEY = oldStripe;
+    for (const key of keys) {
+      if (before[key] === undefined) delete process.env[key];
+      else process.env[key] = before[key];
+    }
   }
 });
