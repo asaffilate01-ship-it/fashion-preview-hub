@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useBag } from "@/components/bag-provider";
@@ -15,25 +15,56 @@ export default function BagClient() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [checkoutNotice, setCheckoutNotice] = useState("");
+  const [pendingSessionId, setPendingSessionId] = useState<string | null>(null);
+  const [checkingPayment, setCheckingPayment] = useState(false);
+  const [confirmedPayment, setConfirmedPayment] = useState(false);
   const subtotal = items.reduce((total, item) => total + (unitAmountFor(item) * item.quantity), 0);
+
+  const verifyPayment = useCallback(async (sessionId: string) => {
+    setCheckingPayment(true);
+    try {
+      const response = await fetch(`/api/checkout/status?session_id=${encodeURIComponent(sessionId)}`, { cache: "no-store" });
+      const data = await response.json() as { confirmed?: boolean; message?: string };
+      if (!response.ok) throw new Error(data.message || "Payment verification is temporarily unavailable.");
+      if (data.confirmed === true) {
+        setConfirmedPayment(true);
+        setPendingSessionId(null);
+        setCheckoutNotice("Your paid KALËTHON order is confirmed. We will email the order details.");
+        clear();
+        window.history.replaceState({}, "", "/bag");
+      } else {
+        setCheckoutNotice("Your return from checkout is not yet confirmed as a paid order. If you have paid, please do not repeat checkout. You can recheck here or contact us.");
+      }
+    } catch {
+      setCheckoutNotice("We could not verify the order yet. If you have paid, please do not start a second checkout. Check again or contact us.");
+    } finally {
+      setCheckingPayment(false);
+    }
+  }, [clear]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const status = new URLSearchParams(window.location.search).get("checkout");
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("checkout");
       if (status === "success") {
-        setCheckoutNotice("Payment received. Your KALËTHON order confirmation is being sent by email.");
-        clear();
-        window.history.replaceState({}, "", "/bag");
+        const sessionId = params.get("session_id");
+        if (!sessionId) {
+          setCheckoutNotice("The checkout reference is missing. Please contact us if a payment was taken.");
+          return;
+        }
+        setPendingSessionId(sessionId);
+        setCheckoutNotice("Checking your payment and recorded order…");
+        void verifyPayment(sessionId);
       } else if (status === "cancelled") {
         setCheckoutNotice("Checkout was cancelled. Your pieces are still in the bag.");
         window.history.replaceState({}, "", "/bag");
       }
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [clear]);
+  }, [verifyPayment]);
 
   const checkout = async () => {
-    if (!termsAccepted || items.length === 0 || busy) return;
+    if (!termsAccepted || items.length === 0 || busy || pendingSessionId) return;
     setBusy(true);
     setMessage("");
     try {
@@ -52,7 +83,7 @@ export default function BagClient() {
   };
 
   if (!ready) return <section className="bag-shell"><p>Preparing your bag…</p></section>;
-  if (items.length === 0) return <section className="bag-empty"><span>0</span>{checkoutNotice && <p className="bag-success" role="status">{checkoutNotice}</p>}<h2>{checkoutNotice ? "Order received." : "Your bag is ready."}</h2><p>{checkoutNotice || "Choose a finished colourway and size from the collection."}</p><Link href="/#pieces">Shop KALËTHON clothing ↗</Link></section>;
+  if (items.length === 0) return <section className="bag-empty"><span>0</span>{checkoutNotice && <p className="bag-success" role="status">{checkoutNotice}</p>}<h2>{confirmedPayment ? "Order received." : "Your bag is ready."}</h2><p>{checkoutNotice || "Choose a finished colourway and size from the collection."}</p>{pendingSessionId && <button className="checkout-recheck" type="button" disabled={checkingPayment} onClick={() => void verifyPayment(pendingSessionId)}>{checkingPayment ? "Checking payment…" : "Check payment status"}</button>}<Link href="/#pieces">Shop KALËTHON clothing ↗</Link></section>;
 
   return <section className="bag-shell">
     <div className="bag-items">
@@ -65,11 +96,12 @@ export default function BagClient() {
     </div>
     <aside className="bag-summary">
       {checkoutNotice && <p className="bag-success" role="status">{checkoutNotice}</p>}
+      {pendingSessionId && <button className="checkout-recheck" type="button" disabled={checkingPayment} onClick={() => void verifyPayment(pendingSessionId)}>{checkingPayment ? "Checking payment…" : "Check payment status"}</button>}
       <p className="eyebrow light">Order summary</p><div><span>Garments</span><b>{formatGBP(subtotal)}</b></div><div><span>UK delivery</span><b>{subtotal >= 15000 ? "Complimentary" : "Calculated at checkout"}</b></div><div className="bag-total"><span>Total</span><strong>{formatGBP(subtotal)}</strong></div>
       <p>Taxes, international delivery and duties are confirmed during checkout.</p>
       <label><input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} /><span>I have checked every specification and agree to the <Link href="/legal/terms-and-conditions" target="_blank">terms</Link> and <Link href="/legal/returns-and-refunds" target="_blank">personalised-item returns notice</Link>.</span></label>
       <label><input type="checkbox" checked={marketingConsent} onChange={(event) => setMarketingConsent(event.target.checked)} /><span>Send me occasional KALËTHON news. Optional.</span></label>
-      <button type="button" disabled={!termsAccepted || busy} onClick={checkout}>{busy ? "Opening secure checkout…" : "Continue to secure checkout"}</button>
+      <button type="button" disabled={!termsAccepted || busy || Boolean(pendingSessionId)} onClick={checkout}>{busy ? "Opening secure checkout…" : pendingSessionId ? "Payment verification pending" : "Continue to secure checkout"}</button>
       {message && <p className="bag-error" role="alert">{message}</p>}
       <small>Secure payment is completed with Stripe. Your selected colourway and size are attached to the order.</small>
     </aside>
