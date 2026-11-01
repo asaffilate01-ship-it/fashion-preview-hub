@@ -57,3 +57,9 @@ test("ordering availability is displayed and paid checkout is disabled when clos
   assert.match(bag, /ordersOpen !== true/);
   assert.match(storefront, /shop-availability-notice/);
 });
+
+test("size guide points to the live finished collection rather than a removed customiser", async () => {
+  const guide = await readFile(new URL("../app/measurements/page.tsx", import.meta.url), "utf8");
+  assert.doesNotMatch(guide, /\/\#design-yours/);
+  assert.match(guide, /Explore finished colourways/);
+});
