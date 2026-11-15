@@ -3,6 +3,8 @@ import { journalArticles } from "@/lib/journal";
 import { sportCollections } from "@/lib/sports";
 import { legalPages } from "@/lib/legal";
 import { regions } from "@/lib/regions";
+import { featuredProducts } from "@/lib/featured-products";
+import { kalethonDepartments } from "@/lib/kalethon-departments";
 
 const baseUrl = "https://kalethon.com";
 
@@ -10,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date("2026-08-30T00:00:00Z");
   return [
     { url: baseUrl, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    ...kalethonDepartments.map((department) => ({ url: `${baseUrl}/collections/${department.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.85 })),
+    ...featuredProducts.map((product) => ({ url: `${baseUrl}/products/${product.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.75 })),
     { url: `${baseUrl}/delivery-to`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     ...regions.map((region) => ({
       url: `${baseUrl}/delivery-to/${region.slug}`,
