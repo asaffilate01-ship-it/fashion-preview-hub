@@ -58,7 +58,7 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
           <h2 id="existing-pieces-title" style={{ fontFamily: "Georgia, serif", fontWeight: 400, fontSize: "clamp(32px,4vw,48px)", margin: "14px 0 30px" }}>Discover existing designs</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,220px),1fr))", gap: 20 }}>
             {existingPieces.map((piece) => (
-              <Link key={piece.sku} href={`/#product-${piece.sku}`} style={{ color: "inherit", textDecoration: "none" }}>
+              <Link key={piece.sku} href={`/products/${piece.sku}`} style={{ color: "inherit", textDecoration: "none" }}>
                 <div style={{ position: "relative", aspectRatio: "4 / 5", background: "#e8e6e0", overflow: "hidden" }}>
                   <Image src={piece.image} alt={piece.name} fill sizes="(max-width: 650px) 100vw, 25vw" style={{ objectFit: "cover" }} unoptimized />
                 </div>
