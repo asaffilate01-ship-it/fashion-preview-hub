@@ -301,7 +301,7 @@ export default function RetailCollection() {
                 <small className="retail-image-caption">{selectedColourway.label} · finished colourway</small>
               </div>
               <div className="retail-product-copy">
-                <div><p>{product.type}</p><h3>{product.name}</h3></div>
+                <div><p>{product.type}</p><h3><Link href={`/products/${product.sku}`} style={{ color: "inherit", textDecoration: "none" }}>{product.name}</Link></h3><Link href={`/products/${product.sku}`} style={{ display: "inline-block", marginTop: 8, fontSize: 13, textDecoration: "underline", color: "inherit" }}>Details & sizing ↗</Link></div>
                 <strong>{formatGBP(selectedAmount)}</strong>
                 <span>{product.material}</span>
                 <small>{product.note}</small>
