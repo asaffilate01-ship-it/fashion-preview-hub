@@ -40,7 +40,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <strong>Explore ↗</strong>
         </Link>
       ))}</div></div>}
-      {garments.length > 0 && <div className="search-group"><h2>Garments</h2><div>{garments.map(([id, product]) => <Link href={productAnchors[id] ? `/#product-${productAnchors[id]}` : "/#pieces"} key={id}><Image src={product.image} alt="" width={164} height={160} unoptimized/><span><b>{product.name}</b><small>Finished colourways in international sizes</small></span><strong>From £{product.amount / 100}</strong></Link>)}</div></div>}
+      {garments.length > 0 && <div className="search-group"><h2>Garments</h2><div>{garments.map(([id, product]) => <Link href={productAnchors[id] ? `/products/${productAnchors[id]}` : "/#pieces"} key={id}><Image src={product.image} alt="" width={164} height={160} unoptimized/><span><b>{product.name}</b><small>Finished colourways in international sizes</small></span><strong>From £{product.amount / 100}</strong></Link>)}</div></div>}
       {sports.length > 0 && <div className="search-group"><h2>Sports</h2><div>{sports.map((sport) => <Link href={`/sport/${sport.slug}`} key={sport.slug}><Image src={sport.image} alt="" width={164} height={160} unoptimized/><span><b>{sport.name} clothing</b><small>{sport.eyebrow}</small></span><strong>Explore ↗</strong></Link>)}</div></div>}
       {stories.length > 0 && <div className="search-group"><h2>Journal</h2><div>{stories.map((article) => <Link href={`/journal/${article.slug}`} key={article.slug}><Image src={article.image} alt="" width={164} height={160} unoptimized/><span><b>{article.title}</b><small>{article.category} · {article.readTime}</small></span><strong>Read ↗</strong></Link>)}</div></div>}
     </section>
