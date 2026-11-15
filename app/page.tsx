@@ -121,10 +121,7 @@ export default function Home() {
 
       <SiteNavigation home />
 
-      <nav className="collection-rail" aria-label="Shop by collection">
-        <span>Shop by sport</span>
-        {collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}
-      </nav>
+      <HeroCarousel />
 
       <section aria-label="Explore KALËTHON departments" style={{ padding: "20px 24px 18px", background: "#f7f5f0" }}>
         <div style={{ maxWidth: 1320, margin: "0 auto" }}>
@@ -137,8 +134,6 @@ export default function Home() {
           </nav>
         </div>
       </section>
-
-      <HeroCarousel />
 
       <section className="intro" id="collection">
         <p className="eyebrow">KALËTHON / London</p>
