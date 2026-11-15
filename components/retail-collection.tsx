@@ -6,6 +6,7 @@ import { useBag } from "@/components/bag-provider";
 import ResponsiveProductImage from "@/components/responsive-product-image";
 import { formatGBP, type StoreBranding, type StoreColour, type StoreFinish, type StoreSleeve } from "@/lib/store";
 import type { StorefrontProduct } from "@/lib/commerce-types";
+import { featuredProducts } from "@/lib/featured-products";
 
 type RetailCategory = "All" | "Polos" | "Tops" | "Layers" | "Bottoms" | "Sets";
 
@@ -192,6 +193,7 @@ export default function RetailCollection() {
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [selectedColours, setSelectedColours] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
+  const productDetailSlugs = useMemo(() => new Set(featuredProducts.map((piece) => piece.slug)), []);
   const visibleProducts = useMemo(() => category === "All" ? products : products.filter((product) => product.category === category), [category, products]);
 
   useEffect(() => {
@@ -301,7 +303,7 @@ export default function RetailCollection() {
                 <small className="retail-image-caption">{selectedColourway.label} · finished colourway</small>
               </div>
               <div className="retail-product-copy">
-                <div><p>{product.type}</p><h3><Link href={`/products/${product.sku}`} style={{ color: "inherit", textDecoration: "none" }}>{product.name}</Link></h3><Link href={`/products/${product.sku}`} style={{ display: "inline-block", marginTop: 8, fontSize: 13, textDecoration: "underline", color: "inherit" }}>Details & sizing ↗</Link></div>
+                <div><p>{product.type}</p><h3>{productDetailSlugs.has(product.sku) ? <Link href={`/products/${product.sku}`} style={{ color: "inherit", textDecoration: "none" }}>{product.name}</Link> : product.name}</h3>{productDetailSlugs.has(product.sku) && <Link href={`/products/${product.sku}`} style={{ display: "inline-block", marginTop: 8, fontSize: 13, textDecoration: "underline", color: "inherit" }}>Details & sizing ↗</Link>}</div>
                 <strong>{formatGBP(selectedAmount)}</strong>
                 <span>{product.material}</span>
                 <small>{product.note}</small>
