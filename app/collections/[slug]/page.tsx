@@ -38,9 +38,14 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
         <p style={{ maxWidth: 680, lineHeight: 1.8, fontSize: 18, marginTop: 28 }}>{department.description}</p>
         <p style={{ fontSize: 13, marginTop: 24, opacity: .75 }}>Collection preview · Product availability and pricing will be confirmed before launch.</p>
       </section>
+      <nav aria-label={department.title + " category shortcuts"} style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px 35px", display: "flex", flexWrap: "wrap", gap: 10 }}>
+        {department.categories.map((category, index) => (
+          <a key={category.title} href={`#category-${index + 1}`} style={{ border: "1px solid #a8a69e", borderRadius: 2, textDecoration: "none", color: "inherit", padding: "10px 15px", fontSize: 14 }}>{category.title} ↓</a>
+        ))}
+      </nav>
       <section aria-label={department.title + " categories"} style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px 100px", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,300px),1fr))", gap: 20 }}>
         {department.categories.map((category, index) => (
-          <article key={category.title} style={{ padding: "32px", background: index % 2 ? "#e8e6e0" : "#eeede8", minHeight: 310 }}>
+          <article id={`category-${index + 1}`} key={category.title} style={{ padding: "32px", scrollMarginTop: 110, background: index % 2 ? "#e8e6e0" : "#eeede8", minHeight: 310 }}>
             <span style={{ fontSize: 12, letterSpacing: ".15em" }}>0{index + 1} / {department.title.toUpperCase()}</span>
             <h2 style={{ fontFamily: "Georgia, serif", fontWeight: 400, fontSize: 33, margin: "28px 0 18px" }}>{category.title}</h2>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: 2 }}>{category.products.map((product) => <li key={product}>{product}</li>)}</ul>
