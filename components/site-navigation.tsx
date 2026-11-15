@@ -7,12 +7,13 @@ import BagLink from "@/components/bag-link";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const primaryLinks = [
-  { href: "/#pieces", label: "Shop" },
-  { href: "/#collections", label: "Sports" },
+  { href: "/collections/men", label: "Men" },
+  { href: "/collections/women", label: "Women" },
+  { href: "/collections/sport", label: "Sport" },
+  { href: "/collections/leather", label: "Leather" },
+  { href: "/collections/fight", label: "Fight" },
+  { href: "/collections/team-pro", label: "Team & Pro" },
   { href: "/try-on", label: "Virtual room" },
-  { href: "/measurements", label: "Size guide" },
-  { href: "/journal", label: "Journal" },
-  { href: "/contact", label: "Contact" },
 ] as const;
 
 const sportLinks = ["Tennis", "Golf", "Padel", "Pickleball", "Running", "Training"] as const;
@@ -36,7 +37,7 @@ export default function SiteNavigation({ home = false }: { home?: boolean }) {
       <Sheet>
         <SheetTrigger asChild><button className="mobile-menu-trigger" type="button" aria-label="Open navigation"><Menu aria-hidden="true"/><span>Menu</span></button></SheetTrigger>
         <SheetContent className="mobile-navigation-sheet" side="right">
-          <SheetHeader className="mobile-navigation-heading"><SheetTitle><Mark/><span>KALËTHON</span></SheetTitle><SheetDescription>Sport-to-city clothing, finished with quiet confidence.</SheetDescription></SheetHeader>
+          <SheetHeader className="mobile-navigation-heading"><SheetTitle><Mark/><span>KALËTHON</span></SheetTitle><SheetDescription>Luxury lifestyle, performance and craftsmanship.</SheetDescription></SheetHeader>
           <nav className="mobile-navigation-links" aria-label="Mobile navigation">
             {primaryLinks.map((link, index) => <SheetClose asChild key={link.href}><Link className={active(link.href) ? "is-active" : ""} href={link.href}><small>0{index + 1}</small><span>{link.label}</span><b>↗</b></Link></SheetClose>)}
           </nav>

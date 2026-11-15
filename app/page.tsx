@@ -121,18 +121,25 @@ export default function Home() {
 
       <SiteNavigation home />
 
-      <nav className="collection-rail" aria-label="Shop by collection">
-        <span>Shop by sport</span>
-        {collections.map((collection) => <Link href={`/sport/${collection.id}`} key={collection.id}>{collection.name}</Link>)}
-      </nav>
-
       <HeroCarousel />
+
+      <section aria-label="Explore KALËTHON departments" style={{ padding: "20px 24px 18px", background: "#f7f5f0" }}>
+        <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+          <p style={{ textTransform: "uppercase", letterSpacing: ".18em", fontSize: 11, marginBottom: 14 }}>The world of KALËTHON</p>
+          <nav aria-label="Luxury and specialist collections" style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {[
+              ["Men", "men"], ["Women", "women"], ["Sport", "sport"], ["Leather goods", "leather"],
+              ["Fight", "fight"], ["Team & Pro", "team-pro"]
+            ].map(([label, slug]) => <Link key={slug} href={`/collections/${slug}`} style={{ border: "1px solid #b8b5ac", padding: "10px 15px", textDecoration: "none", fontSize: 13, color: "#242722" }}>{label} ↗</Link>)}
+          </nav>
+        </div>
+      </section>
 
       <section className="intro" id="collection">
         <p className="eyebrow">KALËTHON / London</p>
         <h2>Relaxed in feel.<br /><em>Resolved in form.</em></h2>
         <p className="intro-copy">
-          Elevated essentials that hold their shape, move naturally and wear with quiet confidence—from the court to the city.
+          Premium lifestyle clothing, considered leather goods and performance collections, from everyday elegance to professional sport.
         </p>
       </section>
 
