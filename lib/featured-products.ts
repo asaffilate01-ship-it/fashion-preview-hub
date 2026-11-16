@@ -43,3 +43,10 @@ export const featuredProducts: FeaturedProduct[] = [
 export function getFeaturedProduct(slug: string) {
   return featuredProducts.find((item) => item.slug === slug);
 }
+
+/** Only published, photographed featured colourways are linked as selectable colours. */
+export function getFeaturedColourways(product: FeaturedProduct): FeaturedProduct[] {
+  const prefixes = ["court-polo-", "poise-hoodie-", "club-zip-hoodie"];
+  const prefix = prefixes.find((value) => product.slug.startsWith(value));
+  return prefix ? featuredProducts.filter((item) => item.slug.startsWith(prefix)) : [product];
+}
