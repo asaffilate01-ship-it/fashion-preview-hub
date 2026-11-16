@@ -90,8 +90,12 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
               <div className={styles.categoryContent}>
                 <p className={styles.visualDisclaimer}>{visual?.concept ? "Design illustration · Collection in development" : "Editorial collection photography"}</p>
                 <h3>{category.title}</h3>
-                <ul>{category.products.map((product) => <li key={product}>{product}</li>)}</ul>
-                {upcoming && <Link className={styles.categoryLink} href="/contact">Enquire about this range <span aria-hidden="true">↗</span></Link>}
+                <ul>{category.products.map((product) => <li key={product}>{upcoming ? (
+                  <Link className={styles.catalogueEnquiry} href={{ pathname: "/pro/quote", query: { department: slug, category: category.title, product } }}>
+                    {product}<span aria-hidden="true">↗</span>
+                  </Link>
+                ) : product}</li>)}</ul>
+                {upcoming && <Link className={styles.categoryLink} href={{ pathname: "/pro/quote", query: { department: slug, category: category.title } }}>Request a quotation <span aria-hidden="true">↗</span></Link>}
               </div>
             </article>
           );
@@ -128,9 +132,14 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
         <p className={styles.sectionKicker}>The KALËTHON standard</p>
         <h2>{upcoming ? "Interested in the collection?" : "Explore the entire world of KALËTHON."}</h2>
         <p>{upcoming
-          ? "For bespoke products, clubs and professional enquiries, contact our team. No unverified equipment or proposed leather products are offered for checkout."
+          ? "For bespoke products, clubs and professional enquiries, send a structured quotation request. Unapproved equipment and proposed leather products are not offered for checkout."
           : "Explore refined essentials, performance collections and selected new developments, all under one brand."}</p>
-        <Link href={upcoming ? "/contact" : "/#pieces"}>{upcoming ? "Contact KALËTHON" : "View the current shop"} <span aria-hidden="true">↗</span></Link>
+        <Link href={upcoming ? { pathname: "/pro/quote", query: { department: slug } } : "/#pieces"}>
+          {upcoming ? "Discuss your requirements" : "View the current shop"} <span aria-hidden="true">↗</span>
+        </Link>
+        {!upcoming && <Link className={styles.tradeLink} href={{ pathname: "/pro/quote", query: { department: slug } }}>
+          Professional & wholesale enquiries <span aria-hidden="true">↗</span>
+        </Link>}
       </aside>
     </main>
   );
