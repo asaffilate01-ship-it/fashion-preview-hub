@@ -75,7 +75,7 @@ export default function ProductDetailClient({ product }: { product: FeaturedProd
             <p style={{ fontSize: 13, marginBottom: 18 }}>Finish: {product.finish} · {product.branding}</p>
             {colourways.length > 1 && (
               <div className={styles.colourways}>
-                <p>Available design colours</p>
+                <p>Explore colourways</p>
                 <div className={styles.colourOptions} role="group" aria-label="Explore colourways">
                   {colourways.map((option) => (
                     <Link href={`/products/${option.slug}`} key={option.slug}
