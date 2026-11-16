@@ -319,3 +319,18 @@
   .categoryImage, .featuredImage { transition: none; }
   .categoryCard:hover .categoryImage, .featuredCard:hover .featuredImage { transform: none; }
 }
+
+
+.catalogueEnquiry {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.catalogueEnquiry:hover { text-decoration: underline; }
+.catalogueEnquiry:focus-visible, .tradeLink:focus-visible { outline: 3px solid #995a65; outline-offset: 3px; }
+.tradeLink { margin-left: 12px; background: #f5f3ed; color: #232b26 !important; border-color: #f5f3ed !important; }
+@media (max-width: 680px) { .tradeLink { margin-left: 0; } }
