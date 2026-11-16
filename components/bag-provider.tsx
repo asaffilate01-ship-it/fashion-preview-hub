@@ -56,7 +56,7 @@ export default function BagProvider({ children }: { children: React.ReactNode })
     count: items.reduce((total, item) => total + item.quantity, 0),
     ready,
     addItem: (next) => setItems((current) => {
-      const match = current.find((item) => item.productId === next.productId && item.bodyColour === next.bodyColour && item.collarColour === next.collarColour && item.cuffColour === next.cuffColour && item.sleeve === next.sleeve && item.branding === next.branding && item.fit === next.fit && item.finish === next.finish && item.size === next.size);
+      const match = current.find((item) => (next.sku ? item.sku === next.sku : !item.sku && item.productId === next.productId) && item.bodyColour === next.bodyColour && item.collarColour === next.collarColour && item.cuffColour === next.cuffColour && item.sleeve === next.sleeve && item.branding === next.branding && item.fit === next.fit && item.finish === next.finish && item.size === next.size);
       if (match) return current.map((item) => item.id === match.id ? { ...item, quantity: Math.min(5, item.quantity + 1) } : item);
       return [...current, { ...next, id: crypto.randomUUID(), quantity: 1 }];
     }),

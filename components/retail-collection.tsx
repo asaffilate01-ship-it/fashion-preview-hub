@@ -188,6 +188,7 @@ function ProductSignature({ branding, signatureTone: tone = "ink" }: Pick<Retail
 export default function RetailCollection() {
   const { addItem } = useBag();
   const [products, setProducts] = useState<RetailProduct[]>(baseProducts);
+  const [catalogueReady, setCatalogueReady] = useState(false);
   const [category, setCategory] = useState<RetailCategory>("All");
   const [activeProduct, setActiveProduct] = useState<string | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
@@ -235,11 +236,13 @@ export default function RetailCollection() {
         colourways: [colourway("bone", "Bone", "Bone", "Bone", "Bone", product.id, product.image)],
       }));
       setProducts([...merged, ...additions]);
-    }).catch(() => undefined);
+      setCatalogueReady(true);
+    }).catch(() => { if (active) setCatalogueReady(false); });
     return () => { active = false; };
   }, []);
 
   const addStandardDesign = (product: RetailProduct, selected: RetailColourway) => {
+    if (!catalogueReady || !selected.managedId || typeof selected.available !== "number" || typeof selected.tracked !== "boolean" || (selected.tracked && selected.available <= 0)) return;
     const size = selectedSizes[product.sku] ?? product.sizes[Math.min(2, product.sizes.length - 1)];
     addItem({
       productId: product.id,
@@ -293,6 +296,10 @@ export default function RetailCollection() {
           const selectedAmount = selectedColourway.amount ?? product.amount;
           const selectedAvailable = selectedColourway.available ?? product.available;
           const selectedTracked = selectedColourway.tracked ?? product.tracked;
+          // Only an explicit match to a published inventory record may be ordered.
+          // Additional colour swatches are previews until merchandise is approved and stocked.
+          const optionPublished = catalogueReady && Boolean(selectedColourway.managedId) && typeof selectedColourway.available === "number" && typeof selectedColourway.tracked === "boolean";
+          const canPurchase = optionPublished && (!selectedTracked || Number(selectedAvailable) > 0);
           return (
             <article className="retail-product-card" id={`product-${product.sku}`} key={product.sku}>
               <div className="retail-product-image">
@@ -304,17 +311,17 @@ export default function RetailCollection() {
               </div>
               <div className="retail-product-copy">
                 <div><p>{product.type}</p><h3>{productDetailSlugs.has(product.sku) ? <Link href={`/products/${product.sku}`} style={{ color: "inherit", textDecoration: "none" }}>{product.name}</Link> : product.name}</h3>{productDetailSlugs.has(product.sku) && <Link href={`/products/${product.sku}`} style={{ display: "inline-block", marginTop: 8, fontSize: 13, textDecoration: "underline", color: "inherit" }}>Details & sizing ↗</Link>}</div>
-                <strong>{formatGBP(selectedAmount)}</strong>
+                <strong>{optionPublished ? formatGBP(selectedAmount) : catalogueReady ? "Price on release" : "Checking price…"}</strong>
                 <span>{product.material}</span>
                 <small>{product.note}</small>
                 <div className="retail-branding"><span>Signature</span><ProductSignature branding={product.branding} signatureTone="ink" /><b>{product.branding === "K mark" ? "Kinetic K icon" : "Full KALËTHON wordmark"}</b></div>
                 <div className="retail-colourways" role="group" aria-label={`Choose a ${product.name} colour`}>
                   <div><span>Colour</span><b>{selectedColourway.label}</b><small>{product.colourways.length} options</small></div>
-                  <div>{product.colourways.map((option) => <button type="button" className={option.key === selectedColourway.key ? "is-selected" : ""} aria-pressed={option.key === selectedColourway.key} aria-label={option.label} title={option.label} onClick={() => setSelectedColours((current) => ({ ...current, [product.sku]: option.key }))} key={option.key}><i className={`swatch-${option.colour.toLowerCase()}`} /><i className={`swatch-${option.collarColour.toLowerCase()}`} /></button>)}</div>
+                  <div>{product.colourways.map((option) => <button type="button" className={option.key === selectedColourway.key ? "is-selected" : ""} aria-pressed={option.key === selectedColourway.key} aria-label={option.label} title={option.label} onClick={() => { setSelectedColours((current) => ({ ...current, [product.sku]: option.key })); setActiveProduct(null); }} key={option.key}><i className={`swatch-${option.colour.toLowerCase()}`} /><i className={`swatch-${option.collarColour.toLowerCase()}`} /></button>)}</div>
                 </div>
               </div>
               <div className="retail-product-actions">
-                <button type="button" aria-expanded={isOpen} disabled={selectedTracked && Number(selectedAvailable) <= 0} onClick={() => setActiveProduct(isOpen ? null : product.sku)}>{selectedTracked && Number(selectedAvailable) <= 0 ? "Out of stock" : "Choose size"}</button>
+                <button type="button" aria-expanded={isOpen} disabled={!canPurchase} onClick={() => setActiveProduct(isOpen ? null : product.sku)}>{!catalogueReady ? "Checking availability…" : !optionPublished ? "Colourway coming soon" : !canPurchase ? "Out of stock" : "Choose size"}</button>
                 <Link href={`/try-on?product=${encodeURIComponent(product.id)}&colour=${encodeURIComponent(selectedColourway.colour)}`}>Virtual try-on <span aria-hidden="true">↗</span></Link>
               </div>
               {isOpen && <div className="retail-quick-add">
@@ -322,7 +329,7 @@ export default function RetailCollection() {
                 <div className="retail-size-scroll" role="group" aria-label={`Choose ${product.name} size`}>
                   {product.sizes.map((size) => <button className={selectedSize === size ? "is-selected" : ""} type="button" aria-pressed={selectedSize === size} onClick={() => setSelectedSizes((current) => ({ ...current, [product.sku]: size }))} key={size}>{size}</button>)}
                 </div>
-                <button className="retail-add-button" type="button" onClick={() => addStandardDesign(product, selectedColourway)}>Add {selectedSize} to bag · {formatGBP(selectedAmount)}</button>
+                <button className="retail-add-button" type="button" disabled={!canPurchase} onClick={() => addStandardDesign(product, selectedColourway)}>Add {selectedSize} to bag · {formatGBP(selectedAmount)}</button>
                 <small>Finished design: {selectedColourway.colour} body, {selectedColourway.collarColour} collar, {selectedColourway.cuffColour} trim, {product.finish.toLowerCase()}, regular fit and {product.branding === "K mark" ? "discreet Kinetic K chest mark" : "aligned full KALËTHON wordmark"}.</small>
               </div>}
             </article>

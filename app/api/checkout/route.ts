@@ -6,11 +6,11 @@ import {
   storeFinishes,
   storeFits,
   storeSleeves,
-  unitAmountFor,
   type BagItem,
   type CustomProductId,
 } from "@/lib/store";
 import { getCommerceProductForCheckout } from "@/db/commerce";
+import { featuredProducts } from "@/lib/featured-products";
 import { rateLimitResponse } from "@/lib/rate-limit";
 
 const sizes = /^(XS|S|M|L|XL|2XL|3XL|UK (6|8|10|12|14|16|18|20|22|24)|(28|30|32|34|36|38|40|42|44)[SRL])$/;
@@ -59,22 +59,39 @@ function validItem(value: unknown): value is BagItem {
   );
 }
 
-type ResolvedProduct = { name: string; image: string; amount: number; sku: string };
+type ResolvedProduct = { name: string; image: string; amount: number; sku: string; available: number; tracked: boolean };
 
 async function resolveProduct(item: BagItem): Promise<ResolvedProduct | null> {
-  if (item.sku) {
-    try {
-      const managed = await getCommerceProductForCheckout(item.sku);
-      if (managed) {
-        if (Boolean(managed.tracked) && Number(managed.available) < item.quantity) return null;
-        return { name: managed.name, image: managed.image, amount: Number(managed.price), sku: managed.sku };
-      }
-    } catch {
-      // The static catalogue remains available before the commerce database is provisioned.
-    }
+  // Checkout must not fall back to static pricing or accept archived/unpublished products.
+  if (!item.sku) return null;
+  try {
+    const managed = await getCommerceProductForCheckout(item.sku);
+    if (!managed || (item.sku !== managed.id && item.sku !== managed.sku)) return null;
+    const featured = featuredProducts.find((product) => product.sku === managed.sku);
+    if (featured && (
+      item.productId !== featured.productId ||
+      item.bodyColour !== featured.colour ||
+      item.collarColour !== featured.collar ||
+      item.cuffColour !== featured.cuff ||
+      item.sleeve !== featured.sleeve ||
+      item.branding !== featured.branding ||
+      item.finish !== featured.finish ||
+      item.fit !== "Regular" ||
+      !featured.sizes.includes(item.size)
+    )) return null;
+    if (Boolean(managed.tracked) && Number(managed.available) < item.quantity) return null;
+    return {
+      name: managed.name,
+      image: managed.image,
+      amount: Number(managed.price),
+      sku: managed.sku,
+      available: Number(managed.available),
+      tracked: Boolean(managed.tracked),
+    };
+  } catch {
+    // A missing commerce database is not a reason to take a payment.
+    return null;
   }
-  const fallback = customProductCatalog[item.productId as CustomProductId];
-  return fallback ? { name: fallback.name, image: fallback.image, amount: unitAmountFor({ ...item, unitAmount: undefined }), sku: item.sku ?? item.productId } : null;
 }
 
 function singleItem(body: Record<string, unknown>): BagItem {
@@ -102,7 +119,18 @@ export async function POST(request: Request) {
     }
     const items = submittedItems as BagItem[];
     const resolvedProducts = await Promise.all(items.map(resolveProduct));
-    if (resolvedProducts.some((product) => !product)) return NextResponse.json({ message: "One of these pieces is unavailable or does not have enough stock." }, { status: 409 });
+    if (resolvedProducts.some((product) => !product)) return NextResponse.json({ message: "A product or selected colourway is not available. Please refresh your bag before checkout." }, { status: 409 });
+    // Inventory belongs to the managed product, not each separate basket line.
+    // Combine line quantities so splitting the same SKU cannot bypass the stock check.
+    const requested = new Map<string, { quantity: number; available: number; tracked: boolean }>();
+    for (let index = 0; index < items.length; index += 1) {
+      const product = resolvedProducts[index]!;
+      const existing = requested.get(product.sku);
+      requested.set(product.sku, { quantity: (existing?.quantity ?? 0) + items[index].quantity, available: product.available, tracked: product.tracked });
+    }
+    if ([...requested.values()].some((item) => item.tracked && item.quantity > item.available)) {
+      return NextResponse.json({ message: "There is not enough stock for the quantities in your bag. Please reduce the quantity." }, { status: 409 });
+    }
     const origin = storefrontOrigin(request);
     const form = new URLSearchParams();
     form.set("mode", "payment");

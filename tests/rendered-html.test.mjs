@@ -27,9 +27,9 @@ test("renders KALËTHON search and social metadata", async () => {
     /^text\/html\b/i,
   );
   const html = await response.text();
-  assert.match(html, /<title>KALËTHON \| Premium British Sport-to-City Clothing/);
+  assert.match(html, /<title>KALËTHON \| Luxury Lifestyle, Leather &amp; Performance/);
   assert.doesNotMatch(html, /Kalëthon/);
-  assert.match(html, /Premium British sport-to-city clothing/);
+  assert.match(html, /Luxury lifestyle apparel, leather goods, tennis and golf wear/);
   assert.doesNotMatch(html, /href="\/customise"/);
   assert.match(html, /Poise Pullover Hoodie/);
   assert.match(html, /Club Zip Hoodie/);

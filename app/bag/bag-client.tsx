@@ -18,40 +18,47 @@ export default function BagClient() {
   const subtotal = items.reduce((total, item) => total + (unitAmountFor(item) * item.quantity), 0);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("checkout");
-    if (status === "cancelled") {
-      setCheckoutNotice("Checkout was cancelled. Your pieces are still in the bag.");
-      window.history.replaceState({}, "", "/bag");
-      return;
-    }
-    if (status !== "success") return;
-    const sessionId = params.get("session_id");
-    if (!sessionId) {
-      setCheckoutNotice("We could not verify this checkout. Your bag is unchanged.");
-      window.history.replaceState({}, "", "/bag");
-      return;
-    }
-    const controller = new AbortController();
-    setCheckoutNotice("Checking your payment with Stripe…");
-    fetch(`/api/checkout/confirmation?session_id=${encodeURIComponent(sessionId)}`, {
-      signal: controller.signal, cache: "no-store",
-    }).then(async (response) => {
-      if (!response.ok) throw new Error("Payment verification unavailable");
-      const result = await response.json() as { verified?: boolean };
-      if (controller.signal.aborted) return;
-      if (result.verified === true) {
-        clear();
-        setCheckoutNotice("Payment verified. Your KALËTHON order confirmation is being processed.");
-      } else {
-        setCheckoutNotice("Payment is not yet confirmed. Your bag has been kept intact.");
+    let controller: AbortController | undefined;
+    // Schedule state transitions in an external callback so effect setup remains pure.
+    const timer = window.setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("checkout");
+      if (status === "cancelled") {
+        setCheckoutNotice("Checkout was cancelled. Your pieces are still in the bag.");
+        window.history.replaceState({}, "", "/bag");
+        return;
       }
-    }).catch(() => {
-      if (!controller.signal.aborted) setCheckoutNotice("We could not verify payment yet. Your bag is unchanged. Check your email or contact support before attempting another payment.");
-    }).finally(() => {
-      if (!controller.signal.aborted) window.history.replaceState({}, "", "/bag");
-    });
-    return () => controller.abort();
+      if (status !== "success") return;
+      const sessionId = params.get("session_id");
+      if (!sessionId) {
+        setCheckoutNotice("We could not verify this checkout. Your bag is unchanged.");
+        window.history.replaceState({}, "", "/bag");
+        return;
+      }
+      controller = new AbortController();
+      setCheckoutNotice("Checking your payment with Stripe…");
+      fetch(`/api/checkout/confirmation?session_id=${encodeURIComponent(sessionId)}`, {
+        signal: controller.signal, cache: "no-store",
+      }).then(async (response) => {
+        if (!response.ok) throw new Error("Payment verification unavailable");
+        const result = await response.json() as { verified?: boolean };
+        if (controller?.signal.aborted) return;
+        if (result.verified === true) {
+          clear();
+          setCheckoutNotice("Payment verified. Your KALËTHON order confirmation is being processed.");
+        } else {
+          setCheckoutNotice("Payment is not yet confirmed. Your bag has been kept intact.");
+        }
+      }).catch(() => {
+        if (!controller?.signal.aborted) setCheckoutNotice("We could not verify payment yet. Your bag is unchanged. Check your email or contact support before attempting another payment.");
+      }).finally(() => {
+        if (!controller?.signal.aborted) window.history.replaceState({}, "", "/bag");
+      });
+    }, 0);
+    return () => {
+      window.clearTimeout(timer);
+      controller?.abort();
+    };
   }, [clear]);
 
   const checkout = async () => {
