@@ -32,7 +32,8 @@ test("unreleased leather, combat and professional ranges do not offer fake check
   }
   assert.ok(page.includes("Original concept illustration, not a product photograph"));
   assert.ok(page.includes("Products are not yet available to purchase."));
-  assert.ok(page.includes('href="/contact"'));
+  assert.ok(page.includes('pathname: "/pro/quote"'));
+  assert.ok(page.includes("Products are not yet available to purchase."));
 });
 
 test("responsive layouts and accessible image labels are supplied", () => {
