@@ -17,7 +17,7 @@ test("search includes professional categories and links to real shop products", 
   const search = source("app/search/page.tsx");
   assert.ok(search.includes("kalethonDepartments"));
   assert.ok(search.includes("productAnchors"));
-  assert.ok(search.includes("/#product-"));
+  assert.ok(search.includes("/products/"));
 });
 
 test("mobile menu retains essential service pages", () => {
