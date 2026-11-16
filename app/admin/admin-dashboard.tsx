@@ -26,6 +26,7 @@ export default function AdminDashboard({ user }: { user: { email: string; displa
   const [message, setMessage] = useState("");
   const [productEditor, setProductEditor] = useState<CommerceProduct | null>(null);
   const [tab, setTab] = useState("overview");
+  const [inboxFilter, setInboxFilter] = useState<"all" | "quotes">("all");
 
   const load = useCallback(async () => {
     setBusy(true);
@@ -113,7 +114,28 @@ export default function AdminDashboard({ user }: { user: { email: string; displa
 
         <TabsContent value="inventory" id="inventory"><section className="admin-panel"><div className="admin-panel-heading"><div><small>Stock control</small><h2>Inventory and availability</h2></div><b>{data.kpis.outOfStock} out of stock</b></div><Table className="admin-table"><TableHeader><TableRow><TableHead>Product</TableHead><TableHead>SKU</TableHead><TableHead>Variant</TableHead><TableHead>On hand</TableHead><TableHead>Reserved</TableHead><TableHead>Available</TableHead><TableHead>Adjust</TableHead></TableRow></TableHeader><TableBody>{data.inventory.map((item) => <TableRow key={item.id}><TableCell><b>{item.productName}</b><small>Updated {new Date(item.updatedAt).toLocaleDateString("en-GB")}</small></TableCell><TableCell>{item.sku}</TableCell><TableCell>{item.optionName}</TableCell><TableCell>{item.stockOnHand}</TableCell><TableCell>{item.stockReserved}</TableCell><TableCell><Status value={item.available <= 0 ? "out_of_stock" : item.available <= item.reorderPoint ? "low_stock" : "in_stock"} /> <b>{item.available}</b></TableCell><TableCell><div className="admin-stock-actions"><button type="button" onClick={() => void mutate({ action: "adjust_stock", id: item.id, quantity: -1 }, "Stock adjusted.")}>−1</button><button type="button" onClick={() => void mutate({ action: "adjust_stock", id: item.id, quantity: 1 }, "Stock adjusted.")}>+1</button><button type="button" onClick={() => void mutate({ action: "adjust_stock", id: item.id, quantity: 10 }, "Stock adjusted.")}>+10</button></div></TableCell></TableRow>)}</TableBody></Table></section></TabsContent>
 
-        <TabsContent value="questions" id="questions"><section className="admin-panel"><div className="admin-panel-heading"><div><small>Client service</small><h2>Questions and enquiries</h2></div><b>{data.kpis.openQuestions} open</b></div><Table className="admin-table admin-question-table"><TableHeader><TableRow><TableHead>Customer</TableHead><TableHead>Question</TableHead><TableHead>Priority</TableHead><TableHead>Status</TableHead><TableHead>Received</TableHead></TableRow></TableHeader><TableBody>{data.questions.map((question) => <QuestionRow question={question} mutate={mutate} key={question.id} />)}{data.questions.length === 0 && <TableRow><TableCell colSpan={5}>Questions sent through the contact form appear here.</TableCell></TableRow>}</TableBody></Table></section></TabsContent>
+        <TabsContent value="questions" id="questions">
+          <section className="admin-panel">
+            <div className="admin-panel-heading">
+              <div><small>Client service and trade enquiries</small><h2>Questions and quotation requests</h2></div>
+              <b>{data.kpis.openQuestions} open</b>
+            </div>
+            <div className="admin-question-filters" role="group" aria-label="Filter inbox">
+              <button type="button" aria-pressed={inboxFilter === "all"} className={inboxFilter === "all" ? "is-selected" : ""} onClick={() => setInboxFilter("all")}>All enquiries ({data.questions.length})</button>
+              <button type="button" aria-pressed={inboxFilter === "quotes"} className={inboxFilter === "quotes" ? "is-selected" : ""} onClick={() => setInboxFilter("quotes")}>Pro quotes ({data.questions.filter((question) => question.subject.startsWith("[PRO QUOTE]")).length})</button>
+            </div>
+            <Table className="admin-table admin-question-table">
+              <TableHeader><TableRow><TableHead>Customer</TableHead><TableHead>Enquiry</TableHead><TableHead>Priority</TableHead><TableHead>Status</TableHead><TableHead>Received</TableHead></TableRow></TableHeader>
+              <TableBody>
+                {data.questions.filter((question) => inboxFilter === "all" || question.subject.startsWith("[PRO QUOTE]")).map((question) => (
+                  <QuestionRow question={question} mutate={mutate} key={question.id} />
+                ))}
+                {data.questions.filter((question) => inboxFilter === "all" || question.subject.startsWith("[PRO QUOTE]")).length === 0 &&
+                  <TableRow><TableCell colSpan={5}>{inboxFilter === "quotes" ? "Quotation enquiries submitted through KALËTHON Pro appear here." : "Customer support and trade enquiries appear here."}</TableCell></TableRow>}
+              </TableBody>
+            </Table>
+          </section>
+        </TabsContent>
       </Tabs> : null}
     </section>
   </main>;
