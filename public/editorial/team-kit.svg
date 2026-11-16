@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1300" role="img" aria-label="Team Kits original KALËTHON collection concept illustration">
+ <defs>
+ <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d3d9dd"/><stop offset="1" stop-color="#8c9aa4"/></linearGradient>
+ <radialGradient id="light"><stop stop-color="#ffffff" stop-opacity=".35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="leather" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#a37753"/><stop offset=".48" stop-color="#745038"/><stop offset="1" stop-color="#3c291f"/></linearGradient>
+ <linearGradient id="ink" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#545d63"/><stop offset="1" stop-color="#151e25"/></linearGradient>
+ <linearGradient id="oxblood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a84d60"/><stop offset="1" stop-color="#491827"/></linearGradient>
+ <linearGradient id="fabric" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#f5f2e9"/><stop offset="1" stop-color="#b9b9ab"/></linearGradient>
+ <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceAlpha" stdDeviation="24"/><feOffset dy="28"/><feComponentTransfer><feFuncA type="linear" slope=".28"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ </defs>
+ <rect width="1100" height="1300" fill="url(#wall)"/>
+ <circle cx="270" cy="200" r="490" fill="url(#light)"/>
+ <rect x="62" y="58" width="976" height="1184" rx="0" fill="none" stroke="#142231" stroke-opacity=".17"/>
+ <text x="96" y="111" fill="#142231" font-family="Arial,sans-serif" font-size="24" letter-spacing="7">KALËTHON</text>
+ <text x="1000" y="111" text-anchor="end" fill="#142231" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">CONCEPT ATELIER</text>
+ <path d="M100 170H1000" stroke="#142231" stroke-opacity=".21"/>
+ <ellipse cx="570" cy="930" rx="310" ry="48" fill="#1a3042" opacity=".22"/>
+<g filter="url(#shadow)">
+<path d="M385 354L474 305H643L727 355L839 475L754 575L691 507V802H417V507L351 575L269 476Z" fill="url(#fabric)" stroke="#253e52" stroke-width="12"/>
+<path d="M477 321L555 390L636 322" fill="none" stroke="#233d56" stroke-width="28"/>
+<path d="M426 468L683 611M425 604L680 750" stroke="#7d9cb0" stroke-width="57" opacity=".6"/>
+<path d="M423 468L680 613M423 604L680 751" stroke="#203c56" stroke-width="17" opacity=".8"/>
+<text x="558" y="597" text-anchor="middle" font-family="Arial,sans-serif" fill="#24415a" font-size="110" font-weight="700">07</text>
+<path d="M415 815H688L731 941L560 964L535 889L513 964L369 945Z" fill="#243e56" stroke="#182c40" stroke-width="9"/>
+<path d="M409 850H692" stroke="#c6c6bd" stroke-width="15"/>
+</g>
+ <path d="M100 1050H1000" stroke="#142231" stroke-opacity=".22"/>
+ <text x="100" y="1120" fill="#142231" font-size="48" font-weight="400" letter-spacing="-1" font-family="Georgia,serif">Team Kits</text>
+ <text x="100" y="1163" fill="#233d56" font-size="19" letter-spacing="3" font-family="Arial,sans-serif">FOOTBALL / CRICKET / RUGBY</text>
+ </svg>
