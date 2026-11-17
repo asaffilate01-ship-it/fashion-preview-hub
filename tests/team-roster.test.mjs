@@ -72,6 +72,7 @@ test("designer passes the roster only via browser session storage after explicit
   assert.ok(client.includes("window.sessionStorage.setItem"));
   assert.ok(client.includes("validateTeamRoster(roster)"));
   assert.ok(client.includes('roster.length ? "&roster=1" : ""'));
+  assert.ok(client.includes('playerName: roster.length ? "PLAYER" : design.playerName'));
   assert.ok(!source("lib/team-designer.ts").includes("rosterRows:"));
   assert.ok(quote.includes("window.sessionStorage.getItem"));
   assert.ok(quote.includes("privacyAcknowledged"));
