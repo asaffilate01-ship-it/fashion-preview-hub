@@ -91,6 +91,8 @@ export async function issueProProof(proofId: string, actor: string) {
   if (proof.version !== Number(latest?.version)) {
     throw new ProofWorkflowError("Create a new proof from the latest version before sharing.", "conflict");
   }
+  // Validate the public origin before mutating any proof status.
+  const origin = proofReviewOrigin();
   const token = freshToken();
   const tokenHash = await hashToken(token);
   const now = new Date().toISOString();
@@ -108,7 +110,7 @@ export async function issueProProof(proofId: string, actor: string) {
   if (Number(results[2]?.meta?.changes ?? 0) !== 1) {
     throw new ProofWorkflowError("Proof status changed. Reload and retry.", "conflict");
   }
-  return { reviewUrl: proofReviewOrigin() + "/pro/proof/" + token, expiresAt, proofId };
+  return { reviewUrl: origin + "/pro/proof/" + token, expiresAt, proofId };
 }
 
 export type CustomerProof = {
