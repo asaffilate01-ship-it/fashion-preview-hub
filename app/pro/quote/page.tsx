@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteNavigation from "@/components/site-navigation";
 import { getProQuoteSelection } from "@/lib/pro-quote";
+import { teamDesignQuotePrefill } from "@/lib/team-designer";
 import ProQuoteForm from "./quote-form";
 import styles from "./quote.module.css";
 
@@ -12,16 +13,21 @@ export const metadata: Metadata = {
   alternates: { canonical: "/pro/quote" },
 };
 
-type Params = { department?: string | string[]; category?: string | string[]; product?: string | string[] };
+type Params = Record<string, string | string[] | undefined>;
 const single = (value: string | string[] | undefined) => typeof value === "string" ? value.slice(0, 150) : undefined;
 
 export default async function QuotePage({ searchParams }: { searchParams: Promise<Params> }) {
   const query = await searchParams;
-  const initial = getProQuoteSelection({
-    department: single(query.department),
-    category: single(query.category),
-    product: single(query.product),
-  });
+  const kitDesign = teamDesignQuotePrefill(query);
+  const initial = {
+    ...getProQuoteSelection({
+      department: single(query.department),
+      category: single(query.category),
+      product: single(query.product),
+    }),
+    quantity: kitDesign?.quantity ?? 25,
+    notes: kitDesign?.notes ?? "",
+  };
 
   return (
     <main className={styles.page}>
