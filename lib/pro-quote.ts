@@ -1,4 +1,5 @@
 import { kalethonDepartments } from "@/lib/kalethon-departments";
+import { validateTeamRoster, teamRosterTotal, teamRosterSizeSummary, RosterValidationError, type TeamRosterEntry } from "@/lib/team-roster";
 
 export const proQuoteDepartments = kalethonDepartments;
 export const proQuoteBranding = [
@@ -30,6 +31,7 @@ export type ProQuoteRequest = {
   country: string;
   notes: string;
   privacyAcknowledged: true;
+  roster: TeamRosterEntry[];
 };
 
 export class QuoteValidationError extends Error {
@@ -96,10 +98,25 @@ export function parseProQuoteRequest(input: unknown): ProQuoteRequest {
   if (typeof notesValue !== "string" || notesValue.length > 1500) {
     throw new QuoteValidationError("Additional information must be under 1,500 characters.");
   }
+  let roster: TeamRosterEntry[] = [];
+  if (data.roster !== undefined && data.roster !== null) {
+    if (department !== "team-pro" || category !== "Team kits") {
+      throw new QuoteValidationError("Player rosters are only accepted for Team & Pro kit quotations.");
+    }
+    try {
+      roster = validateTeamRoster(data.roster);
+    } catch (error) {
+      if (error instanceof RosterValidationError) throw new QuoteValidationError(error.message);
+      throw error;
+    }
+    if (roster.length && teamRosterTotal(roster) > quantity) {
+      throw new QuoteValidationError("The kit quantity must cover every item in the player roster.");
+    }
+  }
   if (data.privacyAcknowledged !== true) {
     throw new QuoteValidationError("Please acknowledge the privacy information.");
   }
-  return {
+  const validated: ProQuoteRequest = {
     department,
     category,
     product,
@@ -113,7 +130,12 @@ export function parseProQuoteRequest(input: unknown): ProQuoteRequest {
     country,
     notes,
     privacyAcknowledged: true,
+    roster,
   };
+  if (formatProQuoteForInbox(validated).message.length > 3900) {
+    throw new QuoteValidationError("Your combined player roster and notes are too long. Please shorten the notes before sending.");
+  }
+  return validated;
 }
 
 export function formatProQuoteForInbox(quote: ProQuoteRequest) {
@@ -133,6 +155,11 @@ export function formatProQuoteForInbox(quote: ProQuoteRequest) {
       `Organisation: ${quote.organisation || "Not provided"}`,
       `Phone / WhatsApp: ${quote.phone || "Not provided"}`,
       `Destination: ${quote.country || "Not specified"}`,
+      ...(quote.roster.length ? [
+        `PLAYER ROSTER — ${quote.roster.length} player entries / ${teamRosterTotal(quote.roster)} assigned kits`,
+        "Size totals: " + teamRosterSizeSummary(quote.roster),
+        ...quote.roster.map((row, index) => `${index + 1}. ${row.name} | #${row.number} | ${row.size} | quantity ${row.quantity}`),
+      ] : []),
       "Requirements:",
       quote.notes || "Customer requests information on this range.",
     ].join("\n"),
