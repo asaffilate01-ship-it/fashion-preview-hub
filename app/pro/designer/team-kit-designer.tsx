@@ -117,7 +117,7 @@ export default function TeamKitDesigner() {
         <div className={styles.heading}>
           <p className={styles.eyebrow}>KALËTHON / Team & Pro</p>
           <h1 id="designer-controls">Create your <em>team identity.</em></h1>
-          <p>Explore a kit concept with your team's colours, pattern, names and numbers.
+          <p>Explore a kit concept with your team&apos;s colours, pattern, names and numbers.
             The preview is for discussion only — final templates, dimensions, printing and materials require approval.</p>
         </div>
         <div className={styles.formGroups}>
