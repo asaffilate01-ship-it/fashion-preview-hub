@@ -73,8 +73,8 @@ export default async function DepartmentPage({ params }: { params: Promise<{ slu
         <section className={styles.designerFeature} aria-labelledby="team-designer-heading">
           <div>
             <p className={styles.sectionKicker}>Team & Pro / Visual design studio</p>
-            <h2 id="team-designer-heading">Create a kit that's <em>your own.</em></h2>
-            <p>Preview your team's colours, patterns, names and numbers across front and back views, then send the complete design brief for a custom quotation.</p>
+            <h2 id="team-designer-heading">Create a kit that&apos;s <em>your own.</em></h2>
+            <p>Preview your team&apos;s colours, patterns, names and numbers across front and back views, then send the complete design brief for a custom quotation.</p>
             <small>Concept artwork only. No pricing, production or fulfilment is confirmed until your specification is approved.</small>
           </div>
           <Link href="/pro/designer" className={styles.designerFeatureLink}>Open the kit designer <span aria-hidden="true">↗</span></Link>
