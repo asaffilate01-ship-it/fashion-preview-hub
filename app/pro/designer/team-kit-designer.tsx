@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import TeamRosterEditor from "./team-roster-editor";
+import { TEAM_ROSTER_SESSION_KEY, TEAM_ROSTER_DRAFT_VERSION, validateTeamRoster, teamRosterTotal, type TeamRosterEntry } from "@/lib/team-roster";
 import {
   defaultTeamDesign, normaliseTeamDesign, teamColours, teamPatterns, teamSports,
   teamDesignQuoteHref, type TeamDesign, type TeamColour, type TeamPattern, type TeamSport,
@@ -80,6 +82,12 @@ function KitMockup({ design, side }: { design: TeamDesign; side: "front" | "back
 export default function TeamKitDesigner() {
   const [design, setDesign] = useState<TeamDesign>(defaultTeamDesign);
   const [draftMessage, setDraftMessage] = useState("");
+  const [roster, setRoster] = useState<TeamRosterEntry[]>([]);
+  const rosterError = (() => {
+    try { validateTeamRoster(roster); return ""; }
+    catch (error) { return error instanceof Error ? error.message : "Please check the roster."; }
+  })();
+  const assignedKits = teamRosterTotal(roster);
 
   const update = <K extends keyof TeamDesign>(key: K, value: TeamDesign[K]) => {
     setDesign((old) => ({ ...old, [key]: value }));
@@ -88,10 +96,15 @@ export default function TeamKitDesigner() {
 
   const save = () => {
     try {
-      window.localStorage.setItem(storageKey, JSON.stringify(normaliseTeamDesign(design)));
-      setDraftMessage("Design saved in this browser. It has not been sent to KALËTHON.");
-    } catch {
-      setDraftMessage("Browser storage is unavailable. You can still submit a quotation enquiry.");
+      const validRoster = validateTeamRoster(roster);
+      window.localStorage.setItem(storageKey, JSON.stringify({
+        version: TEAM_ROSTER_DRAFT_VERSION,
+        design: normaliseTeamDesign(design),
+        roster: validRoster,
+      }));
+      setDraftMessage("Design and player roster saved in this browser. Nothing has been sent to KALËTHON.");
+    } catch (error) {
+      setDraftMessage(error instanceof Error ? error.message : "The local draft could not be saved.");
     }
   };
   const load = () => {
@@ -102,14 +115,45 @@ export default function TeamKitDesigner() {
         return;
       }
       const parsed: unknown = JSON.parse(item);
-      setDesign(normaliseTeamDesign(parsed));
-      setDraftMessage("Your last browser-saved design is loaded.");
+      if (parsed && typeof parsed === "object" && "design" in parsed) {
+        const entry = parsed as { design: unknown; roster?: unknown };
+        const validRoster = validateTeamRoster(entry.roster ?? []);
+        setDesign(normaliseTeamDesign(entry.design));
+        setRoster(validRoster);
+      } else {
+        // Legacy design-only drafts continue to load.
+        setDesign(normaliseTeamDesign(parsed));
+        setRoster([]);
+      }
+      setDraftMessage("Your browser-saved design and roster are loaded.");
     } catch {
       setDraftMessage("Your saved design could not be read.");
     }
   };
 
-  const quoteHref = teamDesignQuoteHref(design);
+  const effectiveQuantity = Math.max(design.quantity || 0, assignedKits);
+  const quoteHref = teamDesignQuoteHref({ ...design, playerName: roster.length ? "PLAYER" : design.playerName, playerNumber: roster.length ? "10" : design.playerNumber, quantity: effectiveQuantity }) + (roster.length ? "&roster=1" : "");
+  const continueToQuote = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (rosterError) {
+      event.preventDefault();
+      setDraftMessage(rosterError);
+      return;
+    }
+    try {
+      if (roster.length) {
+        window.sessionStorage.setItem(TEAM_ROSTER_SESSION_KEY, JSON.stringify({
+          version: TEAM_ROSTER_DRAFT_VERSION,
+          savedAt: Date.now(),
+          roster: validateTeamRoster(roster),
+        }));
+      } else {
+        window.sessionStorage.removeItem(TEAM_ROSTER_SESSION_KEY);
+      }
+    } catch {
+      event.preventDefault();
+      setDraftMessage("Your browser cannot pass the roster to the quote form. Please enable session storage or clear the roster.");
+    }
+  };
 
   return (
     <div className={styles.layout}>
@@ -183,12 +227,24 @@ export default function TeamKitDesigner() {
             </label>
           </div>
         </div>
+        <TeamRosterEditor roster={roster} onChange={(rows) => { setRoster(rows); setDraftMessage(""); }}
+          onPreview={(row) => { update("playerName", row.name); update("playerNumber", row.number); }} />
         <div className={styles.actions}>
-          <Link className={styles.quoteButton} href={quoteHref}>Continue to quotation <span aria-hidden="true">↗</span></Link>
+          {rosterError && <p className={styles.rosterError} role="alert">{rosterError}</p>}
+          {assignedKits > design.quantity && <p className={styles.rosterInfo}>
+            Estimated kit quantity will increase to {assignedKits} to cover the player roster.
+          </p>}
+          <Link className={styles.quoteButton} href={quoteHref} onClick={continueToQuote}
+            aria-disabled={Boolean(rosterError)}>Continue to quotation <span aria-hidden="true">↗</span></Link>
           <div className={styles.secondaryActions}>
             <button type="button" onClick={save}>Save in this browser</button>
             <button type="button" onClick={load}>Load saved design</button>
-            <button type="button" onClick={() => { setDesign(defaultTeamDesign); setDraftMessage("Design reset to the starting template."); }}>Reset</button>
+            <button type="button" onClick={() => { setDesign(defaultTeamDesign); setRoster([]); setDraftMessage("Design and roster reset. Any previously saved browser draft is unchanged."); }}>Reset</button>
+            <button type="button" onClick={() => {
+              window.localStorage.removeItem(storageKey);
+              window.sessionStorage.removeItem(TEAM_ROSTER_SESSION_KEY);
+              setDraftMessage("Saved drafts cleared from this browser.");
+            }}>Delete saved draft</button>
           </div>
           <p className={styles.feedback} role="status" aria-live="polite">{draftMessage}</p>
           <p className={styles.caution}>No payment is taken. This is not a manufacturing-ready pattern,

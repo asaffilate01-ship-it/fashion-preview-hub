@@ -116,5 +116,5 @@ export function teamDesignQuotePrefill(query: Record<string, string | string[] |
     "Estimated kits: " + safe.quantity,
     "Please confirm materials, crest/sponsor artwork, roster, size quantities, lead time and a production proof before ordering.",
   ].join("\n");
-  return { quantity: safe.quantity, notes, product: sport.product };
+  return { quantity: safe.quantity, notes, product: sport.product, rosterExpected: query.roster === "1" };
 }

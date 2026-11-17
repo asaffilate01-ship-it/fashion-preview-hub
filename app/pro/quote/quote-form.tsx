@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { TEAM_ROSTER_SESSION_KEY, validateTeamRoster, teamRosterSizeSummary, teamRosterTotal, type TeamRosterEntry } from "@/lib/team-roster";
 import Link from "next/link";
 import { proQuoteDepartments, proQuoteBranding, proQuoteTimelines } from "@/lib/pro-quote";
 import styles from "./quote.module.css";
 
-type QuoteInitial = { department: string; category: string; product: string; quantity?: number; notes?: string };
+type QuoteInitial = { department: string; category: string; product: string; quantity?: number; notes?: string; rosterExpected?: boolean };
 
 export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
   const [department, setDepartment] = useState(initial.department);
@@ -14,6 +15,31 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [roster, setRoster] = useState<TeamRosterEntry[]>([]);
+  const [rosterRequired, setRosterRequired] = useState(Boolean(initial.rosterExpected));
+  const [rosterMessage, setRosterMessage] = useState(initial.rosterExpected ? "Loading the roster from this browser…" : "");
+
+  useEffect(() => {
+    if (!initial.rosterExpected) return;
+    const timer = window.setTimeout(() => {
+      try {
+        const raw = window.sessionStorage.getItem(TEAM_ROSTER_SESSION_KEY);
+        if (!raw) throw new Error("Player roster not found in this tab. Return to the kit designer to attach it.");
+        const entry = JSON.parse(raw) as { savedAt?: number; roster?: unknown };
+        if (!Number.isFinite(entry.savedAt) || Date.now() - Number(entry.savedAt) > 2 * 60 * 60 * 1000) {
+          throw new Error("The temporary player roster has expired. Return to the designer to attach it again.");
+        }
+        const imported = validateTeamRoster(entry.roster);
+        if (!imported.length) throw new Error("The attached roster is empty. Return to the designer or continue without it.");
+        setRoster(imported);
+        setRosterMessage(`${imported.length} player entries are attached from this browser. Check the quantity before sending.`);
+      } catch (reason) {
+        setRoster([]);
+        setRosterMessage(reason instanceof Error ? reason.message : "Unable to load the player roster.");
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [initial.rosterExpected]);
 
   const currentDepartment = proQuoteDepartments.find((entry) => entry.slug === department) ?? proQuoteDepartments[0];
   const currentCategory = currentDepartment.categories.find((entry) => entry.title === category) ?? currentDepartment.categories[0];
@@ -25,17 +51,31 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
     setCategory(next.categories[0].title);
     setProduct("");
     setError("");
+    if (next.slug !== "team-pro") {
+      setRoster([]);
+      setRosterRequired(false);
+      setRosterMessage("Player roster removed because this is not a Team & Pro kit enquiry.");
+    }
   };
   const changeCategory = (value: string) => {
     if (!currentDepartment.categories.some((entry) => entry.title === value)) return;
     setCategory(value);
     setProduct("");
     setError("");
+    if (currentDepartment.slug !== "team-pro" || value !== "Team kits") {
+      setRoster([]);
+      setRosterRequired(false);
+      setRosterMessage("Player roster removed because the category changed.");
+    }
   };
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
+    if (rosterRequired && roster.length === 0) {
+      setError("The kit roster must be reattached from the designer or explicitly removed before submitting.");
+      return;
+    }
     const form = event.currentTarget;
     setBusy(true);
     setError("");
@@ -51,6 +91,7 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
           product,
           quantity: Number(values.quantity),
           privacyAcknowledged: values.privacyAcknowledged === "on",
+          roster: roster.length && department === "team-pro" && currentCategory.title === "Team kits" ? roster : undefined,
         }),
       });
       const result = await response.json() as { ok?: boolean; message?: string };
@@ -58,6 +99,7 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
         throw new Error(result.message || "We couldn't send your request. Please try again.");
       }
       setSent(true);
+      try { window.sessionStorage.removeItem(TEAM_ROSTER_SESSION_KEY); } catch { /* private mode may block storage */ }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "We couldn't send your request. Please try again.");
     } finally {
@@ -113,6 +155,33 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
           </select>
         </label>
       </fieldset>
+
+      {(rosterRequired || roster.length > 0 || Boolean(rosterMessage)) && (
+        <section className={styles.attachedRoster} aria-label="Team roster handoff">
+          <h3>Player roster</h3>
+          <p role="status" aria-live="polite">{rosterMessage}</p>
+          {roster.length > 0 && (
+            <>
+              <p><strong>{roster.length} player entries · {teamRosterTotal(roster)} assigned kits</strong></p>
+              <p>Sizes: {teamRosterSizeSummary(roster)}</p>
+              <ul>{roster.slice(0, 8).map((row, index) => (
+                <li key={index}>{row.name} · #{row.number} · {row.size} × {row.quantity}</li>
+              ))}</ul>
+              {roster.length > 8 && <p>Plus {roster.length - 8} more player entries included in the quotation.</p>}
+            </>
+          )}
+          <p>Player details are sent only when you submit this quotation request. They are not included in its URL.</p>
+          <div className={styles.rosterHandoffActions}>
+            <Link href="/pro/designer">Edit roster in the designer</Link>
+            <button type="button" onClick={() => {
+              setRoster([]);
+              setRosterRequired(false);
+              setRosterMessage("Player roster removed from this quotation.");
+              try { window.sessionStorage.removeItem(TEAM_ROSTER_SESSION_KEY); } catch { /* blocked storage */ }
+            }}>Continue without player roster</button>
+          </div>
+        </section>
+      )}
 
       <fieldset>
         <legend>02 / Your details</legend>
