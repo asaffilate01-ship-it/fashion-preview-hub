@@ -8,7 +8,7 @@ import styles from "./proof-panel.module.css";
 type ProofResponse = { proofs: ProProof[]; events: ProProofEvent[] };
 type ApiResponse = { ok?: boolean; message?: string; reviewUrl?: string; expiresAt?: string };
 
-function label(status: ProProof["status"]) {
+function label(status: string) {
   return status.replace(/_/g, " ");
 }
 
