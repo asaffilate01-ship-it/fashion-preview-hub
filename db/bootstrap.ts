@@ -115,9 +115,9 @@ const DDL: string[] = [
     customer_decision_note text DEFAULT '' NOT NULL,
     customer_decided_at text,
     created_at text NOT NULL,
-    updated_at text NOT NULL,
-    UNIQUE(quote_question_id, version)
+    updated_at text NOT NULL
   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS commerce_pro_proofs_quote_version_unique ON commerce_pro_proofs (quote_question_id, version)`,
   `CREATE INDEX IF NOT EXISTS commerce_pro_proofs_quote_idx ON commerce_pro_proofs (quote_question_id, version)`,
   `CREATE UNIQUE INDEX IF NOT EXISTS commerce_pro_proofs_token_unique ON commerce_pro_proofs (token_hash)`,
   `CREATE TABLE IF NOT EXISTS commerce_pro_proof_events (
