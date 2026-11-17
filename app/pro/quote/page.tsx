@@ -27,6 +27,7 @@ export default async function QuotePage({ searchParams }: { searchParams: Promis
     }),
     quantity: kitDesign?.quantity ?? 25,
     notes: kitDesign?.notes ?? "",
+    rosterExpected: kitDesign?.rosterExpected ?? false,
   };
 
   return (
