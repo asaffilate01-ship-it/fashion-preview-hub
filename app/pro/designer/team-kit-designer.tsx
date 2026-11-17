@@ -132,7 +132,7 @@ export default function TeamKitDesigner() {
   };
 
   const effectiveQuantity = Math.max(design.quantity || 0, assignedKits);
-  const quoteHref = teamDesignQuoteHref({ ...design, quantity: effectiveQuantity }) + (roster.length ? "&roster=1" : "");
+  const quoteHref = teamDesignQuoteHref({ ...design, playerName: roster.length ? "PLAYER" : design.playerName, playerNumber: roster.length ? "10" : design.playerNumber, quantity: effectiveQuantity }) + (roster.length ? "&roster=1" : "");
   const continueToQuote = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (rosterError) {
       event.preventDefault();
