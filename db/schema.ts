@@ -107,3 +107,37 @@ export const commerceWebhookEvents = sqliteTable("commerce_webhook_events", {
   eventType: text("event_type").notNull(),
   processedAt: text("processed_at").notNull(),
 });
+
+// Versioned proofs are bound to trade enquiries; review tokens are stored only as hashes.
+export const commerceProProofs = sqliteTable("commerce_pro_proofs", {
+  id: text("id").primaryKey(),
+  quoteQuestionId: text("quote_question_id").notNull().references(() => commerceQuestions.id, { onDelete: "cascade" }),
+  version: integer("version").notNull(),
+  title: text("title").notNull(),
+  specification: text("specification").notNull(),
+  artworkPath: text("artwork_path").notNull().default(""),
+  status: text("status").notNull().default("draft"),
+  tokenHash: text("token_hash"),
+  tokenExpiresAt: text("token_expires_at"),
+  createdBy: text("created_by").notNull(),
+  customerName: text("customer_name").notNull().default(""),
+  customerDecisionNote: text("customer_decision_note").notNull().default(""),
+  customerDecidedAt: text("customer_decided_at"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+}, (table) => [
+  uniqueIndex("commerce_pro_proofs_quote_version_unique").on(table.quoteQuestionId, table.version),
+  uniqueIndex("commerce_pro_proofs_token_unique").on(table.tokenHash),
+  index("commerce_pro_proofs_quote_idx").on(table.quoteQuestionId, table.version),
+]);
+
+export const commerceProProofEvents = sqliteTable("commerce_pro_proof_events", {
+  id: text("id").primaryKey(),
+  proofId: text("proof_id").notNull().references(() => commerceProProofs.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(),
+  actor: text("actor").notNull(),
+  message: text("message").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+}, (table) => [
+  index("commerce_pro_proof_events_proof_idx").on(table.proofId, table.createdAt),
+]);
