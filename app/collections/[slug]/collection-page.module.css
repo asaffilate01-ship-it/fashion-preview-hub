@@ -334,3 +334,24 @@
 .catalogueEnquiry:focus-visible, .tradeLink:focus-visible { outline: 3px solid #995a65; outline-offset: 3px; }
 .tradeLink { margin-left: 12px; background: #f5f3ed; color: #232b26 !important; border-color: #f5f3ed !important; }
 @media (max-width: 680px) { .tradeLink { margin-left: 0; } }
+
+.designerFeature {
+  max-width: 1304px; margin: 30px auto 50px; padding: clamp(26px,4vw,54px);
+  background: #e6e4da; display: flex; align-items: end; justify-content: space-between; gap: 35px;
+}
+.designerFeature h2 {
+  font: 400 clamp(31px,4vw,55px)/1.09 Georgia,"Times New Roman",serif;
+  letter-spacing: -.045em; margin: 12px 0 17px;
+}
+.designerFeature p:not(.sectionKicker) { max-width: 670px; color: #4b584e; line-height: 1.68; }
+.designerFeature small { display: block; margin-top: 12px; color: #72796d; font-size: 12px; line-height: 1.5; }
+.designerFeatureLink {
+  display: inline-flex; gap: 24px; white-space: nowrap; text-decoration: none; align-items: center;
+  color: white; background: #233c2e; padding: 18px 21px; min-height: 56px; font-size: 13px;
+}
+.designerFeatureLink:hover { background: #345442; }
+.designerFeatureLink:focus-visible { outline: 3px solid #995a65; outline-offset: 3px; }
+@media (max-width: 790px) {
+  .designerFeature { margin: 20px 16px 40px; display: block; padding: 26px 23px; }
+  .designerFeatureLink { margin-top: 22px; white-space: normal; }
+}
