@@ -5,7 +5,7 @@ import Link from "next/link";
 import { proQuoteDepartments, proQuoteBranding, proQuoteTimelines } from "@/lib/pro-quote";
 import styles from "./quote.module.css";
 
-type QuoteInitial = { department: string; category: string; product: string };
+type QuoteInitial = { department: string; category: string; product: string; quantity?: number; notes?: string };
 
 export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
   const [department, setDepartment] = useState(initial.department);
@@ -99,7 +99,7 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
         </label>
         <div className={styles.twoCols}>
           <label htmlFor="quote-quantity">Estimated quantity
-            <input id="quote-quantity" name="quantity" type="number" inputMode="numeric" min="1" max="10000" step="1" defaultValue="25" required />
+            <input id="quote-quantity" name="quantity" type="number" inputMode="numeric" min="1" max="10000" step="1" defaultValue={initial.quantity ?? 25} required />
           </label>
           <label htmlFor="quote-branding">Branding or customisation
             <select id="quote-branding" name="branding" defaultValue="Not decided">
@@ -140,7 +140,7 @@ export default function ProQuoteForm({ initial }: { initial: QuoteInitial }) {
       <fieldset>
         <legend>03 / Requirements</legend>
         <label htmlFor="quote-notes">Colours, materials, club crest, personalisation and other details <small>Optional</small>
-          <textarea id="quote-notes" name="notes" rows={5} maxLength={1500} placeholder="Tell us about your preferred fabrics, logo placement, sizes, artwork or special requirements. Artwork files can be discussed after your enquiry." />
+          <textarea id="quote-notes" name="notes" rows={8} maxLength={1500} defaultValue={initial.notes ?? ""} placeholder="Tell us about your preferred fabrics, logo placement, sizes, artwork or special requirements. Artwork files can be discussed after your enquiry." />
         </label>
         <label className={styles.check} htmlFor="quote-privacy">
           <input id="quote-privacy" type="checkbox" name="privacyAcknowledged" required />

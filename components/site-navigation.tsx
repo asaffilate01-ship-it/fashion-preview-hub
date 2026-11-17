@@ -43,7 +43,7 @@ export default function SiteNavigation({ home = false }: { home?: boolean }) {
           </nav>
           <div className="mobile-sport-links"><p>Shop by sport</p><div>{sportLinks.map((sport) => <SheetClose asChild key={sport}><Link href={`/sport/${sport.toLowerCase()}`}>{sport}</Link></SheetClose>)}</div></div>
           <nav aria-label="More KALËTHON services" style={{ display: "grid", gap: 12, padding: "16px 4px" }}>
-            {[{ href: "/pro/quote", label: "Custom & wholesale enquiries" }, { href: "/measurements", label: "Size guide" }, { href: "/journal", label: "Journal" }, { href: "/contact", label: "Contact and support" }].map((item) => (
+            {[{ href: "/pro/designer", label: "Team kit designer" }, { href: "/pro/quote", label: "Custom & wholesale enquiries" }, { href: "/measurements", label: "Size guide" }, { href: "/journal", label: "Journal" }, { href: "/contact", label: "Contact and support" }].map((item) => (
               <SheetClose asChild key={item.href}><Link href={item.href} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #ddd" }}>{item.label}<ChevronRight size={16} aria-hidden="true" /></Link></SheetClose>
             ))}
           </nav>
