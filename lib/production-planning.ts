@@ -182,3 +182,16 @@ export function validateProductionTransition(
 
 // 'ready_for_release' is an INTERNAL planning status. It never initiates factory
 // dispatch, authorises a payment, or proves that an invoice has been paid.
+
+export const productionStageLabels: Record<ProductionStage, string> = {
+  draft: "Internal draft",
+  supplier_review: "Supplier review",
+  preproduction: "Pre-production checks",
+  ready_for_release: "Ready for release review",
+  on_hold: "On hold",
+  cancelled: "Cancelled",
+};
+
+export function nextProductionStages(stage: ProductionStage): ProductionStage[] {
+  return [stage, ...transitions[stage]];
+}
