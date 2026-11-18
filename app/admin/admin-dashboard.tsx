@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import ProofPanel from "./proof-panel";
+import ProductionPanel from "./production-panel";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { AlertTriangle, Banknote, Boxes, CircleDollarSign, FileCheck2, LayoutDashboard, LogOut, MessageSquare, Package, Plus, RefreshCw, Save, ShoppingBag, TrendingUp } from "lucide-react";
+import { AlertTriangle, Banknote, Boxes, CircleDollarSign, FileCheck2, Factory, LayoutDashboard, LogOut, MessageSquare, Package, Plus, RefreshCw, Save, ShoppingBag, TrendingUp } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -69,7 +70,7 @@ export default function AdminDashboard({ user }: { user: { email: string; displa
       <Link href="/" className="admin-brand" aria-label="KALËTHON storefront"><span>K</span><b>KALËTHON</b></Link>
       <div className="admin-sidebar-copy"><small>Commerce operating system</small><strong>Control room</strong></div>
       <nav aria-label="Administration sections">
-        <button type="button" className={tab === "overview" ? "is-active" : ""} onClick={() => setTab("overview")}><LayoutDashboard />Overview</button><button type="button" className={tab === "products" ? "is-active" : ""} onClick={() => setTab("products")}><Package />Products</button><button type="button" className={tab === "orders" ? "is-active" : ""} onClick={() => setTab("orders")}><ShoppingBag />Orders</button><button type="button" className={tab === "inventory" ? "is-active" : ""} onClick={() => setTab("inventory")}><Boxes />Inventory</button><button type="button" className={tab === "questions" ? "is-active" : ""} onClick={() => setTab("questions")}><MessageSquare />Questions</button><button type="button" className={tab === "proofs" ? "is-active" : ""} onClick={() => setTab("proofs")}><FileCheck2 />Pro proofs</button>
+        <button type="button" className={tab === "overview" ? "is-active" : ""} onClick={() => setTab("overview")}><LayoutDashboard />Overview</button><button type="button" className={tab === "products" ? "is-active" : ""} onClick={() => setTab("products")}><Package />Products</button><button type="button" className={tab === "orders" ? "is-active" : ""} onClick={() => setTab("orders")}><ShoppingBag />Orders</button><button type="button" className={tab === "inventory" ? "is-active" : ""} onClick={() => setTab("inventory")}><Boxes />Inventory</button><button type="button" className={tab === "questions" ? "is-active" : ""} onClick={() => setTab("questions")}><MessageSquare />Questions</button><button type="button" className={tab === "proofs" ? "is-active" : ""} onClick={() => setTab("proofs")}><FileCheck2 />Pro proofs</button><button type="button" className={tab === "production" ? "is-active" : ""} onClick={() => setTab("production")}><Factory />Production plans</button>
       </nav>
       <div className="admin-user"><span>{user.displayName.slice(0, 1).toUpperCase()}</span><div><b>{user.displayName}</b><small>{user.email}</small></div></div>
       <a className="admin-signout" href="/signout-with-chatgpt?return_to=/"><LogOut />Sign out</a>
@@ -81,7 +82,7 @@ export default function AdminDashboard({ user }: { user: { email: string; displa
       {busy && !data ? <div className="admin-loading">Loading product, order and stock data…</div> : null}
       {data ? <Tabs value={tab} onValueChange={setTab} className="admin-tabs">
         <TabsList className="admin-mobile-tabs" variant="line">
-          <TabsTrigger value="overview"><LayoutDashboard />Overview</TabsTrigger><TabsTrigger value="products"><Package />Products</TabsTrigger><TabsTrigger value="orders"><ShoppingBag />Orders</TabsTrigger><TabsTrigger value="inventory"><Boxes />Stock</TabsTrigger><TabsTrigger value="questions"><MessageSquare />Inbox</TabsTrigger><TabsTrigger value="proofs"><FileCheck2 />Proofs</TabsTrigger>
+          <TabsTrigger value="overview"><LayoutDashboard />Overview</TabsTrigger><TabsTrigger value="products"><Package />Products</TabsTrigger><TabsTrigger value="orders"><ShoppingBag />Orders</TabsTrigger><TabsTrigger value="inventory"><Boxes />Stock</TabsTrigger><TabsTrigger value="questions"><MessageSquare />Inbox</TabsTrigger><TabsTrigger value="proofs"><FileCheck2 />Proofs</TabsTrigger><TabsTrigger value="production"><Factory />Production</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" id="overview">
@@ -138,6 +139,7 @@ export default function AdminDashboard({ user }: { user: { email: string; displa
           </section>
         </TabsContent>
         <TabsContent value="proofs" id="proofs"><ProofPanel quotes={data.questions} /></TabsContent>
+        <TabsContent value="production" id="production"><ProductionPanel /></TabsContent>
       </Tabs> : null}
     </section>
   </main>;

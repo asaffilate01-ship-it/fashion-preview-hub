@@ -1,0 +1,59 @@
+.workspace { padding: clamp(18px, 3vw, 34px); display: grid; gap: 22px; color: #233029; }
+.heading { display:flex; gap:18px; align-items:start; justify-content:space-between; flex-wrap:wrap; }
+.heading p { margin:0 0 9px; text-transform:uppercase; letter-spacing:.14em; color:#796e5f; font-size:11px; }
+.heading h2 { margin:0 0 12px; font:400 clamp(27px,3vw,42px)/1.1 Georgia,"Times New Roman",serif; }
+.heading small { color:#647166; font-size:13px; line-height:1.65; display:block; max-width:720px; }
+.heading button { padding:12px 17px; border:1px solid #aeb8ae; min-height:46px; background:#fff; cursor:pointer; }
+.summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.summary div { border:1px solid #e0e3dc; padding:20px; background:#fff; display:grid; gap:5px; }
+.summary strong { font:400 36px/1.1 Georgia,serif; }
+.summary span { font-size:11px; line-height:1.4; color:#677266; }
+.create { border:1px solid #ddded7; background:#fafaf7; padding:clamp(18px,3vw,32px); display:grid; gap:16px; max-width:1100px; }
+.create h3, .plansHeading h3 { font:400 25px/1.2 Georgia,serif; margin:0; }
+.create p { margin:0; font-size:13px; color:#647166; line-height:1.65; }
+.create label, .editor label { display:grid; gap:7px; font-size:13px; font-weight:600; min-width:0; color:#38483c; }
+.create select, .create input, .create textarea, .editor select, .editor input:not([type=checkbox]), .editor textarea {
+  min-height:50px; width:100%; border:1px solid #adb7ac; background:#fff; color:#1b2a20; font:400 15px/1.45 Arial,sans-serif;
+  padding:12px 14px; border-radius:0;
+}
+.create textarea, .editor textarea { min-height:95px; resize:vertical; }
+.create button[type=submit], .saveLine button { color:white; background:#254834; border:0; min-height:51px; padding:13px 20px; font-size:13px; cursor:pointer; }
+.create button:disabled, .saveLine button:disabled, .heading button:disabled { opacity:.6; cursor:default; }
+.twoColumns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:17px; }
+.feedback { background:#e8f1e8; border-left:4px solid #5e8967; color:#28482f; padding:12px 16px; font-size:13px; line-height:1.5; }
+.plans { display:grid; gap:18px; }
+.plansHeading { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+.plansHeading span { color:#6d796e; font-size:12px; }
+.plan { border:1px solid #daddd6; background:#fff; padding:clamp(18px,3vw,28px); display:grid; gap:15px; }
+.planHeading { display:flex; align-items:flex-start; justify-content:space-between; gap:15px; flex-wrap:wrap; }
+.planHeading small { color:#7b6d60; font-size:11px; }
+.planHeading h3 { font:400 24px/1.15 Georgia,serif; margin:10px 0; }
+.planHeading p { color:#677167; font-size:12px; }
+.status { background:#e7eee7; color:#314d39; text-transform:capitalize; font-size:11px; padding:9px 11px; white-space:nowrap; }
+.editor { display:grid; gap:17px; }
+.checks { display:grid; gap:13px; padding:19px; border:1px solid #d8ded6; background:#f7f9f5; min-width:0; }
+.checks legend { font-size:12px; padding:0 7px; color:#576a5b; font-weight:600; }
+.checks label { display:flex; align-items:flex-start; gap:11px; font-size:12px; line-height:1.4; font-weight:400; cursor:pointer; }
+.checks input { flex:none; width:19px; height:19px; margin:0; accent-color:#2f5e43; }
+.saveLine { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:16px; }
+.saveLine button { white-space:normal; }
+.history { color:#5c685e; font-size:12px; border-top:1px solid #d9ddd6; padding-top:16px; line-height:1.6; }
+.history summary { cursor:pointer; font-weight:600; }
+.history ol { margin:12px 0 0; padding-left:20px; display:grid; gap:8px; }
+.history li { overflow-wrap:anywhere; }
+.history time { color:#37483c; }
+.disclaimer { font-size:13px; color:#5e665f; line-height:1.65; padding:16px 20px; border:1px solid #dedcd1; background:#faf8ee; }
+.create :is(input,textarea,select):focus-visible,.editor :is(input,textarea,select):focus-visible,.workspace button:focus-visible,.history summary:focus-visible {
+ outline:3px solid #81505a;outline-offset:2px;
+}
+@media(max-width:900px) { .summary{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media(max-width:640px) {
+ .workspace { padding:17px; }
+ .twoColumns,.saveLine { grid-template-columns:minmax(0,1fr); }
+ .create,.plan { padding:18px; }
+ .saveLine button { width:100%; }
+ .summary div { padding:16px; }
+ .summary strong { font-size:30px; }
+ .planHeading h3 { font-size:22px; }
+ .checks { padding:15px 12px; }
+}
