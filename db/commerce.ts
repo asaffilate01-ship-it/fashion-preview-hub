@@ -37,7 +37,7 @@ export async function seedCommerceCatalogue() {
   const now = new Date().toISOString();
   const statements = seedProducts.flatMap(([id, sku, slug, name, category, productType, image, price, cost], index) => [
     database.prepare("INSERT OR IGNORE INTO commerce_products (id, sku, slug, name, category, product_type, description, image, price, cost, active, featured, track_inventory, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, 1, ?, ?)").bind(id, sku, slug, name, category, productType, `${productType} from the finished KALËTHON edit.`, image, price, cost, index < 6 ? 1 : 0, now, now),
-    database.prepare("INSERT OR IGNORE INTO commerce_inventory (id, product_id, sku, option_name, size, colour, stock_on_hand, stock_reserved, reorder_point, updated_at) VALUES (?, ?, ?, 'Core run', 'All sizes', 'Standard', 12, 0, 4, ?)").bind(`inv-${id}`, id, sku, now),
+    database.prepare("INSERT OR IGNORE INTO commerce_inventory (id, product_id, sku, option_name, size, colour, stock_on_hand, stock_reserved, reorder_point, updated_at) VALUES (?, ?, ?, 'Core run', 'All sizes', 'Standard', 0, 0, 4, ?)").bind(`inv-${id}`, id, sku, now),
   ]);
   await database.batch(statements);
 }
