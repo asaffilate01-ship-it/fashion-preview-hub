@@ -176,3 +176,43 @@ export const commerceProductionEvents = sqliteTable("commerce_production_events"
   detail: text("detail").notNull().default(""),
   createdAt: text("created_at").notNull(),
 }, (table) => [index("commerce_production_events_plan_idx").on(table.planId, table.createdAt)]);
+
+export const commerceTradePrices = sqliteTable("commerce_trade_prices", {
+  id: text("id").primaryKey(),
+  quoteQuestionId: text("quote_question_id").notNull().references(() => commerceQuestions.id, { onDelete: "restrict" }),
+  reference: text("reference").notNull(),
+  revision: integer("revision").notNull(),
+  status: text("status").notNull().default("draft"),
+  linesJson: text("lines_json").notNull(),
+  shippingPence: integer("shipping_pence").notNull(),
+  discountBps: integer("discount_bps").notNull(),
+  taxRateBps: integer("tax_rate_bps").notNull(),
+  subtotalPence: integer("subtotal_pence").notNull(),
+  discountPence: integer("discount_pence").notNull(),
+  taxPence: integer("tax_pence").notNull(),
+  totalPence: integer("total_pence").notNull(),
+  costPence: integer("cost_pence").notNull(),
+  validUntil: text("valid_until").notNull(),
+  notes: text("notes").notNull().default(""),
+  costReviewed: integer("cost_reviewed", { mode: "boolean" }).notNull().default(false),
+  taxReviewed: integer("tax_reviewed", { mode: "boolean" }).notNull().default(false),
+  createdBy: text("created_by").notNull(),
+  updatedAt: text("updated_at").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [
+  uniqueIndex("commerce_trade_prices_question_version_unique").on(table.quoteQuestionId, table.revision),
+  uniqueIndex("commerce_trade_prices_reference_unique").on(table.reference),
+  index("commerce_trade_prices_question_idx").on(table.quoteQuestionId, table.revision),
+  index("commerce_trade_prices_status_idx").on(table.status, table.validUntil),
+]);
+
+export const commerceTradePriceEvents = sqliteTable("commerce_trade_price_events", {
+  id: text("id").primaryKey(),
+  priceId: text("price_id").notNull().references(() => commerceTradePrices.id, { onDelete: "cascade" }),
+  action: text("action").notNull(),
+  actor: text("actor").notNull(),
+  detail: text("detail").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+}, (table) => [
+  index("commerce_trade_price_events_price_idx").on(table.priceId, table.createdAt),
+]);
