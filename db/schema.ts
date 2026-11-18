@@ -141,3 +141,38 @@ export const commerceProProofEvents = sqliteTable("commerce_pro_proof_events", {
 }, (table) => [
   index("commerce_pro_proof_events_proof_idx").on(table.proofId, table.createdAt),
 ]);
+
+export const commerceProductionPlans = sqliteTable("commerce_production_plans", {
+  id: text("id").primaryKey(),
+  quoteQuestionId: text("quote_question_id").notNull().references(() => commerceQuestions.id, { onDelete: "restrict" }),
+  proofId: text("proof_id").notNull().references(() => commerceProProofs.id, { onDelete: "restrict" }),
+  reference: text("reference").notNull(),
+  plannedQuantity: integer("planned_quantity").notNull(),
+  supplier: text("supplier").notNull().default(""),
+  targetDate: text("target_date").notNull(),
+  notes: text("notes").notNull().default(""),
+  status: text("status").notNull().default("draft"),
+  supplierConfirmed: integer("supplier_confirmed", { mode: "boolean" }).notNull().default(false),
+  technicalChecked: integer("technical_checked", { mode: "boolean" }).notNull().default(false),
+  commercialChecked: integer("commercial_checked", { mode: "boolean" }).notNull().default(false),
+  qualityChecked: integer("quality_checked", { mode: "boolean" }).notNull().default(false),
+  version: integer("version").notNull().default(1),
+  createdBy: text("created_by").notNull(),
+  updatedBy: text("updated_by").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+}, (table) => [
+  uniqueIndex("commerce_production_plans_quote_unique").on(table.quoteQuestionId),
+  uniqueIndex("commerce_production_plans_proof_unique").on(table.proofId),
+  uniqueIndex("commerce_production_plans_reference_unique").on(table.reference),
+  index("commerce_production_plans_status_idx").on(table.status, table.targetDate),
+]);
+
+export const commerceProductionEvents = sqliteTable("commerce_production_events", {
+  id: text("id").primaryKey(),
+  planId: text("plan_id").notNull().references(() => commerceProductionPlans.id, { onDelete: "cascade" }),
+  action: text("action").notNull(),
+  actor: text("actor").notNull(),
+  detail: text("detail").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+}, (table) => [index("commerce_production_events_plan_idx").on(table.planId, table.createdAt)]);
