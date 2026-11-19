@@ -5,14 +5,15 @@ import {
   calculateTradePrice, MAX_QUOTE_LINES, parseTradePrice,
   type TradePriceLine, type StoredTradePrice, type TradePriceEvent,
 } from "@/lib/commercial-quote";
+import type { TradeReview, TradeReviewEvent } from "@/lib/trade-review";
 import styles from "./pricing-panel.module.css";
 
-type Register = { prices: StoredTradePrice[]; events: TradePriceEvent[] };
+type Register = { prices: StoredTradePrice[]; events: TradePriceEvent[]; reviews: TradeReview[]; reviewEvents: TradeReviewEvent[] };
 const emptyLine = (): TradePriceLine => ({ description: "Custom teamwear", quantity: 25, unitPricePence: 0, unitCostPence: 0 });
 const money = (pence: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(pence / 100);
 
 export default function PricingPanel({ questions }: { questions: CommerceQuestion[] }) {
-  const [data, setData] = useState<Register>({ prices: [], events: [] });
+  const [data, setData] = useState<Register>({ prices: [], events: [], reviews: [], reviewEvents: [] });
   const [quoteQuestionId, setQuoteQuestionId] = useState("");
   const [lines, setLines] = useState<TradePriceLine[]>([emptyLine()]);
   const [shippingPence, setShippingPence] = useState(0);
@@ -25,6 +26,7 @@ export default function PricingPanel({ questions }: { questions: CommerceQuestio
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [privateLink, setPrivateLink] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -76,6 +78,39 @@ export default function PricingPanel({ questions }: { questions: CommerceQuestio
     catch (error) { setMessage(error instanceof Error ? error.message : "Review pricing fields."); return; }
     void post({ action: "create", ...input }, "Draft pricing revision saved. It has not been issued to the customer.");
   };
+  const issue = async (priceId: string) => {
+    if (busy) return;
+    setPrivateLink("");
+    setMessage("");
+    setBusy(true);
+    try {
+      const response = await fetch("/api/admin/pricing", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({ action: "issue_customer_review", id: priceId }),
+      });
+      const result = await response.json() as { ok?: boolean; reviewUrl?: string; message?: string };
+      if (!response.ok || !result.ok || !result.reviewUrl) {
+        throw new Error(result.message || "Could not issue private quotation.");
+      }
+      setPrivateLink(result.reviewUrl);
+      setMessage("Private quotation link issued. Share it only with the intended customer; it will not be displayed again.");
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not issue private quotation.");
+    } finally { setBusy(false); }
+  };
+
+  const copyLink = async () => {
+    if (!privateLink) return;
+    try {
+      await navigator.clipboard.writeText(privateLink);
+      setMessage("Private quotation link copied. Send it only to the correct customer.");
+    } catch {
+      setMessage("Select the private link field and copy it manually.");
+    }
+  };
+
   const proQuestions = questions.filter((item) => item.subject.startsWith("[PRO QUOTE]"));
   const latest = new Map<string, number>();
   for (const price of data.prices) latest.set(price.quoteQuestionId, Math.max(price.revision, latest.get(price.quoteQuestionId) ?? 0));
@@ -180,12 +215,22 @@ export default function PricingPanel({ questions }: { questions: CommerceQuestio
           {busy ? "Saving…" : "Save internal pricing revision"}
         </button>
       </form>
+      {privateLink && <section className={styles.privateLink} role="status">
+        <h3>One-time customer quotation link</h3>
+        <p>This private link expires within seven days (or sooner when the quote expires).
+          It is displayed only now; KALËTHON stores a hash and cannot retrieve it later.</p>
+        <input type="text" value={privateLink} readOnly aria-label="Private customer quotation URL"
+          onFocus={(event) => event.currentTarget.select()} />
+        <button type="button" onClick={() => void copyLink()}>Copy review link</button>
+      </section>}
       {message && <p className={styles.feedback} role="status">{message}</p>}
       <section className={styles.register}>
         <h3>02 / Trade pricing register</h3>
         {loading && <p>Loading pricing records…</p>}
         {!loading && data.prices.length === 0 && <p>No internal quotations have been created yet.</p>}
-        {data.prices.map((price) => <article className={styles.card} key={price.id}>
+        {data.prices.map((price) => {
+          const review = data.reviews?.find((entry) => entry.priceId === price.id);
+          return <article className={styles.card} key={price.id}>
           <header><div><small>{price.reference} · Revision {price.revision}</small>
             <h4>{price.customerName}</h4><p>{price.customerEmail}</p></div>
             <span>{price.status.replace(/_/g, " ")}</span></header>
@@ -200,13 +245,30 @@ export default function PricingPanel({ questions }: { questions: CommerceQuestio
             <ol>{data.events.filter((event) => event.priceId === price.id).map((event) =>
               <li key={event.id}>{new Date(event.createdAt).toLocaleString("en-GB")}: {event.actor} — {event.action}. {event.detail}</li>)}</ol>
           </details>
+          {review && <section className={styles.reviewStatus}>
+            <strong>Customer quotation: {review.status.replace(/_/g, " ")}</strong>
+            {review.status === "issued" && review.expiresAt && <p>Private review link expires {new Date(review.expiresAt).toLocaleDateString("en-GB")}.</p>}
+            {review.respondedAt && <p>{review.customerName} responded on {new Date(review.respondedAt).toLocaleDateString("en-GB")}.</p>}
+            {review.customerNote && <p>Response: {review.customerNote}</p>}
+            {data.reviewEvents?.filter((event) => event.reviewId === review.id).length > 0 &&
+              <details className={styles.details}><summary>Customer review audit</summary>
+                <ol>{data.reviewEvents?.filter((event) => event.reviewId === review.id).map((event) =>
+                  <li key={event.id}>{new Date(event.createdAt).toLocaleString("en-GB")} · {event.action} by {event.actor}: {event.message}</li>)}</ol>
+              </details>}
+          </section>}
           {price.status === "draft" && price.revision === latest.get(price.quoteQuestionId) &&
             <button className={styles.primary} type="button" disabled={busy}
               onClick={() => void post({ action: "mark_ready", id: price.id },
                 "Internal commercial review recorded; not issued to the customer.")}>
               Mark internally reviewed
             </button>}
-        </article>)}
+          {price.status === "review_ready" && !review && price.revision === latest.get(price.quoteQuestionId) &&
+            <button className={styles.primary} type="button" disabled={busy}
+              onClick={() => void issue(price.id)}>
+              Issue private customer quotation link
+            </button>}
+        </article>;
+        })}
       </section>
       <p className={styles.warning}>
         Internal estimates do not create VAT invoices, binding customer offers, customer acceptance, payment requests, or factory dispatch.
