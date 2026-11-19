@@ -1,0 +1,56 @@
+.workspace { padding: clamp(18px,3vw,34px); display:grid; gap:23px; color:#27372c; }
+.heading { display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:start; }
+.heading p { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#756e61; margin:0 0 8px; }
+.heading h2 { font:400 clamp(28px,3.5vw,45px)/1.1 Georgia,serif; margin:0 0 11px; }
+.heading small { display:block; color:#657165; line-height:1.65; font-size:12px; max-width:700px; }
+.heading button { background:#fff; border:1px solid #b1bbae; padding:12px 16px; min-height:46px; cursor:pointer; }
+.metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px; }
+.metrics > span { display:grid; gap:7px; background:#fff; border:1px solid #dce2d9; padding:16px; font-size:12px; color:#5d6e60; }
+.metrics strong { font:400 31px/1.1 Georgia,serif; color:#253a2d; }
+.form { background:#fafbf8; border:1px solid #d8dfd6; padding:clamp(18px,3vw,30px); display:grid; gap:16px; }
+.form h3,.register h3 { font:400 24px/1.2 Georgia,serif; margin:0; }
+.form label { display:grid; gap:7px; min-width:0; font-size:13px; font-weight:650; color:#3a5140; }
+.form :is(input,textarea,select) { font:400 16px/1.4 Arial,sans-serif; background:#fff; color:#213628; min-height:50px; border:1px solid #abb9ac; padding:12px 13px; border-radius:0; width:100%; }
+.form textarea { resize:vertical; min-height:85px; }
+.form :is(input,textarea,select):disabled { opacity:.62; background:#f4f5f2; }
+.form > button[type=submit],.actionRow button { border:0; background:#28513a; padding:15px 19px; color:#fff; cursor:pointer; font-size:13px; font-weight:650; min-height:51px; }
+.form button:disabled,.heading button:disabled { opacity:.6; cursor:default; }
+.two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.context { color:#546856; padding:12px; background:#ecf2e9; line-height:1.5; font-size:12px; }
+.feedback { border-left:4px solid #68866f; background:#e9f2e9; color:#265036; padding:14px 18px; font-size:13px; }
+.register { display:grid; gap:18px; }
+.record { background:#fff; border:1px solid #dce3dc; padding:clamp(17px,3vw,27px); display:grid; gap:16px; }
+.recordHeader { display:flex; justify-content:space-between; gap:18px; align-items:start; flex-wrap:wrap; }
+.recordHeader small { font-size:11px; color:#807668; }
+.recordHeader h4 { font:400 26px/1.18 Georgia,serif; margin:8px 0; }
+.recordHeader p { color:#6c776c; font-size:12px; margin:0; overflow-wrap:anywhere; }
+.status { background:#e1efe3; color:#28573a; font-size:11px; padding:8px 11px; white-space:nowrap; }
+.record .metrics span { background:#f5f8f5; }
+.record .metrics strong { font-size:22px; }
+.warning { border:1px solid #e4d4ad; background:#faf5e8; color:#715930; font-size:12px; padding:15px 17px; line-height:1.6; }
+.details { font-size:12px; color:#536457; line-height:1.6; }
+.details summary { font-weight:650; cursor:pointer; }
+.details p { line-height:1.5; }
+.details ol { padding-left:20px; }
+.details li { overflow-wrap:anywhere; margin:7px 0; }
+.tableScroll { overflow-x:auto; margin:14px 0; }
+.details table { width:100%; min-width:490px; border-collapse:collapse; font-size:12px; }
+.details td,.details th { text-align:left; border-bottom:1px solid #d9e2d9; padding:10px 8px; }
+.checklist { display:grid; gap:13px; padding:18px; background:#f4f8f3; border:1px solid #dce5db; }
+.checklist legend { font-size:12px; color:#546b5a; font-weight:650; padding:0 7px; }
+.checklist label { display:flex; align-items:flex-start; gap:11px; font-size:12px; line-height:1.45; font-weight:400; }
+.checklist input[type=checkbox] { margin:0; flex:none; width:19px; height:19px; min-height:0; accent-color:#30664a; }
+.actionRow { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:15px; }
+.actionRow button { white-space:normal; }
+.form :is(input,textarea,select):focus-visible,.workspace button:focus-visible,.details summary:focus-visible {
+ outline:3px solid #825568; outline-offset:3px;
+}
+@media(max-width:850px) { .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) {
+ .workspace { padding:16px; }
+ .form,.record { padding:18px; }
+ .two,.actionRow,.metrics { grid-template-columns:minmax(0,1fr); }
+ .metrics > span { padding:14px; }
+ .metrics strong { font-size:25px; }
+ .actionRow button { width:100%; }
+}
