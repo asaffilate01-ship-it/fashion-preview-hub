@@ -245,3 +245,45 @@ export const commerceTradeReviewEvents = sqliteTable("commerce_trade_review_even
 }, (table) => [
   index("commerce_trade_review_events_review_idx").on(table.reviewId, table.createdAt),
 ]);
+
+export const commerceTradeHandovers = sqliteTable("commerce_trade_handovers", {
+  id: text("id").primaryKey(),
+  quoteQuestionId: text("quote_question_id").notNull().references(() => commerceQuestions.id, { onDelete: "restrict" }),
+  sourcePriceId: text("source_price_id").notNull().references(() => commerceTradePrices.id, { onDelete: "restrict" }),
+  sourceReviewId: text("source_review_id").notNull().references(() => commerceTradePriceReviews.id, { onDelete: "restrict" }),
+  reference: text("reference").notNull(),
+  buyerLegalName: text("buyer_legal_name").notNull(),
+  buyerEmail: text("buyer_email").notNull(),
+  billingAddress: text("billing_address").notNull(),
+  deliveryAddress: text("delivery_address").notNull().default(""),
+  billingCountry: text("billing_country").notNull(),
+  purchaseOrderReference: text("purchase_order_reference").notNull().default(""),
+  depositBps: integer("deposit_bps").notNull().default(0),
+  notes: text("notes").notNull().default(""),
+  snapshotJson: text("snapshot_json").notNull(),
+  status: text("status").notNull().default("draft"),
+  buyerDetailsReviewed: integer("buyer_details_reviewed", { mode: "boolean" }).notNull().default(false),
+  vatTreatmentReviewed: integer("vat_treatment_reviewed", { mode: "boolean" }).notNull().default(false),
+  paymentTermsReviewed: integer("payment_terms_reviewed", { mode: "boolean" }).notNull().default(false),
+  specificationReviewed: integer("specification_reviewed", { mode: "boolean" }).notNull().default(false),
+  version: integer("version").notNull().default(1),
+  createdBy: text("created_by").notNull(),
+  updatedBy: text("updated_by").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+}, (table) => [
+  uniqueIndex("commerce_trade_handovers_question_unique").on(table.quoteQuestionId),
+  uniqueIndex("commerce_trade_handovers_price_unique").on(table.sourcePriceId),
+  uniqueIndex("commerce_trade_handovers_review_unique").on(table.sourceReviewId),
+  uniqueIndex("commerce_trade_handovers_reference_unique").on(table.reference),
+  index("commerce_trade_handovers_stage_idx").on(table.status, table.updatedAt),
+]);
+
+export const commerceTradeHandoverEvents = sqliteTable("commerce_trade_handover_events", {
+  id: text("id").primaryKey(),
+  handoverId: text("handover_id").notNull().references(() => commerceTradeHandovers.id, { onDelete: "cascade" }),
+  action: text("action").notNull(),
+  actor: text("actor").notNull(),
+  detail: text("detail").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+}, (table) => [index("commerce_trade_handover_events_id_idx").on(table.handoverId, table.createdAt)]);
