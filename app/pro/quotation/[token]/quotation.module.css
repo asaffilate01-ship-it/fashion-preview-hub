@@ -1,0 +1,53 @@
+.page { min-height:100svh; background:#f7f5ef; color:#26302a; }
+.layout { max-width:1330px; margin:auto; padding:18px clamp(16px,4vw,52px) 100px; }
+.breadcrumb { display:flex; gap:12px; color:#677064; font-size:12px; }
+.breadcrumb a { color:#344334; text-decoration:none; }
+.intro { padding:clamp(42px,6vw,85px) 0 36px; }
+.kicker { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#807065; }
+.intro h1 { font:400 clamp(42px,6vw,75px)/1.06 Georgia,"Times New Roman",serif; letter-spacing:-.055em; margin:15px 0 20px; }
+.intro h1 em { font-weight:400; }
+.intro > p:last-child { max-width:770px; font-size:15px; line-height:1.7; color:#626d62; }
+.columns { display:grid; grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr); gap:clamp(24px,4vw,58px); align-items:start; }
+.quote,.response { min-width:0; background:#fff; border:1px solid #e0ddd4; padding:clamp(22px,3vw,36px); }
+.meta { display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; font-size:11px; color:#657063; }
+.quote h2,.response h2 { font:400 clamp(29px,3vw,40px)/1.15 Georgia,"Times New Roman",serif; margin:20px 0 8px; }
+.customer { margin:0 0 22px; font-size:13px; color:#73786f; }
+.tableWrap { max-width:100%; overflow-x:auto; }
+.tableWrap table { width:100%; border-collapse:collapse; min-width:460px; font-size:13px; }
+.tableWrap th { padding:13px 10px; background:#eef0eb; color:#4c5d4f; text-align:left; font-weight:650; }
+.tableWrap td { padding:16px 10px; border-bottom:1px solid #e5e8e1; line-height:1.5; }
+.tableWrap td:not(:first-child),.tableWrap th:not(:first-child) { text-align:right; white-space:nowrap; }
+.totals { display:grid; gap:11px; padding-top:25px; margin-top:20px; border-top:1px solid #d7ddd5; }
+.totals div { display:flex; justify-content:space-between; gap:15px; align-items:baseline; font-size:13px; }
+.totals dt { color:#617064; }
+.totals dd { font-weight:650; margin:0; white-space:nowrap; }
+.totals .grand { border-top:1px solid #b9c6b9; padding-top:16px; margin-top:5px; font-size:17px; }
+.terms { font-size:12px; line-height:1.75; color:#5f695f; background:#f6f5f1; padding:16px; margin-top:28px; }
+.expiry { font-size:12px; line-height:1.6; color:#8a715b; }
+.response { background:#ebebe5; }
+.response > p:not(.kicker) { font-size:13px; color:#58665a; line-height:1.7; margin:0 0 24px; }
+.options { display:grid; gap:10px; padding:0; margin:0 0 24px; border:0; }
+.options legend { font-size:13px; font-weight:700; margin-bottom:12px; }
+.options label { display:flex; gap:11px; align-items:center; min-height:53px; background:#fff; border:1px solid #c8cec5; padding:12px; font-size:13px; cursor:pointer; }
+.options input,.confirm input { width:20px; height:20px; flex:none; accent-color:#31583b; }
+.field { display:grid; gap:9px; margin-bottom:18px; font-size:13px; font-weight:650; }
+.field input,.field textarea { width:100%; background:#fff; border:1px solid #b0bcb0; color:#1e2e22; padding:13px 14px; font:400 16px/1.5 Arial,sans-serif; }
+.field input { min-height:52px; }
+.field textarea { resize:vertical; min-height:120px; }
+.confirm { display:flex; gap:12px; align-items:flex-start; line-height:1.6; color:#324b36; font-size:13px; margin:20px 0; }
+.confirm input { margin-top:2px; }
+.submit { width:100%; min-height:58px; color:#fff; background:#294c33; padding:15px 20px; cursor:pointer; border:0; font-size:14px; font-weight:650; }
+.submit:disabled { background:#92a094; cursor:default; }
+.submit:not(:disabled):hover { background:#355a40; }
+.error { color:#992d44; font-size:13px; line-height:1.5; padding-top:12px; }
+.helper { color:#6c786f; font-size:11px; line-height:1.7; margin-top:18px; }
+.tick { display:grid; place-items:center; width:50px; height:50px; background:#d4e8d9; color:#1f6040; border-radius:50%; font-size:28px; }
+.response a { color:#284c34; text-decoration:underline; }
+:is(.breadcrumb a,.options input,.field input,.field textarea,.confirm input,.submit,.response a):focus-visible { outline:3px solid #83516a; outline-offset:3px; }
+@media(max-width:860px) { .columns { grid-template-columns:1fr; } }
+@media(max-width:600px) {
+ .layout { padding:14px 16px 66px; } .intro { padding:44px 0 24px; }
+ .quote,.response { padding:22px 17px; } .submit { min-height:60px; }
+ .intro h1 { font-size:clamp(40px,10vw,58px); }
+ .totals .grand { font-size:16px; }
+}
