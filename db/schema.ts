@@ -216,3 +216,32 @@ export const commerceTradePriceEvents = sqliteTable("commerce_trade_price_events
 }, (table) => [
   index("commerce_trade_price_events_price_idx").on(table.priceId, table.createdAt),
 ]);
+
+export const commerceTradePriceReviews = sqliteTable("commerce_trade_price_reviews", {
+  id: text("id").primaryKey(),
+  priceId: text("price_id").notNull().references(() => commerceTradePrices.id, { onDelete: "restrict" }),
+  tokenHash: text("token_hash"),
+  tokenExpiresAt: text("token_expires_at"),
+  status: text("status").notNull().default("issued"),
+  customerName: text("customer_name").notNull().default(""),
+  customerNote: text("customer_note").notNull().default(""),
+  respondedAt: text("responded_at"),
+  issuedBy: text("issued_by").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+}, (table) => [
+  uniqueIndex("commerce_trade_price_reviews_price_unique").on(table.priceId),
+  uniqueIndex("commerce_trade_price_reviews_token_unique").on(table.tokenHash),
+  index("commerce_trade_price_reviews_status_idx").on(table.status, table.tokenExpiresAt),
+]);
+
+export const commerceTradeReviewEvents = sqliteTable("commerce_trade_review_events", {
+  id: text("id").primaryKey(),
+  reviewId: text("review_id").notNull().references(() => commerceTradePriceReviews.id, { onDelete: "cascade" }),
+  action: text("action").notNull(),
+  actor: text("actor").notNull(),
+  message: text("message").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+}, (table) => [
+  index("commerce_trade_review_events_review_idx").on(table.reviewId, table.createdAt),
+]);

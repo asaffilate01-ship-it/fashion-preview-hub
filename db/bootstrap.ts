@@ -197,6 +197,31 @@ const DDL: string[] = [
     created_at text NOT NULL
   )`,
   `CREATE INDEX IF NOT EXISTS commerce_trade_price_events_price_idx ON commerce_trade_price_events (price_id, created_at)`,
+  `CREATE TABLE IF NOT EXISTS commerce_trade_price_reviews (
+    id text PRIMARY KEY NOT NULL,
+    price_id text NOT NULL UNIQUE REFERENCES commerce_trade_prices(id) ON DELETE restrict,
+    token_hash text UNIQUE,
+    token_expires_at text,
+    status text NOT NULL DEFAULT 'issued',
+    customer_name text NOT NULL DEFAULT '',
+    customer_note text NOT NULL DEFAULT '',
+    responded_at text,
+    issued_by text NOT NULL,
+    created_at text NOT NULL,
+    updated_at text NOT NULL
+  )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS commerce_trade_price_reviews_price_unique ON commerce_trade_price_reviews (price_id)`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS commerce_trade_price_reviews_token_unique ON commerce_trade_price_reviews (token_hash)`,
+  `CREATE INDEX IF NOT EXISTS commerce_trade_price_reviews_status_idx ON commerce_trade_price_reviews (status, token_expires_at)`,
+  `CREATE TABLE IF NOT EXISTS commerce_trade_review_events (
+    id text PRIMARY KEY NOT NULL,
+    review_id text NOT NULL REFERENCES commerce_trade_price_reviews(id) ON DELETE cascade,
+    action text NOT NULL,
+    actor text NOT NULL,
+    message text NOT NULL DEFAULT '',
+    created_at text NOT NULL
+  )`,
+  `CREATE INDEX IF NOT EXISTS commerce_trade_review_events_review_idx ON commerce_trade_review_events (review_id, created_at)`,
   `CREATE TABLE IF NOT EXISTS commerce_webhook_events (
     id text PRIMARY KEY NOT NULL,
     event_type text NOT NULL,

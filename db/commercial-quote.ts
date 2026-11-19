@@ -100,6 +100,11 @@ export async function createTradePrice(raw: unknown, actor: string) {
       db.prepare("INSERT INTO commerce_trade_price_events (id, price_id, action, actor, detail, created_at)" +
         " VALUES (?, ?, 'created', ?, ?, ?)")
         .bind(crypto.randomUUID(), id, actor, "Internal cost estimate created; no customer acceptance or invoice", now),
+      db.prepare("UPDATE commerce_trade_price_reviews SET status = 'superseded'," +
+        " token_hash = NULL, token_expires_at = NULL, updated_at = ?" +
+        " WHERE price_id IN (SELECT p.id FROM commerce_trade_prices p" +
+        " WHERE p.quote_question_id = ? AND p.id <> ? AND p.status = 'superseded')" +
+        " AND status = 'issued'").bind(now, input.quoteQuestionId, id),
     ]);
     if (Number(results[1]?.meta?.changes ?? 0) !== 1 || Number(results[2]?.meta?.changes ?? 0) !== 1) {
       throw new CommercialPricingError("Could not create the internal pricing revision.", "conflict");
