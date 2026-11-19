@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getAdminIdentity } from "@/lib/admin-auth";
 import { createTradePrice, listTradePrices, markTradePriceReady } from "@/db/commercial-quote";
 import { CommercialPricingError } from "@/lib/commercial-quote";
+import { issueTradeReview, listTradeReviews } from "@/db/trade-review";
+import { TradeReviewError } from "@/lib/trade-review";
 
 export const dynamic = "force-dynamic";
 const noStore = { "Cache-Control": "no-store" };
@@ -12,7 +14,8 @@ export async function GET() {
     return NextResponse.json({ message: "Administrator access is required." }, { status: 401, headers: noStore });
   }
   try {
-    return NextResponse.json(await listTradePrices(), { headers: noStore });
+    const [prices, reviews] = await Promise.all([listTradePrices(), listTradeReviews()]);
+    return NextResponse.json({ ...prices, ...reviews }, { headers: noStore });
   } catch {
     return NextResponse.json({ message: "Trade pricing is unavailable." }, { status: 503, headers: noStore });
   }
@@ -47,8 +50,18 @@ export async function POST(request: Request) {
       const result = await markTradePriceReady(String(body.id ?? ""), admin.email);
       return NextResponse.json({ ok: true, ...result }, { headers: noStore });
     }
+    if (body.action === "issue_customer_review") {
+      const result = await issueTradeReview(String(body.id ?? ""), admin.email);
+      return NextResponse.json({ ok: true, ...result }, {
+        headers: { ...noStore, "Referrer-Policy": "no-referrer" },
+      });
+    }
     return NextResponse.json({ message: "Unknown pricing action." }, { status: 400, headers: noStore });
   } catch (error) {
+    if (error instanceof TradeReviewError) {
+      const status = error.code === "conflict" ? 409 : error.code === "unavailable" ? 503 : 400;
+      return NextResponse.json({ message: error.message }, { status, headers: noStore });
+    }
     if (error instanceof CommercialPricingError) {
       const status = error.code === "not_found" ? 404 : error.code === "conflict" ? 409 :
         error.code === "unavailable" ? 503 : 400;
