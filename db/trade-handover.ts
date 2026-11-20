@@ -258,3 +258,13 @@ export async function updateTradeHandover(raw: unknown, actor: string) {
   }
   return { id: input.id, version: input.expectedVersion + 1, status: input.nextStatus };
 }
+
+/**
+ * Fetch a single accepted-quotation handover for a server-only, admin-gated
+ * worksheet. This read path contains no internal cost or margin fields.
+ */
+export async function getTradeHandoverForWorksheet(id: string): Promise<HandoverRecord | null> {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return null;
+  const db = await database();
+  return getOne(db, id);
+}
