@@ -54,3 +54,10 @@
  .metrics strong { font-size:25px; }
  .actionRow button { width:100%; }
 }
+
+.worksheetLink { display:inline-flex; align-items:center; gap:13px; width:fit-content;
+  color:#fff; background:#254733; text-decoration:none; font-size:13px; font-weight:650;
+  min-height:48px; padding:13px 17px; }
+.worksheetLink:hover { background:#386a4b; }
+.worksheetLink:focus-visible { outline:3px solid #85556b; outline-offset:3px; }
+@media(max-width:600px) { .worksheetLink { width:100%; justify-content:space-between; } }
