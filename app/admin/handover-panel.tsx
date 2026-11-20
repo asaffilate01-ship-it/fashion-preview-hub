@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   depositOptionsBps, handoverLabels, illustrativeDepositPence, nextHandoverStatuses,
   type AcceptedQuote, type HandoverChecks, type HandoverEvent, type HandoverFields,
@@ -97,6 +98,14 @@ function HandoverEditor({ handover, audit, busy, onSave }: {
       <span>Illustrative deposit <strong>{money(illustrativeDepositPence(handover.snapshot, fields.depositBps))}</strong></span>
       <span>Quote revision <strong>{handover.snapshot.priceRevision}</strong></span>
     </div>
+    {handover.status === "ready_for_invoice_review" && handover.quoteStillCurrent &&
+      (!handover.proofRequired || handover.latestProofApproved) && (
+        <Link className={styles.worksheetLink}
+          href={`/admin/handovers/${handover.id}/preview`}
+          target="_blank" rel="noopener noreferrer">
+          Open internal invoice-preparation worksheet <span aria-hidden="true">↗</span>
+        </Link>
+      )}
     {(!handover.quoteStillCurrent || (handover.proofRequired && !handover.latestProofApproved)) &&
       <p className={styles.warning}>This handover cannot advance to invoice preparation: the accepted quotation is outdated or the latest required artwork proof is not approved.</p>}
     <details className={styles.details}><summary>Review immutable customer price snapshot</summary>
